@@ -39,11 +39,11 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
   const [costResult, setCostResult] = useState<CostResult | null>(null);
 
   const steps = [
-    { number: 1, title: 'Strategic Alignment', component: Step1Strategic },
-    { number: 2, title: 'Data Collection', component: Step2DataCollection },
-    { number: 3, title: 'Cost Modeling', component: Step3CostModeling },
-    { number: 4, title: 'Scenario Analysis', component: Step4ScenarioAnalysis },
-    { number: 5, title: 'Insights & Roadmap', component: Step5Insights },
+    { number: 1, title: '战略对齐', component: Step1Strategic },
+    { number: 2, title: '数据采集', component: Step2DataCollection },
+    { number: 3, title: '成本建模', component: Step3CostModeling },
+    { number: 4, title: '场景分析', component: Step4ScenarioAnalysis },
+    { number: 5, title: '洞察与路线图', component: Step5Insights },
   ];
 
   const handleNext = () => {
@@ -54,7 +54,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
         setCostResult(result);
       } catch (error) {
         console.error('Error calculating cost model:', error);
-        alert('Error calculating costs. Please check your inputs.');
+        alert('成本计算出错，请检查输入信息。');
         return;
       }
     }
@@ -91,7 +91,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Home
+              返回首页
             </button>
           </div>
 
@@ -155,7 +155,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
               className="flex items-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              Previous
+              上一步
             </button>
 
             {currentStep < steps.length ? (
@@ -163,7 +163,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
                 onClick={handleNext}
                 className="flex items-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Next
+                下一步
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : (
@@ -172,7 +172,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
                 className="flex items-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
               >
                 <CheckCircle className="h-4 w-4" />
-                Complete
+                完成
               </button>
             )}
           </div>
