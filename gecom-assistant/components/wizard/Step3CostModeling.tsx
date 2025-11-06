@@ -15,33 +15,33 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
     return (
       <div className="text-center py-12">
         <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p className="text-gray-600">Calculating cost model...</p>
+        <p className="text-gray-600">正在计算成本模型...</p>
       </div>
     );
   }
 
   // Prepare data for OPEX breakdown chart
   const opexData = [
-    { name: 'M4: Goods & Tax', value: costResult.opex.m4_goodsTax.total, color: '#3b82f6' },
-    { name: 'M5: Logistics', value: costResult.opex.m5_logistics.total, color: '#10b981' },
-    { name: 'M6: Marketing', value: costResult.opex.m6_marketing.total, color: '#f59e0b' },
-    { name: 'M7: Payment', value: costResult.opex.m7_payment.total, color: '#8b5cf6' },
-    { name: 'M8: Operations', value: costResult.opex.m8_operations.total, color: '#ec4899' },
+    { name: 'M4: 货物税费', value: costResult.opex.m4_goodsTax.total, color: '#3b82f6' },
+    { name: 'M5: 物流配送', value: costResult.opex.m5_logistics.total, color: '#10b981' },
+    { name: 'M6: 营销获客', value: costResult.opex.m6_marketing.total, color: '#f59e0b' },
+    { name: 'M7: 支付手续费', value: costResult.opex.m7_payment.total, color: '#8b5cf6' },
+    { name: 'M8: 运营管理', value: costResult.opex.m8_operations.total, color: '#ec4899' },
   ];
 
   // Unit economics comparison
   const unitEconomicsData = [
-    { name: 'Revenue', amount: costResult.unitEconomics.revenue },
-    { name: 'Total Cost', amount: costResult.unitEconomics.totalCost },
-    { name: 'Gross Profit', amount: costResult.unitEconomics.grossProfit },
+    { name: '营收', amount: costResult.unitEconomics.revenue },
+    { name: '总成本', amount: costResult.unitEconomics.totalCost },
+    { name: '毛利', amount: costResult.unitEconomics.grossProfit },
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Cost Modeling Results</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">成本建模结果</h2>
         <p className="text-gray-600">
-          Complete cost breakdown based on GECOM dual-phase eight-module model
+          基于GECOM双阶段八模块模型的完整成本拆解
         </p>
       </div>
 
@@ -51,7 +51,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-red-900 mb-2">Warnings</h4>
+              <h4 className="text-sm font-semibold text-red-900 mb-2">警告</h4>
               <ul className="space-y-1">
                 {costResult.warnings.map((warning, index) => (
                   <li key={index} className="text-sm text-red-800">{warning}</li>
@@ -65,28 +65,28 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
       {/* Key metrics */}
       <div className="grid grid-cols-4 gap-4">
         <MetricCard
-          title="Gross Margin"
+          title="毛利率"
           value={`${costResult.unitEconomics.grossMargin.toFixed(1)}%`}
-          subtitle={`$${costResult.unitEconomics.grossProfit.toFixed(2)} per unit`}
+          subtitle={`单位毛利 $${costResult.unitEconomics.grossProfit.toFixed(2)}`}
           trend={costResult.unitEconomics.grossMargin >= 30 ? 'up' : 'down'}
           color={costResult.unitEconomics.grossMargin >= 30 ? 'green' : 'red'}
         />
         <MetricCard
-          title="ROI"
+          title="投资回报率"
           value={`${costResult.kpis.roi.toFixed(0)}%`}
-          subtitle="Annual return"
+          subtitle="年化回报"
           trend={costResult.kpis.roi >= 100 ? 'up' : 'down'}
           color={costResult.kpis.roi >= 100 ? 'green' : 'yellow'}
         />
         <MetricCard
-          title="Payback Period"
+          title="回本周期"
           value={`${costResult.kpis.paybackPeriod.toFixed(1)}`}
-          subtitle="months"
+          subtitle="个月"
           trend={costResult.kpis.paybackPeriod <= 12 ? 'up' : 'down'}
           color={costResult.kpis.paybackPeriod <= 12 ? 'green' : 'yellow'}
         />
         <MetricCard
-          title="LTV:CAC"
+          title="LTV:CAC比率"
           value={`${costResult.kpis.ltvCacRatio.toFixed(1)}:1`}
           subtitle={`LTV $${costResult.kpis.ltv.toFixed(0)}`}
           trend={costResult.kpis.ltvCacRatio >= 3 ? 'up' : 'down'}
@@ -96,28 +96,28 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
       {/* CAPEX breakdown */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Phase 0-1: CAPEX (One-time Startup Costs)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">阶段0-1: CAPEX（一次性启动成本）</h3>
         <div className="space-y-3">
           <CostRow
-            label="M1: Market Entry"
+            label="M1: 市场准入"
             amount={costResult.capex.m1_marketEntry.total}
-            details={`Registration, licensing, legal: $${costResult.capex.m1_marketEntry.companyRegistration + costResult.capex.m1_marketEntry.businessLicense + costResult.capex.m1_marketEntry.legalConsulting + costResult.capex.m1_marketEntry.taxRegistration}`}
+            details={`公司注册、许可证、法务: $${costResult.capex.m1_marketEntry.companyRegistration + costResult.capex.m1_marketEntry.businessLicense + costResult.capex.m1_marketEntry.legalConsulting + costResult.capex.m1_marketEntry.taxRegistration}`}
           />
           <CostRow
-            label="M2: Tech & Compliance"
+            label="M2: 技术合规"
             amount={costResult.capex.m2_techCompliance.total}
-            details={`Certification, trademark, testing: $${costResult.capex.m2_techCompliance.productCertification + costResult.capex.m2_techCompliance.trademarkRegistration + costResult.capex.m2_techCompliance.complianceTesting}`}
+            details={`产品认证、商标注册、检测: $${costResult.capex.m2_techCompliance.productCertification + costResult.capex.m2_techCompliance.trademarkRegistration + costResult.capex.m2_techCompliance.complianceTesting}`}
           />
           <CostRow
-            label="M3: Supply Chain Setup"
+            label="M3: 供应链搭建"
             amount={costResult.capex.m3_supplyChain.total}
-            details={`Warehouse, inventory, systems: $${costResult.capex.m3_supplyChain.warehouseDeposit + costResult.capex.m3_supplyChain.equipmentPurchase + costResult.capex.m3_supplyChain.initialInventory + costResult.capex.m3_supplyChain.systemSetup}`}
+            details={`仓储、库存、系统: $${costResult.capex.m3_supplyChain.warehouseDeposit + costResult.capex.m3_supplyChain.equipmentPurchase + costResult.capex.m3_supplyChain.initialInventory + costResult.capex.m3_supplyChain.systemSetup}`}
           />
           <div className="pt-3 border-t border-gray-200">
             <CostRow
-              label="Total CAPEX"
+              label="CAPEX总计"
               amount={costResult.capex.total}
-              details="One-time investment required"
+              details="所需一次性投资"
               bold
             />
           </div>
@@ -126,38 +126,38 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
       {/* OPEX breakdown */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Phase 1-N: OPEX (Per-Unit Operating Costs)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">阶段1-N: OPEX（单位运营成本）</h3>
         <div className="space-y-3 mb-6">
           <CostRow
-            label="M4: Goods & Tax"
+            label="M4: 货物税费"
             amount={costResult.opex.m4_goodsTax.total}
-            details={`COGS $${costResult.opex.m4_goodsTax.cogs}, Tariff $${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}, VAT $${costResult.opex.m4_goodsTax.vat.toFixed(2)}`}
+            details={`COGS $${costResult.opex.m4_goodsTax.cogs}, 关税 $${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}, 增值税 $${costResult.opex.m4_goodsTax.vat.toFixed(2)}`}
           />
           <CostRow
-            label="M5: Logistics"
+            label="M5: 物流配送"
             amount={costResult.opex.m5_logistics.total}
-            details={`Intl shipping $${costResult.opex.m5_logistics.intlShipping.toFixed(2)}, Local $${costResult.opex.m5_logistics.localDelivery.toFixed(2)}, FBA $${(costResult.opex.m5_logistics.fbaFee || 0).toFixed(2)}`}
+            details={`国际运输 $${costResult.opex.m5_logistics.intlShipping.toFixed(2)}, 本地配送 $${costResult.opex.m5_logistics.localDelivery.toFixed(2)}, FBA $${(costResult.opex.m5_logistics.fbaFee || 0).toFixed(2)}`}
           />
           <CostRow
-            label="M6: Marketing"
+            label="M6: 营销获客"
             amount={costResult.opex.m6_marketing.total}
-            details={`CAC $${costResult.opex.m6_marketing.cac.toFixed(2)}, Commission $${costResult.opex.m6_marketing.platformCommission.toFixed(2)}`}
+            details={`CAC $${costResult.opex.m6_marketing.cac.toFixed(2)}, 平台佣金 $${costResult.opex.m6_marketing.platformCommission.toFixed(2)}`}
           />
           <CostRow
-            label="M7: Payment"
+            label="M7: 支付手续费"
             amount={costResult.opex.m7_payment.total}
-            details={`Gateway $${costResult.opex.m7_payment.paymentGatewayFee.toFixed(2)}, FX $${costResult.opex.m7_payment.currencyConversion.toFixed(2)}`}
+            details={`网关费用 $${costResult.opex.m7_payment.paymentGatewayFee.toFixed(2)}, 汇率损失 $${costResult.opex.m7_payment.currencyConversion.toFixed(2)}`}
           />
           <CostRow
-            label="M8: Operations"
+            label="M8: 运营管理"
             amount={costResult.opex.m8_operations.total}
-            details={`CS $${costResult.opex.m8_operations.customerService.toFixed(2)}, Staff $${costResult.opex.m8_operations.staff.toFixed(2)}, Software $${costResult.opex.m8_operations.software.toFixed(2)}`}
+            details={`客服 $${costResult.opex.m8_operations.customerService.toFixed(2)}, 人员 $${costResult.opex.m8_operations.staff.toFixed(2)}, 软件 $${costResult.opex.m8_operations.software.toFixed(2)}`}
           />
           <div className="pt-3 border-t border-gray-200">
             <CostRow
-              label="Total OPEX per Unit"
+              label="单位OPEX总计"
               amount={costResult.opex.total}
-              details="Cost per unit sold"
+              details="每单位销售成本"
               bold
             />
           </div>
@@ -165,7 +165,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
         {/* OPEX breakdown chart */}
         <div className="mt-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-4">Cost Distribution</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-4">成本分布</h4>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -189,7 +189,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
       {/* Unit economics */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Unit Economics</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">单位经济模型</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={unitEconomicsData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -203,14 +203,14 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-600">Break-even Price</div>
+            <div className="text-sm text-gray-600">盈亏平衡价格</div>
             <div className="text-2xl font-bold text-gray-900">${costResult.kpis.breakEvenPrice.toFixed(2)}</div>
-            <div className="text-xs text-gray-500 mt-1">Minimum price to cover all costs</div>
+            <div className="text-xs text-gray-500 mt-1">覆盖所有成本的最低价格</div>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-600">Break-even Volume</div>
+            <div className="text-sm text-gray-600">盈亏平衡销量</div>
             <div className="text-2xl font-bold text-gray-900">{costResult.kpis.breakEvenVolume.toFixed(0)}</div>
-            <div className="text-xs text-gray-500 mt-1">Units needed to recover CAPEX</div>
+            <div className="text-xs text-gray-500 mt-1">回收CAPEX所需单位数</div>
           </div>
         </div>
       </div>

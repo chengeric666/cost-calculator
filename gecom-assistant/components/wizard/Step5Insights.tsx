@@ -13,7 +13,7 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
   if (!costResult) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">No analysis results available yet</p>
+        <p className="text-gray-600">尚无分析结果</p>
       </div>
     );
   }
@@ -42,37 +42,37 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Insights & Action Roadmap</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">洞察与行动路线图</h2>
         <p className="text-gray-600">
-          AI-powered recommendations and actionable next steps for your go-to-market strategy
+          AI驱动的推荐方案和市场进入策略的可执行步骤
         </p>
       </div>
 
       {/* Executive summary */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
-        <h3 className="text-xl font-bold mb-4">Executive Summary</h3>
+        <h3 className="text-xl font-bold mb-4">执行摘要</h3>
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <div className="text-blue-100 text-sm mb-1">Business Model</div>
+            <div className="text-blue-100 text-sm mb-1">商业模式</div>
             <div className="text-2xl font-bold">
               {costResult.unitEconomics.grossMargin >= 30
-                ? '✅ Healthy'
+                ? '✅ 健康'
                 : costResult.unitEconomics.grossMargin >= 20
-                ? '⚠️ Workable'
-                : '❌ High Risk'}
+                ? '⚠️ 可行'
+                : '❌ 高风险'}
             </div>
           </div>
           <div>
-            <div className="text-blue-100 text-sm mb-1">Expected ROI</div>
+            <div className="text-blue-100 text-sm mb-1">预期ROI</div>
             <div className="text-2xl font-bold">{costResult.kpis.roi.toFixed(0)}%</div>
           </div>
           <div>
-            <div className="text-blue-100 text-sm mb-1">Unit Profit</div>
+            <div className="text-blue-100 text-sm mb-1">单位利润</div>
             <div className="text-2xl font-bold">${costResult.unitEconomics.grossProfit.toFixed(2)}</div>
           </div>
           <div>
-            <div className="text-blue-100 text-sm mb-1">Break-even Volume</div>
-            <div className="text-2xl font-bold">{costResult.kpis.breakEvenVolume.toFixed(0)} units</div>
+            <div className="text-blue-100 text-sm mb-1">盈亏平衡销量</div>
+            <div className="text-2xl font-bold">{costResult.kpis.breakEvenVolume.toFixed(0)} 单位</div>
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="h-5 w-5 text-yellow-600" />
-          <h3 className="text-lg font-semibold text-gray-900">AI-Powered Recommendations</h3>
+          <h3 className="text-lg font-semibold text-gray-900">AI驱动推荐</h3>
         </div>
 
         <div className="space-y-3">
@@ -99,39 +99,39 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
 
       {/* Action roadmap */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">90-Day Action Roadmap</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">90天行动路线图</h3>
 
         <div className="space-y-6">
           {/* Month 1 */}
           <RoadmapPhase
-            title="Month 1: Market Validation"
+            title="第1个月：市场验证"
             tasks={[
-              'Complete market entry requirements (M1: business registration, tax setup)',
-              'Obtain necessary certifications (M2: product compliance, trademark)',
-              'Set up supply chain (M3: warehouse, initial inventory)',
-              'Launch MVP with 100-500 unit test batch',
+              '完成市场准入要求（M1：企业注册、税务登记）',
+              '获取必要认证（M2：产品合规、商标注册）',
+              '搭建供应链（M3：仓储、初始库存）',
+              '启动MVP，投放100-500单位测试批次',
             ]}
           />
 
           {/* Month 2 */}
           <RoadmapPhase
-            title="Month 2: Market Testing & Optimization"
+            title="第2个月：市场测试与优化"
             tasks={[
-              'Test marketing channels and optimize CAC (target: <$20 for pet, <$35 for vape)',
-              'Gather customer feedback and refine product-market fit',
-              'Optimize logistics and fulfillment processes',
-              'Monitor unit economics and adjust pricing if needed',
+              '测试营销渠道并优化CAC（目标：宠物<$20，电子烟<$35）',
+              '收集客户反馈并优化产品市场匹配度',
+              '优化物流和配送流程',
+              '监控单位经济模型，必要时调整定价',
             ]}
           />
 
           {/* Month 3 */}
           <RoadmapPhase
-            title="Month 3: Scale & Expansion"
+            title="第3个月：扩大规模与拓展"
             tasks={[
-              `Scale to target volume (${project.scope?.assumptions.monthlySales} units/month)`,
-              'Implement automation for operations and customer service',
-              'Explore additional channels or markets (if current model validated)',
-              'Build cash reserves for next growth phase',
+              `扩大到目标销量（${project.scope?.assumptions.monthlySales} 单位/月）`,
+              '实施运营和客服自动化',
+              '探索更多渠道或市场（如当前模式已验证）',
+              '建立现金储备以应对下一阶段增长',
             ]}
           />
         </div>
@@ -141,49 +141,49 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <AlertTriangle className="h-5 w-5 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Risk Mitigation Strategies</h3>
+          <h3 className="text-lg font-semibold text-gray-900">风险缓解策略</h3>
         </div>
 
         <div className="space-y-3">
           <RiskCard
-            risk="Cash Flow Risk"
-            mitigation="Maintain 3-6 months operating expenses in reserves. Consider pre-orders or deposits to fund inventory."
+            risk="现金流风险"
+            mitigation="保持3-6个月运营费用储备。考虑通过预售或定金来资助库存。"
           />
           <RiskCard
-            risk="CAC Volatility"
-            mitigation="Diversify marketing channels (paid, organic, referral). Build owned audience (email list, community)."
+            risk="CAC波动"
+            mitigation="多元化营销渠道（付费、有机、推荐）。建立自有受众（邮件列表、社群）。"
           />
           <RiskCard
-            risk="Supply Chain Disruption"
-            mitigation="Establish relationships with 2-3 backup suppliers. Maintain safety stock equal to 1.5x lead time."
+            risk="供应链中断"
+            mitigation="与2-3个备用供应商建立关系。保持相当于1.5倍交货期的安全库存。"
           />
           <RiskCard
-            risk="Regulatory Changes"
-            mitigation="Subscribe to industry compliance updates. Work with local legal counsel. Budget 5-10% for unexpected compliance costs."
+            risk="监管变化"
+            mitigation="订阅行业合规更新。与当地法律顾问合作。预留5-10%预算应对意外合规成本。"
           />
         </div>
       </div>
 
       {/* Export options */}
       <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Export & Share</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">导出与分享</h3>
         <div className="flex gap-4">
           <button
             onClick={handleExport}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Download className="h-4 w-4" />
-            Export Analysis (JSON)
+            导出分析报告 (JSON)
           </button>
           <button
             className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             onClick={() => window.print()}
           >
-            Print Report
+            打印报告
           </button>
         </div>
         <p className="text-sm text-gray-600 mt-3">
-          Save this analysis for reference or share with your team, investors, or advisors.
+          保存此分析以供参考，或与您的团队、投资人或顾问分享。
         </p>
       </div>
 
@@ -191,18 +191,17 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
       <div className="bg-green-50 border border-green-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="h-6 w-6 text-green-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Analysis Complete!</h3>
+          <h3 className="text-lg font-semibold text-gray-900">分析完成！</h3>
         </div>
         <p className="text-gray-700 mb-4">
-          You've completed the GECOM 5-step cost analysis. Review the recommendations above and use the action
-          roadmap to guide your market entry strategy.
+          您已完成GECOM五步成本分析。请查看以上推荐方案，并使用行动路线图指导您的市场进入策略。
         </p>
         <div className="flex gap-3">
           <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-            Start New Analysis
+            开始新分析
           </button>
           <button className="px-6 py-2 bg-white border border-green-600 text-green-700 rounded-lg hover:bg-green-50 transition-colors">
-            Schedule Consultation
+            预约咨询
           </button>
         </div>
       </div>
