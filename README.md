@@ -199,34 +199,40 @@ npm start
 
 ## 🏗️ 技术架构
 
-### 技术栈
+### 技术栈（v1.0 MVP）
 - **框架**: Next.js 14 (App Router) + TypeScript
 - **样式**: Tailwind CSS v4
 - **图表**: Recharts
 - **图标**: Lucide React
-- **部署**: Vercel（推荐）
+- **后端**: Appwrite BaaS（Database + Auth + Storage）
+- **AI服务**: DeepSeek API（R1推理 + V3工具调用）
+- **部署**: Appwrite Sites（SSR模式）
 
 ### 核心模块
 
-**计算引擎** (`lib/gecom/calculator.ts`)
+**计算引擎** (`lib/gecom-engine.ts`)
 - M1-M8 完整成本计算逻辑
 - 单位经济模型
 - KPI 指标计算（ROI、回本周期、LTV:CAC、盈亏平衡）
 
-**行业因子库** (`lib/gecom/industry-factors.ts`)
-- 6 个预配置场景
-- 支持动态覆盖
-- Tier 2 数据源（90%可信度）
+**Appwrite数据层** (`lib/appwrite-*.ts`)
+- `appwrite-client.ts` - 客户端和服务端SDK配置
+- `appwrite-data.ts` - 项目和计算结果CRUD操作
+- 支持历史项目保存/加载
+- 多用户数据隔离（未来功能）
+
+**DeepSeek AI助手** (`lib/deepseek-client.ts`)
+- 基于OpenAI SDK封装
+- 成本优化建议生成
+- 场景敏感性分析
+- 智能问答（7×24实时响应）
+- 报告摘要生成
 
 **向导系统** (`components/wizard/`)
 - 5 个步骤组件
 - 渐进式表单验证
 - 实时计算反馈
-
-**AI 助手** (`components/AssistantPanel.tsx`)
-- 规则引擎（POC版本）
-- 中英文关键词匹配
-- 预定义回复模板
+- 完整的中文界面
 
 ## 📚 核心文档
 
@@ -330,46 +336,80 @@ npm start
 
 ## 🔄 产品演进路线
 
-### ✅ 当前状态：POC v1.0
+### ✅ 已完成：POC v1.0
 - [x] 基础五步向导
 - [x] 双阶段八模块计算
 - [x] 6个预配置场景
 - [x] 规则引擎AI助手
 - [x] 100%中文界面
 
-### 📋 下一步：MVP v2.0（规划中）
+### 🚧 进行中：MVP v1.0（Appwrite + DeepSeek）
+- [x] 环境变量配置（.env.example）
+- [x] Appwrite SDK集成（客户端 + 服务端）
+- [x] DeepSeek API客户端（R1 + V3）
+- [x] 项目上下文文档（CLAUDE.md）
+- [x] 部署指南（DEPLOYMENT.md）
+- [ ] 历史项目保存/加载功能
+- [ ] AI助手实时问答（Step 5）
+- [ ] 成本优化建议生成
+- [ ] 真实部署到Appwrite Sites
+
+### 📋 下一步：MVP v2.0（功能扩展）
+- [ ] 用户认证系统（Appwrite Auth）
 - [ ] 增加10+行业（3C、时尚、家居等）
 - [ ] 扩展至欧盟、日本、巴西等市场
-- [ ] Claude API深度集成
-- [ ] Supabase用户系统（认证+数据持久化）
-- [ ] 多SKU组合分析
+- [ ] 多SKU组合分析（Step 4）
 - [ ] PDF/Excel导出
+- [ ] 动态因子更新（关税、汇率API）
 
 ### 🌟 未来：SaaS v3.0（愿景）
-- [ ] 动态行业因子更新
 - [ ] 基于真实客户数据的基准库
 - [ ] 咨询服务集成
 - [ ] API开放平台
 - [ ] 移动端App
+- [ ] 多语言支持
 
 ## 🛠️ 开发指南
 
-### 环境变量
+### 环境变量配置
 
-POC版本无需环境变量。生产部署时如需AI集成：
+**MVP v1.0 需要配置环境变量**。参考 `.env.example` 文件：
 
 ```bash
-# .env.local
-ANTHROPIC_API_KEY=your_claude_api_key_here
+# 复制环境变量模板
+cp .env.example .env.local
+
+# 最小配置（仅AI功能）
+LLM_BASE_URL=https://llm.chutes.ai/v1
+LLM_API_KEY=your_deepseek_api_key
+MODEL_REASON=deepseek-ai/DeepSeek-R1
+LLM_PROVIDER=deepseek
+
+# 完整配置（包含数据持久化）
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://apps.aotsea.com/v1
+NEXT_PUBLIC_APPWRITE_PROJECT=your_project_id
+NEXT_PUBLIC_APPWRITE_DATABASE=your_database_id
+APPWRITE_API_KEY=your_appwrite_api_key
+```
+
+详细配置说明见：[.env.example](./.env.example)
+
+### 部署指南
+
+详细部署流程见：[DEPLOYMENT.md](./DEPLOYMENT.md)
+
+**快速部署到Appwrite Sites**：
+```bash
+./scripts/deploy-to-appwrite.sh
 ```
 
 ### 贡献指南
 
-这是一个POC实现。投入生产使用时需要：
+MVP v1.0 开发中，欢迎贡献：
 
-1. **AI升级**：将规则引擎替换为Claude API或GPT-4
-2. **用户系统**：实现认证（Supabase、Auth0）
-3. **数据持久化**：添加数据库存储项目数据
+1. **AI功能增强**：扩展DeepSeek AI助手能力
+2. **用户系统**：实现Appwrite Auth认证
+3. **数据持久化**：完善项目保存/加载
 4. **因子扩展**：覆盖更多行业和市场
 5. **测试完善**：添加单元测试和E2E测试
 
@@ -382,10 +422,25 @@ ANTHROPIC_API_KEY=your_claude_api_key_here
 
 ## 📚 相关资源
 
+### 核心文档
+- **项目主文档**：[README.md](./README.md)（本文件）
+- **项目上下文**：[CLAUDE.md](./CLAUDE.md) - AI助手完整项目背景
+- **部署指南**：[DEPLOYMENT.md](./DEPLOYMENT.md) - Appwrite部署流程
+- **环境变量**：[.env.example](./.env.example) - 配置说明
+
+### 方法论文档
 - **GECOM白皮书**：`GECOM全球电商成本优化方法论白皮书 - V2.2.docx`
-- **应用文档**：`gecom-assistant/README.zh-CN.md`
-- **中文化指南**：`gecom-assistant/LOCALIZATION.zh-CN.md`
-- **参考文档**：`docs/reference/`
+- **市场洞察**：`GECOM-01-market-insight.md`
+- **竞品分析**：`GECOM-02-competitive-benchmark.md`
+- **MVP规划**：`GECOM-03-product-mvp-plan.md`
+
+### 参考文档
+- **早期设计**：`docs/reference/` - 竞品分析、产品设计等
+- **历史归档**：`docs/archive/` - 旧版README等
+
+### 在线资源
+- **Appwrite文档**：https://appwrite.io/docs
+- **DeepSeek API**：https://platform.deepseek.com/docs
 - **在线体验**：（部署后提供URL）
 
 ## 🤝 参与贡献

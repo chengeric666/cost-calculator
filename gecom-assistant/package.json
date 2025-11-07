@@ -1,7 +1,7 @@
 {
   "name": "gecom-assistant",
   "version": "1.0.0",
-  "description": "",
+  "description": "GECOM智能成本助手 - 全球电商成本优化方法论计算工具",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -9,14 +9,17 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["gecom", "cost-calculator", "e-commerce", "cross-border", "appwrite", "deepseek"],
+  "author": "GECOM Team",
+  "license": "MIT",
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.17",
+    "appwrite": "^16.0.2",
     "clsx": "^2.1.1",
     "lucide-react": "^0.552.0",
     "next": "^16.0.1",
+    "node-appwrite": "^14.1.0",
+    "openai": "^4.77.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^3.3.0",
