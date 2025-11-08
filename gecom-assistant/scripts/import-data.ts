@@ -162,32 +162,57 @@ async function createVersionRecord(
 
 /**
  * 导入所有国家数据文件
- * Week 1 Day 2-3: 美国数据采集完成
- * Week 1 Day 4: 德国、越南数据
- * Week 1 Day 5-Week 2: 其余16国数据
+ * Week 1 Day 2-3: 美国数据采集完成 ✅
+ * Week 1 Day 4: 德国、越南、英国、日本数据采集完成 ✅
+ * Week 1 Day 5-Week 2: 其余15国数据 + 19国电子烟数据
  */
 import US_PET_FOOD from '../data/cost-factors/US-pet-food';
+import DE_PET_FOOD from '../data/cost-factors/DE-pet-food';
+import VN_PET_FOOD from '../data/cost-factors/VN-pet-food';
+import UK_PET_FOOD from '../data/cost-factors/UK-pet-food';
+import JP_PET_FOOD from '../data/cost-factors/JP-pet-food';
+
+// 待添加：
+// import CA_PET_FOOD from '../data/cost-factors/CA-pet-food'; // 加拿大
+// import FR_PET_FOOD from '../data/cost-factors/FR-pet-food'; // 法国
+// import SG_PET_FOOD from '../data/cost-factors/SG-pet-food'; // 新加坡
+// import TH_PET_FOOD from '../data/cost-factors/TH-pet-food'; // 泰国
+// import ID_PET_FOOD from '../data/cost-factors/ID-pet-food'; // 印尼
+// import MY_PET_FOOD from '../data/cost-factors/MY-pet-food'; // 马来西亚
+// import PH_PET_FOOD from '../data/cost-factors/PH-pet-food'; // 菲律宾
+// import KR_PET_FOOD from '../data/cost-factors/KR-pet-food'; // 韩国
+// import AU_PET_FOOD from '../data/cost-factors/AU-pet-food'; // 澳大利亚
+// import IN_PET_FOOD from '../data/cost-factors/IN-pet-food'; // 印度
+// import SA_PET_FOOD from '../data/cost-factors/SA-pet-food'; // 沙特
+// import AE_PET_FOOD from '../data/cost-factors/AE-pet-food'; // 阿联酋
+// import MX_PET_FOOD from '../data/cost-factors/MX-pet-food'; // 墨西哥
+// import BR_PET_FOOD from '../data/cost-factors/BR-pet-food'; // 巴西
+
+// 电子烟数据（19国×1行业=19条）
 // import US_VAPE from '../data/cost-factors/US-vape';
-// import DE_PET_FOOD from '../data/cost-factors/DE-pet-food';
 // import DE_VAPE from '../data/cost-factors/DE-vape';
-// import VN_PET_FOOD from '../data/cost-factors/VN-pet-food';
-// ... 逐步导入19国×2行业=38个数据文件
+// ... 其他国家电子烟数据
 
 /**
  * 所有待导入数据
- * 按照Week 1-2逐步添加19国数据
+ * 当前：5国宠物食品数据
+ * 目标：19国×2行业=38条记录
  */
 const ALL_COST_FACTORS: Partial<CostFactor>[] = [
   US_PET_FOOD,
+  DE_PET_FOOD,
+  VN_PET_FOOD,
+  UK_PET_FOOD,
+  JP_PET_FOOD,
+
   // 后续添加：
+  // CA_PET_FOOD,
+  // FR_PET_FOOD,
+  // ... 14国宠物食品
+
   // US_VAPE,
-  // DE_PET_FOOD,
   // DE_VAPE,
-  // VN_PET_FOOD,
-  // VN_VAPE,
-  // UK_PET_FOOD,
-  // UK_VAPE,
-  // ... 共38条记录 (19国×2行业)
+  // ... 19国电子烟
 ];
 
 // ========================================
