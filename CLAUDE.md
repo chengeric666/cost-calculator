@@ -4,8 +4,8 @@
 >
 > **交互语言：** 中文（所有对话必须使用中文） ⭐
 >
-> **文档版本：** v1.0 (MVP)
-> **最后更新：** 2025-11-07
+> **文档版本：** v1.1 (MVP)
+> **最后更新：** 2025-11-08
 > **项目阶段：** POC → MVP（Appwrite集成 + 真实AI助手）
 
 ---
@@ -265,7 +265,10 @@ cost-calculator/
 │   │   ├── 5-step-workflow.md
 │   │   ├── env_sample.md
 │   │   ├── DEPLOYMENT.md
-│   │   └── claude-sample.md
+│   │   ├── claude-sample.md
+│   │   └── 数据样例/            # GECOM 模块数据样例
+│   │       ├── M1_行业特定准入许可_宠物食品19国准入许可.xlsx
+│   │       ├── M2-M8数据文件...（16个文件）
 │   │
 │   └── archive/                 # 历史归档
 │       ├── README-original.md
@@ -446,6 +449,7 @@ appwrite sites create-deployment \
 - [x] 成本结果可视化（饼图、柱状图）
 - [x] 100%中文界面
 - [x] 项目文档整理
+- [x] 文件结构优化（数据样例归档）
 
 ### 🚧 进行中（MVP v1.0）
 - [x] 环境变量配置（DeepSeek + Appwrite）
@@ -512,5 +516,5 @@ GECOM方法论源自创始团队多年跨境电商实战经验，结合了：
 ---
 
 **文档维护者**: GECOM Team
-**最后更新**: 2025-11-07
-**版本**: v1.0 (MVP)
+**最后更新**: 2025-11-08
+**版本**: v1.1 (MVP)
