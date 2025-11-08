@@ -12,7 +12,11 @@
  * 2. 运行：npx tsx scripts/setup-database.ts
  */
 
+import { config } from 'dotenv';
 import { Client, Databases, ID } from 'node-appwrite';
+
+// 加载.env.local文件
+config({ path: '.env.local' });
 
 // ========================================
 // 环境变量配置
