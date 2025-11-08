@@ -1,0 +1,132 @@
+
+
+1.产品的HS编码：
+  宠物食品：编码2309.10  
+
+2.重点国家：
+  北美：美国、加拿大
+  欧洲：德国、英国、法国
+  中东：阿联酋、沙特
+  拉美：墨西哥、巴西
+  东南亚：新加坡、泰国、印度、越南、印尼、马来西亚、菲律宾
+  其他： 澳大利亚、日本、韩国
+
+
+3.数据爬取的数据源要求：
+Tier 1来源(政府/平台官方，必须使用，可靠性90-100%)**
+- 关税数据:各国海关官网(US: HTS, EU: TARIC, CN: 中国海关等)
+
+- 🇺🇸 **US Harmonized Tariff Schedule (HTS)** 
+  - URL: https://hts.usitc.gov/
+  - 数据：宠物食品HS编码2309.10关税率，清关费用
+  - 更新：实时
+备注说明：美国要重点考虑：USTR 301条款清单
+https://ustr.gov/issue-areas/enforcement/section-301-investigations/section-301-china/200-billion-trade-action
+
+-加拿大CBSA《Customs Tariff》
+- URL: https://www.cbsa-asfc.gc.ca/trade-commerce/tariff-tarif/menu-eng.html
+  - 数据：宠物食品HS编码2309.10关税率，清关费用
+  - 更新：实时
+
+
+- 🇪🇺 **EU TARIC Database**	欧盟 TARIC 数据库
+  - URL: https://ec.europa.eu/taxation_customs/dds2/taric
+  - 数据：欧盟关税率9.5%，清关费用
+  - 更新：实时
+
+
+- 脱欧后，英国实行其独立的英国全球关税（UKGT）
+- URL:https://www.gov.uk/guidance/tariffs-on-goods-imported-into-the-uk
+ - 数据：第三国关税税率为8%，清关费用
+  - 更新：实时
+
+
+- 🇨🇳 **中国海关税则查询**
+  - URL: http://www.customs.gov.cn/
+  - 数据：进口关税4%，清关费用
+  - 更新：年度
+
+
+**Tier 2来源(行业报告/专业工具，优先参考，可靠性75-90%）**
+ 咨询公司研究：**
+- **McKinsey & Company - Insights**
+  - URL: https://www.mckinsey.com/industries/public-sector/our-insights
+  - 数据：跨境电商成本结构、关税税率和清关费用
+  - 更新：不定期
+  - 可靠性：**95%**
+
+- **Deloitte - Consumer Industry**
+  - URL: https://www2.deloitte.com/global/en/industries/consumer.html
+  - 数据：零售和电商成本分析、关税税率和清关费用
+
+  - 更新：年度
+  - 可靠性：**90%**
+
+- **BCG - Consumer Goods**
+  - URL: https://www.bcg.com/industries/consumer-products
+  - 数据：跨境扩张策略、成本优化、关税税率和清关费用
+  - 更新：不定期
+  - 可靠性：**90%**
+
+
+**Tier 3来源(第三方/估算，辅助参考，可靠性60-75%）**
+- 物流比价平台(Freightos, Flexport等)
+- 卖家社区(Amazon Seller Forums, Reddit r/FulfillmentByAmazon等)
+
+**1. 卖家社区/论坛：**
+- **r/FulfillmentByAmazon (Reddit)**
+  - URL: https://www.reddit.com/r/FulfillmentByAmazon/
+  - 数据：真实卖家退货率、运营成本、ROI经验分享、关税税率和清关费用
+
+  - 更新：实时
+  - 可靠性：**70%**（需交叉验证）
+
+- **r/ecommerce (Reddit)**
+  - URL: https://www.reddit.com/r/ecommerce/
+  - 数据：多平台成本对比、DTC运营心得、关税税率和清关费用
+  - 更新：实时
+  - 可靠性：**65%**
+
+- **r/Entrepreneur (Reddit)**
+  - URL: https://www.reddit.com/r/Entrepreneur/
+  - 数据：跨境创业案例、成本坑点、关税税率和清关费用
+  - 更新：实时
+  - 可靠性：**60%**
+
+**竞品分析官网：**
+-乖宝
+-https://www.gambolpet.com/ (乖宝宠物-海外官网)
+http://m.gambolpet.com/ （乖宝宠物-国内官网）
+乖宝宠物食品集团股份有限公司2024 年年度报告：https://static.cninfo.com.cn/finalpage/2025-04-22/1223187569.PDF
+乖宝宠物食品集团股份有限公司2023 年年度报告：https://static.cninfo.com.cn/finalpage/2024-04-16/1219618020.PDF?utm_source=chatgpt.com
+- 数据：年度报告、成本组成、关税税率和清关费用
+ - 更新：不定期
+  - 可靠性：**60%**
+
+-中宠wanpy
+-https://www.wanpy.eu/  (中宠wanpy 海外）
+http://www.wanpy.com.cn/(中宠wanpy 中国）
+乖宝宠物食品集团股份有限公司2024 年年度报告：https://static.cninfo.com.cn/finalpage/2025-04-22/1223187569.PDF
+乖宝宠物食品集团股份有限公司2023 年年度报告：https://static.cninfo.com.cn/finalpage/2024-04-16/1219618020.PDF?utm_source=chatgpt.com
+- 数据：年度报告、成本组成、关税税率和清关费用
+ - 更新：不定期
+  - 可靠性：**60%**
+
+
+
+爬取后的数据验证：
+
+
+1.1 美国：确认征收25%惩罚性关税
+错误根源分析： 初步分析正确地识别出，在美国协调关税表（HTS）中，HS编码2309.10（“零售包装的狗食或猫食”）的标准最惠国（MFN）税率为“免税”（Free）。然而，该分析犯下的致命错误是，完全忽略了在301条款下施加的、具有凌驾性的惩罚性关税。   
+
+最终核实结论： 经过核查，确认HTS子目2309.10.00已被列入美国贸易代表办公室（USTR）的301条款第三批清单（List 3），该清单涵盖了约2000亿美元的中国进口商品 1。此清单于2018年9月24日生效，初始税率为10%，后于2019年5月上调至25% 2。该关税是在0%的基础税率之上额外征收的。   
+证据支持： 官方的《联邦公报》（例如，83 FR 47974）以及USTR官方关税清单明确包含了此HTS编码 。该附加关税在美国协调关税表（HTSUS）的9903.88.03税号下被正式执行 。
+
+1.2 欧盟：共同对外关税的再核实
+核实结论： 使用欧盟的TARIC数据库进行再次核实，确认源自中国（CN）的HS编码2309.10.90（“其他”狗食或猫食）的第三国关税税率为**9.5%**的从价税。先前报告中“2.5-7.5%”的估算  略有不准且缺乏精确性。所有未来的财务模型都必须使用这个经过修正的、更高的税率。   
+
+来源： 对TARIC数据库的直接查询结果
+
+1.3 英国：英国全球关税（UKGT）的再核实
+核实结论： 脱欧后，英国实行其独立的英国全球关税（UKGT）。再次核实确认，对于源自中国的HS编码2309.10.90的商品，第三国关税税率为8%
