@@ -17,8 +17,12 @@ import { Client as ServerClient, Databases as ServerDatabases } from 'node-appwr
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://apps.aotsea.com/v1';
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '';
 const APPWRITE_DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE || '';
+
+// MVP 2.0: 4个Collections
+const APPWRITE_COLLECTION_COST_FACTORS = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_COST_FACTORS || 'cost_factors';
 const APPWRITE_COLLECTION_PROJECTS = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_PROJECTS || 'projects';
 const APPWRITE_COLLECTION_CALCULATIONS = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_CALCULATIONS || 'calculations';
+const APPWRITE_COLLECTION_COST_FACTOR_VERSIONS = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_COST_FACTOR_VERSIONS || 'cost_factor_versions';
 
 // 服务端私密变量
 const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY || '';
@@ -68,20 +72,22 @@ export const serverDatabases = new ServerDatabases(serverClient);
 // ============================================
 
 /**
- * Appwrite数据库和集合配置
+ * Appwrite数据库和集合配置 - MVP 2.0
  */
 export const appwriteConfig = {
   endpoint: APPWRITE_ENDPOINT,
   project: APPWRITE_PROJECT,
   databaseId: APPWRITE_DATABASE_ID,
   collections: {
+    costFactors: APPWRITE_COLLECTION_COST_FACTORS,
     projects: APPWRITE_COLLECTION_PROJECTS,
     calculations: APPWRITE_COLLECTION_CALCULATIONS,
+    costFactorVersions: APPWRITE_COLLECTION_COST_FACTOR_VERSIONS,
   },
 };
 
 /**
- * 验证Appwrite配置是否完整
+ * 验证Appwrite配置是否完整 - MVP 2.0
  * @returns 配置是否有效
  */
 export function isAppwriteConfigured(): boolean {
@@ -89,8 +95,10 @@ export function isAppwriteConfigured(): boolean {
     APPWRITE_ENDPOINT &&
     APPWRITE_PROJECT &&
     APPWRITE_DATABASE_ID &&
+    APPWRITE_COLLECTION_COST_FACTORS &&
     APPWRITE_COLLECTION_PROJECTS &&
-    APPWRITE_COLLECTION_CALCULATIONS
+    APPWRITE_COLLECTION_CALCULATIONS &&
+    APPWRITE_COLLECTION_COST_FACTOR_VERSIONS
   );
 }
 

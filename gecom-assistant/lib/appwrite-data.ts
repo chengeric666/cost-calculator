@@ -6,7 +6,7 @@
 
 import { ID, Query } from 'appwrite';
 import { databases, serverDatabases, appwriteConfig, isAppwriteConfigured, QueryOptions, AppwriteDocument } from './appwrite-client';
-import { Project, CostResult, Scope } from '@/types/gecom';
+import { Project, CostResult, Scope, CostFactor, TargetCountry, Industry, M4Logistics, Calculation } from '@/types/gecom';
 
 // ============================================
 // 类型定义
@@ -419,6 +419,240 @@ export async function serverBatchCreateProjects(projects: Partial<Project>[]): P
       successCount++;
     } catch (error) {
       console.error('批量创建项目失败:', error);
+    }
+  }
+
+  return successCount;
+}
+
+// ============================================
+// 成本因子（Cost Factors）操作 - MVP 2.0
+// ============================================
+
+/**
+ * 成本因子文档类型（Appwrite格式）
+ */
+export interface CostFactorDocument extends AppwriteDocument {
+  country: string;
+  country_name_cn: string;
+  country_flag?: string;
+  industry: string;
+  version: string;
+
+  // M1-M8字段（完整127字段，这里简化类型定义）
+  [key: string]: any;
+}
+
+/**
+ * 获取成本因子
+ * @param country 国家代码
+ * @param industry 行业
+ * @param version 版本（可选，默认最新）
+ * @returns 成本因子
+ */
+export async function getCostFactor(
+  country: TargetCountry,
+  industry: Industry,
+  version: string = '2025Q1'
+): Promise<CostFactor | null> {
+  ensureConfigured();
+
+  try {
+    const queries = [
+      Query.equal('country', country),
+      Query.equal('industry', industry),
+      Query.equal('version', version),
+    ];
+
+    const response = await databases.listDocuments<CostFactorDocument>(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.costFactors,
+      queries
+    );
+
+    if (response.documents.length === 0) {
+      console.warn(`未找到成本因子: ${country}/${industry}/${version}`);
+      return null;
+    }
+
+    const doc = response.documents[0];
+
+    // 解析m4_logistics JSON字段
+    let m4_logistics_parsed: M4Logistics | null = null;
+    if (doc.m4_logistics) {
+      try {
+        m4_logistics_parsed = JSON.parse(doc.m4_logistics);
+      } catch (e) {
+        console.error('解析m4_logistics失败:', e);
+      }
+    }
+
+    return {
+      country: doc.country as TargetCountry,
+      country_name_cn: doc.country_name_cn,
+      country_flag: doc.country_flag,
+      industry: doc.industry as Industry,
+      version: doc.version,
+
+      // M1字段
+      m1_regulatory_agency: doc.m1_regulatory_agency,
+      m1_pre_approval_required: doc.m1_pre_approval_required,
+      m1_registration_required: doc.m1_registration_required,
+      m1_complexity: doc.m1_complexity,
+      m1_estimated_cost_usd: doc.m1_estimated_cost_usd,
+      m1_data_source: doc.m1_data_source,
+
+      // M2字段
+      m2_certifications_required: doc.m2_certifications_required,
+      m2_estimated_cost_usd: doc.m2_estimated_cost_usd,
+      m2_data_source: doc.m2_data_source,
+
+      // M3字段
+      m3_packaging_rate: doc.m3_packaging_rate,
+      m3_data_source: doc.m3_data_source,
+
+      // M4字段
+      m4_hs_code: doc.m4_hs_code,
+      m4_effective_tariff_rate: doc.m4_effective_tariff_rate || 0,
+      m4_tariff_notes: doc.m4_tariff_notes,
+      m4_vat_rate: doc.m4_vat_rate || 0,
+      m4_vat_notes: doc.m4_vat_notes,
+      m4_logistics: doc.m4_logistics,
+      m4_tariff_data_source: doc.m4_tariff_data_source,
+      m4_vat_data_source: doc.m4_vat_data_source,
+
+      // M5字段
+      m5_last_mile_delivery_usd: doc.m5_last_mile_delivery_usd,
+      m5_return_rate: doc.m5_return_rate,
+      m5_return_cost_rate: doc.m5_return_cost_rate,
+      m5_data_source: doc.m5_data_source,
+
+      // M6字段
+      m6_marketing_rate: doc.m6_marketing_rate,
+      m6_platform_commission_rate: doc.m6_platform_commission_rate,
+      m6_data_source: doc.m6_data_source,
+
+      // M7字段
+      m7_payment_rate: doc.m7_payment_rate,
+      m7_payment_fixed_usd: doc.m7_payment_fixed_usd,
+      m7_platform_commission_rate: doc.m7_platform_commission_rate,
+      m7_data_source: doc.m7_data_source,
+
+      // M8字段
+      m8_ga_rate: doc.m8_ga_rate,
+      m8_data_source: doc.m8_data_source,
+
+      created_at: doc.$createdAt,
+      updated_at: doc.$updatedAt,
+    };
+  } catch (error) {
+    console.error(`获取成本因子失败 (${country}/${industry}/${version}):`, error);
+    return null;
+  }
+}
+
+/**
+ * 批量获取多国成本因子
+ * @param countries 国家代码数组
+ * @param industry 行业
+ * @param version 版本
+ * @returns 成本因子数组
+ */
+export async function getCostFactorsByCountries(
+  countries: TargetCountry[],
+  industry: Industry,
+  version: string = '2025Q1'
+): Promise<CostFactor[]> {
+  ensureConfigured();
+
+  const results = await Promise.all(
+    countries.map(country => getCostFactor(country, industry, version))
+  );
+
+  return results.filter((factor): factor is CostFactor => factor !== null);
+}
+
+/**
+ * 获取所有可用国家列表
+ * @param industry 行业（可选）
+ * @param version 版本（可选）
+ * @returns 国家列表
+ */
+export async function getAvailableCountries(
+  industry?: Industry,
+  version: string = '2025Q1'
+): Promise<Array<{ country: TargetCountry; country_name_cn: string; country_flag?: string }>> {
+  ensureConfigured();
+
+  try {
+    const queries = [Query.equal('version', version)];
+    if (industry) {
+      queries.push(Query.equal('industry', industry));
+    }
+
+    const response = await databases.listDocuments<CostFactorDocument>(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.costFactors,
+      queries
+    );
+
+    return response.documents.map(doc => ({
+      country: doc.country as TargetCountry,
+      country_name_cn: doc.country_name_cn,
+      country_flag: doc.country_flag,
+    }));
+  } catch (error) {
+    console.error('获取可用国家列表失败:', error);
+    return [];
+  }
+}
+
+/**
+ * 服务端创建成本因子（用于数据导入）
+ * @param costFactor 成本因子数据
+ * @returns 是否创建成功
+ */
+export async function serverCreateCostFactor(costFactor: Partial<CostFactor>): Promise<boolean> {
+  ensureConfigured();
+
+  try {
+    await serverDatabases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.costFactors,
+      ID.unique(),
+      {
+        country: costFactor.country,
+        country_name_cn: costFactor.country_name_cn,
+        country_flag: costFactor.country_flag,
+        industry: costFactor.industry,
+        version: costFactor.version || '2025Q1',
+
+        // M1-M8字段（省略详细展开，根据CostFactor接口自动映射）
+        ...costFactor,
+      }
+    );
+
+    return true;
+  } catch (error) {
+    console.error('创建成本因子失败:', error);
+    return false;
+  }
+}
+
+/**
+ * 服务端批量创建成本因子（用于数据导入）
+ * @param costFactors 成本因子数组
+ * @returns 创建成功的数量
+ */
+export async function serverBatchCreateCostFactors(costFactors: Partial<CostFactor>[]): Promise<number> {
+  ensureConfigured();
+
+  let successCount = 0;
+
+  for (const costFactor of costFactors) {
+    const success = await serverCreateCostFactor(costFactor);
+    if (success) {
+      successCount++;
     }
   }
 
