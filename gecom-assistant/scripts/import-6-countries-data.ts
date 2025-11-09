@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * 导入14国数据到Appwrite（Week 2 Day 11完成）
+ * 导入16国数据到Appwrite（Week 2 Day 12完成）
  *
  * 功能：
- * 1. 导入14国数据（US/DE/VN/UK/JP/CA/FR/AU/IT/ES/SG/MY/PH/TH）
+ * 1. 导入16国数据（US/DE/VN/UK/JP/CA/FR/AU/IT/ES/SG/MY/PH/TH/ID/IN）
  * 2. 支持67个P0字段 + 扩展字段
  * 3. 自动过滤metadata字段
  * 4. 性能测试：批量查询<500ms
@@ -14,7 +14,7 @@ import { Client, Databases, ID, Query } from 'node-appwrite';
 
 config({ path: '.env.local' });
 
-// 导入14国数据（3文件模式合并后）
+// 导入16国数据（3文件模式合并后）
 import { US_PET_FOOD } from '../data/cost-factors/US-pet-food';
 import { DE_PET_FOOD } from '../data/cost-factors/DE-pet-food';
 import { VN_PET_FOOD } from '../data/cost-factors/VN-pet-food';
@@ -29,6 +29,8 @@ import { SG_PET_FOOD } from '../data/cost-factors/SG-pet-food';
 import { MY_PET_FOOD } from '../data/cost-factors/MY-pet-food';
 import { PH_PET_FOOD } from '../data/cost-factors/PH-pet-food';
 import { TH_PET_FOOD } from '../data/cost-factors/TH-pet-food';
+import { ID_PET_FOOD } from '../data/cost-factors/ID-pet-food';
+import { IN_PET_FOOD } from '../data/cost-factors/IN-pet-food';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -174,11 +176,11 @@ async function importCountryData(countryName: string, countryCode: string, rawDa
 }
 
 /**
- * 导入所有14国数据
+ * 导入所有16国数据
  */
 async function importAllCountries() {
   console.log('\n========================================');
-  console.log('🌍 导入14国数据到Appwrite（Week 2 Day 11完成）');
+  console.log('🌍 导入16国数据到Appwrite（Week 2 Day 12完成）');
   console.log('========================================\n');
   console.log(`Database: ${DB_ID}`);
   console.log(`Collection: ${COL_ID}`);
@@ -199,6 +201,8 @@ async function importAllCountries() {
     { name: '马来西亚', code: 'MY', flag: '🇲🇾', data: MY_PET_FOOD },
     { name: '菲律宾', code: 'PH', flag: '🇵🇭', data: PH_PET_FOOD },
     { name: '泰国', code: 'TH', flag: '🇹🇭', data: TH_PET_FOOD },
+    { name: '印尼', code: 'ID', flag: '🇮🇩', data: ID_PET_FOOD },
+    { name: '印度', code: 'IN', flag: '🇮🇳', data: IN_PET_FOOD },
   ];
 
   const results = {
@@ -259,19 +263,19 @@ async function importAllCountries() {
     });
 
     console.log('\n========================================');
-    console.log('🎉 14国数据导入完成！');
+    console.log('🎉 16国数据导入完成！');
     console.log('\n📌 数据质量验证：');
     console.log(`   - P0字段填充率: 100% (67个P0字段全部填充)`);
     console.log(`   - Tier 1+2平均: 90%+ (高质量数据)`);
     console.log(`   - 溯源信息: 100% (完整的collected_at/data_source/tier)`);
-    console.log('\n📌 Day 11完成总结：');
-    console.log('   - 菲律宾(PH): VAT 12%, 关税0%, CAC $23, 市场$430M');
-    console.log('   - 泰国(TH): VAT 7%, 关税5%, CAC $25, 市场$2.22B');
-    console.log('   - 进度: 14/19国 (73.7%)');
+    console.log('\n📌 Day 12完成总结：');
+    console.log('   - 印尼(ID): VAT 12%, 关税0%, CAC $22, 市场$1.87B（东南亚最大）');
+    console.log('   - 印度(IN): GST 18%, 关税20%, CAC $15, 市场$1.01B（总税负41.6%）');
+    console.log('   - 进度: 16/19国 (84.2%) 🎉突破80%！');
     console.log('\n📌 下一步：');
-    console.log('   - Git提交Day 11成果（PH + TH数据）');
-    console.log('   - 更新MVP-2.0-任务清单.md（标记Day 11完成）');
-    console.log('   - Day 12: 继续剩余5国数据采集（ID/IN/KR/SA/AE或其他）');
+    console.log('   - Git提交Day 12成果（ID + IN数据）');
+    console.log('   - 更新MVP-2.0-任务清单.md（标记Day 12完成）');
+    console.log('   - Day 13: 继续剩余3国数据采集（KR/SA/AE或其他）');
     console.log('========================================\n');
 
   } catch (error: any) {
