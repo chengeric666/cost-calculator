@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * 导入9国数据到Appwrite（Week 2 Day 9 Part 1）
+ * 导入10国数据到Appwrite（Week 2 Day 9完成）
  *
  * 功能：
- * 1. 导入9国数据（US/DE/VN/UK/JP/CA/FR/AU/IT）
+ * 1. 导入10国数据（US/DE/VN/UK/JP/CA/FR/AU/IT/ES）
  * 2. 支持67个P0字段 + 扩展字段
  * 3. 自动过滤metadata字段
  * 4. 性能测试：批量查询<500ms
@@ -14,7 +14,7 @@ import { Client, Databases, ID, Query } from 'node-appwrite';
 
 config({ path: '.env.local' });
 
-// 导入9国数据（3文件模式合并后）
+// 导入10国数据（3文件模式合并后）
 import { US_PET_FOOD } from '../data/cost-factors/US-pet-food';
 import { DE_PET_FOOD } from '../data/cost-factors/DE-pet-food';
 import { VN_PET_FOOD } from '../data/cost-factors/VN-pet-food';
@@ -24,6 +24,7 @@ import { CA_PET_FOOD } from '../data/cost-factors/CA-pet-food';
 import { FR_PET_FOOD } from '../data/cost-factors/FR-pet-food';
 import { AU_PET_FOOD } from '../data/cost-factors/AU-pet-food';
 import { IT_PET_FOOD } from '../data/cost-factors/IT-pet-food';
+import { ES_PET_FOOD } from '../data/cost-factors/ES-pet-food';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -169,11 +170,11 @@ async function importCountryData(countryName: string, countryCode: string, rawDa
 }
 
 /**
- * 导入所有9国数据
+ * 导入所有10国数据
  */
 async function importAllCountries() {
   console.log('\n========================================');
-  console.log('🌍 导入9国数据到Appwrite（Week 2 Day 9 Part 1）');
+  console.log('🌍 导入10国数据到Appwrite（Week 2 Day 9完成）');
   console.log('========================================\n');
   console.log(`Database: ${DB_ID}`);
   console.log(`Collection: ${COL_ID}`);
@@ -189,6 +190,7 @@ async function importAllCountries() {
     { name: '法国', code: 'FR', flag: '🇫🇷', data: FR_PET_FOOD },
     { name: '澳大利亚', code: 'AU', flag: '🇦🇺', data: AU_PET_FOOD },
     { name: '意大利', code: 'IT', flag: '🇮🇹', data: IT_PET_FOOD },
+    { name: '西班牙', code: 'ES', flag: '🇪🇸', data: ES_PET_FOOD },
   ];
 
   const results = {
@@ -249,16 +251,19 @@ async function importAllCountries() {
     });
 
     console.log('\n========================================');
-    console.log('🎉 9国数据导入完成！');
+    console.log('🎉 10国数据导入完成！');
     console.log('\n📌 数据质量验证：');
     console.log(`   - P0字段填充率: 100% (67个P0字段全部填充)`);
     console.log(`   - Tier 1+2平均: 90%+ (高质量数据)`);
     console.log(`   - 溯源信息: 100% (完整的collected_at/data_source/tier)`);
+    console.log('\n📌 Day 9完成总结：');
+    console.log('   - 意大利(IT): VAT 22%, 关税6.5%, CAC $32, 市场€3.1B');
+    console.log('   - 西班牙(ES): VAT 21%, 关税6.5%, CAC $28, 市场€2.5B');
+    console.log('   - 进度: 10/19国 (52.6%)');
     console.log('\n📌 下一步：');
-    console.log('   - Git提交Day 9 Part 1成果（意大利数据）');
-    console.log('   - 更新MVP-2.0-任务清单.md');
-    console.log('   - 继续Day 9 Part 2: 西班牙(ES)数据采集');
-    console.log('   - Day 10: SG + MY等国家数据采集');
+    console.log('   - Git提交Day 9成果（IT + ES数据）');
+    console.log('   - 更新MVP-2.0-任务清单.md（标记Day 9完成）');
+    console.log('   - Day 10: 新加坡(SG) + 马来西亚(MY)数据采集');
     console.log('========================================\n');
 
   } catch (error: any) {
