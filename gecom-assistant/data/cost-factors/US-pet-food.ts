@@ -29,7 +29,7 @@ import type { CostFactor } from '../../types/gecom';
  * - 2025-11-09: Week 2 Day 6重构为3文件模式（base + specific + merged）
  */
 
-export const US_PET_FOOD: Partial<CostFactor> = {
+export const US_PET_FOOD: any = {
   // ========== 基础元数据 ==========
 
   country: 'US',
