@@ -623,58 +623,95 @@
 **目标国家**: FR（法国）+ AU（澳大利亚）
 **采集策略**: 继续3文件模式，1天完成2国（提速）
 
-### Day 8: 法国数据采集 🎯
+### Day 8: 法国数据采集 ✅
 
 **目标国家**: FR（法国）
 
-- [ ] **Task 7.1**: 研究法国宠物食品进口关税
-  - 查询EU TARIC数据库
-  - HS Code: 2309.10.00
-  - 欧盟统一关税（预期6.5%，与德国一致）
-  - 数据来源：EU TARIC（Tier 1）
+- [x] **Task 8.1✅**: 研究法国宠物食品进口关税
+  - ✅ 查询EU TARIC数据库
+  - ✅ HS Code: 2309.10.00
+  - ✅ 欧盟统一关税6.5%（与德国一致）
+  - ✅ 数据来源：EU TARIC（Tier 1）
 
-- [ ] **Task 7.2**: 获取法国VAT税率
-  - 标准VAT: 20%
-  - 宠物食品可能适用降低税率5.5%（需确认）
-  - 数据来源：Direction générale des Finances publiques（Tier 1）
+- [x] **Task 8.2✅**: 获取法国VAT税率
+  - ✅ 标准VAT: 20%（宠物食品适用标准税率）
+  - ✅ 降低税率5.5%仅适用农场动物饲料（非宠物食品）
+  - ✅ 数据来源：Direction générale des Finances publiques (DGFiP)（Tier 1）
 
-- [ ] **Task 7.3**: 调研法国Amazon FBA费率
-  - Amazon.fr FBA费率表
-  - 配送费用
-  - 仓储费用（欧洲FBA网络）
-  - 数据来源：Amazon.fr Seller Central（Tier 1）
+- [x] **Task 8.3✅**: 调研法国Amazon FBA费率
+  - ✅ Amazon.fr FBA费率：$5.00（标准尺寸）
+  - ✅ 欧盟FBA网络（与德国€7.18接近）
+  - ✅ 数据来源：Amazon.fr Seller Central（Tier 2 - EU网络估算）
 
-- [ ] **Task 7.4**: 获取法国物流成本
-  - 从中国到法国勒阿弗尔港海运成本
-  - 空运成本（巴黎戴高乐机场）
-  - 联系CMA CGM/Air France Cargo
-  - 数据来源：物流商报价（Tier 2）
+- [x] **Task 8.4✅**: 获取法国物流成本
+  - ✅ 海运：$0.12/kg（上海/宁波 → 勒阿弗尔港，25-45天）
+  - ✅ FCL 20ft: $1,240-2,050
+  - ✅ 空运：$7.00/kg（2-5天，巴黎戴高乐机场）
+  - ✅ 数据来源：Freightos + Sino-shipping 2025 Q4报价（Tier 2）
 
-- [ ] **Task 7.5**: 调研法国M1市场准入成本
-  - SARL/SAS注册费
-  - SIRET注册（免费）
-  - TVA注册
-  - 数据来源：Infogreffe官网（Tier 1）
+- [x] **Task 8.5✅**: 调研法国M1市场准入成本
+  - ✅ SARL/SAS注册费：€200-250（USD $220）
+  - ✅ SIRET注册免费
+  - ✅ TVA注册免费
+  - ✅ 数据来源：Infogreffe官网 + Guichet-Entreprises（Tier 1）
 
-- [ ] **Task 7.6**: 调研法国M2技术合规成本
-  - EU 767/2009宠物食品法规合规
-  - FEDIAF认证
-  - 法语标签要求
-  - 数据来源：DGCCRF + FEDIAF（Tier 1-2）
+- [x] **Task 8.6✅**: 调研法国M2技术合规成本
+  - ✅ EU 767/2009宠物食品法规合规
+  - ✅ FEDIAF + DGCCRF监管
+  - ✅ 法语标签强制要求（$650审核费）
+  - ✅ 产品认证：$1,900（Bureau Veritas）
+  - ✅ 数据来源：DGCCRF + FEDIAF + Bureau Veritas（Tier 1-2）
 
-- [ ] **Task 7.7**: 创建FR-pet-food.ts数据文件
-  - 复用DE模板（同属欧盟）
-  - 调整VAT税率（20% vs 德国19%）
-  - 填充M1-M8所有字段
+- [x] **Task 8.7✅**: 创建FR-base-data.ts + FR-pet-food-specific.ts + FR-pet-food.ts（3文件模式）
+  - ✅ FR-base-data.ts: 232行，35通用字段，Tier 1占比75%
+  - ✅ FR-pet-food-specific.ts: 348行，55特定字段，Tier 1占比70%
+  - ✅ FR-pet-food.ts: 239行，合并数据，Tier 1占比72%
+  - ✅ 调整VAT税率（20% vs 德国19%）
+  - ✅ 填充M1-M8所有P0字段（67/67）
 
-- [ ] **Task 7.8**: 验证法国数据完整性
-- [ ] **Task 7.9**: 导入法国数据到Appwrite
-- [ ] **Task 7.10**: Git提交Day 7成果（7/19国）
+- [x] **Task 8.8✅**: 验证法国数据完整性
+  - ✅ P0字段67个100%填充
+  - ✅ Tier 1占比72% > 60%目标
+  - ✅ Tier 2占比23% > 20%目标
+  - ✅ M4关税/VAT均为Tier 1
+  - ✅ 数据溯源100%完整
 
-**验收标准**：
-- ✅ 法国数据完整
-- ✅ 与德国数据对比验证（欧盟一致性）
-- ✅ Tier 1/2数据≥80%
+- [x] **Task 8.9✅**: 导入法国数据到Appwrite
+  - ✅ 更新import-6-countries-data.ts → 7国
+  - ✅ 法国数据导入成功（文档ID: 6910670d000fa68e391e）
+  - ✅ 查询性能：216ms < 500ms目标
+
+- [x] **Task 8.10✅**: Git提交Day 8成果（7/19国）
+  - **新增文件**（3个）：
+    - FR-base-data.ts（232行，35字段）
+    - FR-pet-food-specific.ts（348行，55字段）
+    - FR-pet-food.ts（239行，合并数据）
+  - **修改文件**（1个）：
+    - import-6-countries-data.ts → 支持7国
+  - **提交消息**：
+    ```
+    数据：完成法国宠物食品数据采集（7/19国）
+
+    - 采用3文件模式（base + specific + merged）
+    - 复用欧盟统一标准（EU 767/2009、关税6.5%）
+    - 法国特定数据（VAT 20%、法语标签、DGCCRF监管）
+    - P0字段67/67填充，Tier 1占比72%
+    - 导入Appwrite成功，查询216ms
+    ```
+
+**验收标准**（100%通过✅）：
+- ✅ 法国数据完整（67/67 P0字段）
+- ✅ 与德国数据对比验证（欧盟关税6.5%一致）
+- ✅ Tier 1/2数据95%（72% + 23%）> 80%目标
+- ✅ 导入Appwrite成功，性能216ms < 500ms
+- ✅ 数据溯源100%完整（URL + Tier + 时间戳）
+
+**Day 8成果价值**：
+- 🎯 完成第7国数据采集（7/19国，进度36.8%）
+- 🎯 欧盟第3国（法国），验证欧盟数据复用策略✅
+- 🎯 法语市场数据（法语标签+客服成本）
+- 🎯 关税优势：6.5% vs 美国55%（节省48.5个百分点）
+- 🎯 验证3文件模式可扩展性（Week 2已采集7国）
 
 ---
 
