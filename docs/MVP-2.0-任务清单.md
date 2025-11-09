@@ -129,75 +129,141 @@
 ## Week 2: 14国数据采集（Pet Food行业）
 
 > **目标**: 完成剩余14国宠物食品数据，达到19/19国（100%）
-> **策略**: 每天2-3国，专注数据质量
-> **验收**: 每国必须通过数据验证，Tier 1/2数据≥80%
+> **策略**: 数据质量优先，通用vs特定数据分离
+> **验收**: 每国必须通过完整验证清单
+>
+> **📊 数据质量强制要求**（所有采集任务必须遵守）⭐
+> - ✅ **P0字段100%填充**：67个核心字段无null值
+> - ✅ **Tier质量达标**：Tier 1/2数据≥80%，关键字段（M4关税/VAT）必须Tier 1
+> - ✅ **数据溯源完整**：每个data_source格式正确（机构 - URL），100%标注collected_at
+> - ✅ **通用vs特定分离**：创建3个文件（XX-base-data.ts、XX-pet-food-specific.ts、XX-pet-food.ts）
+> - ✅ **合理性验证**：关税<100%, VAT<30%, CAC>0, 海运<空运
+> - ✅ **性能达标**：导入成功，查询<200ms
+>
+> **📋 完整规范参考**：
+> - [DATA-COLLECTION-STANDARD.md](./DATA-COLLECTION-STANDARD.md) - 数据采集标准与规范
+> - [DATA-TEMPLATE-EXAMPLE.md](./templates/DATA-TEMPLATE-EXAMPLE.md) - 数据模板示例
+> - [CLAUDE.md - 数据质量标准](../CLAUDE.md#数据质量标准与成功指标-) - 成功指标
 
 ### Day 6: 加拿大数据采集 🎯
 
 **目标国家**: CA（加拿大）
+**采集策略**: 通用vs特定数据分离（3文件模式）
 
-- [ ] **Task 6.1**: 研究加拿大宠物食品进口关税
-  - 查询Canada Border Services Agency (CBSA)
-  - HS Code: 2309.10.00
+**Step 1: 通用数据采集（✅可复用）**
+
+- [ ] **Task 6.1**: 研究M4关税与VAT（⭐最关键）
+  - 关税：查询CBSA官网，HS Code 2309.10.00
   - 获取MFN税率和CPTPP优惠税率
-  - 数据来源：CBSA官网（目标Tier 1）
+  - VAT：查询CRA官网，GST 5% + 各省PST（安大略HST 13%）
+  - **数据来源格式**：'CBSA官网 - https://cbsa-asfc.gc.ca/trade-commerce/tariff-tarif/2025/'
+  - **Tier要求**：必须Tier 1官方数据
+  - **时间戳**：ISO 8601格式（2025-11-09T10:00:00+08:00）
 
-- [ ] **Task 6.2**: 获取加拿大GST/HST税率
-  - 联邦GST: 5%
-  - 各省HST差异（ON: 13%, BC: 12%, QC: 14.975%等）
-  - 确定使用税率：安大略13%（最大市场）
-  - 数据来源：CRA官网（Tier 1）
+- [ ] **Task 6.2**: 获取M4物流成本（✅通用）
+  - 海运：中国→温哥华，$/kg + 时效
+  - 空运：中国→多伦多，$/kg + 时效
+  - 联系DHL/FedEx/CMA CGM获取2025年Q1报价
+  - **数据来源**：'DHL Express报价 - 2025年Q1中国→加拿大线路'
+  - **Tier**：Tier 2权威报价
 
-- [ ] **Task 6.3**: 调研加拿大Amazon FBA费率
-  - Amazon.ca FBA费率表
-  - 标准尺寸配送费
-  - 仓储费用
-  - 数据来源：Amazon.ca Seller Central（Tier 1）
+- [ ] **Task 6.3**: 获取M5配送 + M7支付（✅通用）
+  - M5尾程配送：Canada Post官方费率
+  - M7支付：Stripe 2.9% + $0.3（全球统一，复用）
+  - **Tier**：Tier 1官方数据
 
-- [ ] **Task 6.4**: 获取加拿大物流成本
-  - 从中国到加拿大温哥华海运成本
-  - 空运成本（多伦多）
-  - 联系DHL/FedEx询价
-  - 数据来源：物流商报价（Tier 2）
+- [ ] **Task 6.4**: 研究M1-M3通用成本（✅通用）
+  - M1公司注册：Corporations Canada费用
+  - M1税务登记：GST/HST注册（免费）
+  - M3仓储押金：第三方仓储报价
+  - M8最低工资：安大略劳工法
+  - **Tier**：Tier 1官方数据
 
-- [ ] **Task 6.5**: 调研加拿大M1市场准入成本
-  - 联邦公司注册费（Corporations Canada）
-  - GST/HST注册（免费）
-  - CFIA宠物食品进口许可
-  - 数据来源：CFIA官网（Tier 1）
+**Step 2: Pet Food行业特定数据采集（❌特定）**
 
-- [ ] **Task 6.6**: 调研加拿大M2技术合规成本
-  - CFIA产品标签要求
-  - 双语标签成本（英/法）
-  - 认证费用估算
-  - 数据来源：CFIA + 第三方实验室（Tier 2）
+- [ ] **Task 6.5**: 研究M1-M2行业合规（❌特定）
+  - M1监管机构：CFIA (Canadian Food Inspection Agency)
+  - M1行业许可：CFIA宠物食品进口许可费
+  - M2产品认证：CFIA标签合规 + SGS检测报价
+  - M2双语标签：英/法双语审核成本
+  - **数据来源**：'CFIA官网 - https://inspection.canada.ca + SGS报价'
+  - **Tier**：Tier 1/2混合
 
-- [ ] **Task 6.7**: 创建CA-pet-food.ts数据文件
-  - 使用US/DE/VN模板
-  - 填充M1-M8所有36字段
-  - 标注数据来源和Tier等级
-  - 添加中文国家名称和国旗
+- [ ] **Task 6.6**: 研究M4关税 + M6营销（❌特定）
+  - M4 HS Code：2309.10.00（宠物食品特定）
+  - M4实际关税率：基于CPTPP优惠税率
+  - M5 FBA费用：Amazon.ca Pet类目标准尺寸
+  - M6 CAC：Jungle Scout报告 - Pet类目2024
+  - M6平台佣金：Amazon.ca Pet类目15%
+  - **Tier**：Tier 1（关税/FBA）+ Tier 2（CAC）
 
-- [ ] **Task 6.8**: 验证加拿大数据完整性
-  - 检查所有必填字段
-  - 验证数据合理性（与美国对比）
-  - 确认Tier 1/2数据≥80%
+**Step 3: 数据文件创建（3文件模式）**
 
-- [ ] **Task 6.9**: 导入加拿大数据到Appwrite
-  - 更新import-5-countries-data.ts → import-6-countries-data.ts
-  - 运行导入脚本
-  - 验证导入成功
-  - 测试查询性能
+- [ ] **Task 6.7**: 创建CA-base-data.ts（通用数据）
+  - 参考模板：docs/templates/DATA-TEMPLATE-EXAMPLE.md模板1
+  - 包含35个通用字段（M1公司注册、M4 VAT、物流、M7支付、M8工资等）
+  - 每个字段标注：data_source、tier、collected_at
+  - 添加注释标记：`// ✅通用`
+  - **验证**：TypeScript编译通过，无null值
 
-- [ ] **Task 6.10**: Git提交Day 6成果
-  - 提交消息：数据：完成加拿大宠物食品数据采集（6/19国）
-  - 验收标准：CA数据完整导入
+- [ ] **Task 6.8**: 创建CA-pet-food-specific.ts（特定数据）
+  - 参考模板：docs/templates/DATA-TEMPLATE-EXAMPLE.md模板2
+  - 包含55个行业特定字段（M1行业许可、M2认证、M4关税、M6 CAC等）
+  - 每个字段标注：data_source、tier、collected_at
+  - 添加注释标记：`// ❌特定`
+  - **验证**：TypeScript编译通过
 
-**验收标准**：
-- ✅ 加拿大数据36字段全部填充
-- ✅ Tier 1/2数据≥80%
-- ✅ 导入Appwrite成功
-- ✅ 查询性能<200ms
+- [ ] **Task 6.9**: 创建CA-pet-food.ts（合并完整数据）
+  - 参考模板：docs/templates/DATA-TEMPLATE-EXAMPLE.md模板3
+  - 导入CA_BASE_DATA和CA_PET_FOOD_SPECIFIC
+  - 添加元数据：country='CA', industry='pet_food', version='2025Q1'
+  - 添加collected_at、collected_by、verified_at
+  - 合并数据：`{...CA_BASE_DATA, ...CA_PET_FOOD_SPECIFIC}`
+
+**Step 4: 验证与导入**
+
+- [ ] **Task 6.10**: 运行完整验证清单
+  - **完整性验证**：
+    - [ ] P0字段67个100%填充（无null）
+    - [ ] 每个模块M1-M8有data_source
+    - [ ] collected_at格式正确（ISO 8601）
+  - **合理性验证**：
+    - [ ] 关税率 0% ≤ tariff ≤ 100%
+    - [ ] VAT率 0% ≤ VAT ≤ 30%
+    - [ ] CAC > 0 且 < $100
+    - [ ] 海运成本 < 空运成本
+  - **Tier质量验证**：
+    - [ ] Tier 1数据占比 ≥ 60%
+    - [ ] Tier 2数据占比 ≥ 20%
+    - [ ] M4关税/VAT必须Tier 1
+  - **溯源验证**：
+    - [ ] 所有data_source格式正确（机构 - URL）
+    - [ ] Tier 1数据有完整URL
+    - [ ] 时间戳在2024-2025范围
+
+- [ ] **Task 6.11**: 导入Appwrite并性能测试
+  - 更新导入脚本：import-6-countries-data.ts
+  - 导入CA_PET_FOOD数据
+  - 验证导入成功（Appwrite Console检查）
+  - 性能测试：查询CA数据<200ms
+
+- [ ] **Task 6.12**: Git提交Day 6成果
+  - **提交文件**：
+    - data/cost-factors/CA-base-data.ts
+    - data/cost-factors/CA-pet-food-specific.ts
+    - data/cost-factors/CA-pet-food.ts
+    - scripts/import-6-countries-data.ts
+  - **提交消息**：`数据：完成加拿大宠物食品数据采集（6/19国，通用vs特定分离）`
+  - **验证报告**：附带验证清单检查结果
+
+**Day 6验收标准**（必须100%通过）：
+- ✅ 3个数据文件创建完成（base/specific/merged）
+- ✅ P0字段67个100%填充
+- ✅ Tier 1/2数据≥80%，M4关税/VAT 100% Tier 1
+- ✅ 数据溯源100%完整（含URL和时间戳）
+- ✅ 通过完整验证清单（完整性+合理性+Tier+溯源）
+- ✅ 导入Appwrite成功，查询<200ms
+- ✅ Git提交，文档更新
 
 ---
 

@@ -642,9 +642,185 @@ appwrite sites create-deployment \
 
 ---
 
+## 📊 数据质量标准与成功指标 ⭐
+
+> **重要性**：数据质量是GECOM MVP 2.0的核心竞争力
+> **完整规范**：参见[DATA-COLLECTION-STANDARD.md](./docs/DATA-COLLECTION-STANDARD.md)
+
+### 数据质量3-Tier分级体系
+
+```
+Tier 1（官方数据 - 100%可信）⭐
+├─ 定义：政府机构、海关、税务局、平台官方文档
+├─ 目标占比：≥60%
+├─ 示例：
+│  ├─ M4关税：USITC官网、CBSA官网、欧盟TARIC
+│  ├─ M4 VAT：IRS官网、CRA官网、德国联邦税务局
+│  └─ M7支付：Stripe官方费率页
+├─ 标注格式：
+│  data_source: 'USITC官网 - https://hts.usitc.gov'
+│  tier: 'tier1_official'
+│  collected_at: '2025-11-09T10:00:00+08:00'
+
+Tier 2（权威数据 - 90%可信）
+├─ 定义：物流商报价、行业报告、专业机构
+├─ 目标占比：≥30%
+├─ 示例：
+│  ├─ M4物流：DHL官方报价、FedEx报价单
+│  ├─ M6 CAC：Jungle Scout年度报告
+│  └─ M5尾程：Amazon FBA费率表
+├─ 标注格式：
+│  data_source: 'DHL报价单 - 2025年Q1'
+│  tier: 'tier2_authoritative'
+
+Tier 3（估算数据 - 80%可信）⚠️
+├─ 定义：AI研究、专家访谈、行业经验
+├─ 目标占比：≤10%
+├─ 使用条件：仅在无法获取Tier 1/2时使用
+├─ 标注格式：
+│  data_source: 'AI研究 + 行业标准'
+│  tier: 'tier3_estimated'
+│  confidence: 'medium'
+```
+
+### 数据溯源强制要求
+
+**每条成本记录必须包含**：
+- ✅ `collected_at`: 数据采集时间（ISO 8601格式）
+- ✅ `collected_by`: 采集人员/系统
+- ✅ `version`: 数据版本（2025Q1）
+
+**每个模块（M1-M8）必须包含**：
+- ✅ `m*_data_source`: 具体来源（机构名称 - URL/文件）
+- ✅ `m*_tier`: 数据质量等级（tier1/tier2/tier3）
+- ✅ `m*_collected_at`: 模块采集时间
+
+**数据来源格式规范**：
+```
+Tier 1: 'USITC官网 - https://hts.usitc.gov/current/2309'
+Tier 2: 'DHL Express报价单 - 2025年Q1中国→美国线路'
+Tier 3: 'AI研究基于3个行业报告综合 - 中等置信度'
+```
+
+### 字段优先级分级（36 → 127字段路线图）
+
+```
+P0字段（核心计算必须，67个字段）⭐
+├─ 定义：GECOM计算引擎依赖字段，缺失导致无法计算ROI
+├─ Week 2-3必须完成
+├─ 包含：
+│  ├─ M1: 12个（company_registration, tax_registration等）
+│  ├─ M2: 10个（product_certification, compliance_testing等）
+│  ├─ M4: 9个（hs_code, tariff, vat, logistics）
+│  ├─ M6: 8个（cac_usd, platform_commission等）
+│  └─ ...其他模块
+
+P1字段（数据丰富度，30个字段）
+├─ 定义：提升报告质量，不影响核心计算
+├─ Week 2-3尽力完成
+├─ 包含：renewal_required, certification_validity_years等
+
+P2字段（Nice to have，30个字段）
+├─ 定义：高级分析、未来功能预留
+├─ v3.0补充
+└─ 包含：government_subsidy, influencer_marketing_rate等
+```
+
+### 通用vs行业特定数据区分
+
+**核心策略**：方案2（字段分级标注）+ 渐进式迁移
+
+```typescript
+// 通用数据（35个字段，28%）- 跨行业复用 ✅
+m1_company_registration_usd  // 公司注册费
+m1_tax_registration_usd      // 税务登记费
+m4_vat_rate                  // VAT税率（国家统一）
+m4_logistics                 // 物流成本（按重量计费）
+m7_payment_rate              // Stripe全球统一2.9%
+m8_labor_cost_usd_hour       // 最低工资
+
+// 行业特定数据（55个字段，43%）- 每行业独立 ❌
+m1_industry_license_usd      // 行业许可费（宠物vs电子烟不同）
+m2_product_certification_usd // 产品认证（CFIA vs TPD）
+m4_hs_code                   // 商品编码（2309.10.00 vs 8543.70.00）
+m4_effective_tariff_rate     // 关税率（按HS Code差异）
+m6_cac_usd                   // CAC（宠物$20 vs 电子烟$35）
+m6_platform_commission_rate  // 平台佣金（Pet 15% vs Electronics 8%）
+```
+
+**数据采集优化策略**：
+1. **阶段1**：采集19国通用数据（35个字段）→ 创建`XX-base-data.ts`
+2. **阶段2**：采集19国×Pet Food特定数据（55个字段）→ 创建`XX-pet-food-specific.ts`
+3. **阶段3**：复用通用数据，仅采集Vape特定数据 → 节省50%时间
+
+### MVP 2.0成功指标
+
+**数据覆盖**：
+- ✅ 19国×2行业 = 38条完整记录
+- ✅ 每条记录 ≥ 67个P0字段（目标97个含P1）
+- ✅ 0条blocking错误
+
+**数据质量**：
+- ✅ Tier 1/2数据 ≥ 80%（总体）
+- ✅ 关键字段（M4关税/VAT）100% Tier 1
+- ✅ 数据溯源100%完整（每个data_source有URL）
+- ✅ 时间戳100%标注
+- ✅ 数据合理性检查通过率100%
+
+**可维护性**：
+- ✅ 通用数据明确标注（35个字段）
+- ✅ 行业特定数据明确标注（55个字段）
+- ✅ Vape行业可复用通用数据（节省50%采集时间）
+- ✅ 数据更新流程文档化
+
+**扩展性**：
+- ✅ 数据模型支持扩展到100国
+- ✅ 支持新增第3个行业（仅采集55个特定字段）
+- ✅ 数据导入脚本可处理新国家
+
+### 单国验收标准（每国必须通过）
+
+| 验收项 | 最低标准 | 优秀标准 |
+|-------|---------|---------|
+| P0字段完整性 | 67/67 (100%) | 97/127 (76%) |
+| Tier 1/2占比 | ≥70% | ≥85% |
+| 数据溯源完整性 | 100% | 100%有URL |
+| 合理性检查通过率 | 100% | 100% |
+| 通用vs特定字段标注 | 100% | 100% |
+| 导入成功 | 是 | 是 |
+| 查询性能 | <500ms | <200ms |
+
+### 数据验证清单（每国必检）
+
+```markdown
+## 完整性验证
+- [ ] P0字段100%填充（67个字段无null）
+- [ ] 每个模块M1-M8至少有1个data_source
+- [ ] collected_at字段存在且格式正确
+- [ ] 通用字段和特定字段正确分离
+
+## 合理性验证
+- [ ] 关税率合理（0% ≤ tariff ≤ 100%）
+- [ ] VAT率合理（0% ≤ VAT ≤ 30%）
+- [ ] CAC > 0 且 < $100
+- [ ] 物流成本：海运 < 空运
+
+## Tier质量验证
+- [ ] Tier 1数据占比 ≥ 50%
+- [ ] 关键字段（M4关税/VAT）必须Tier 1
+- [ ] 每个Tier标注有对应的data_source
+
+## 溯源验证
+- [ ] 所有data_source格式正确（机构 - URL）
+- [ ] Tier 1数据有完整URL
+- [ ] 时间戳在2024-2025年范围内
+```
+
+---
+
 ## 📝 开发任务清单
 
-> **💡 重要提示**：MVP 2.0完整任务清单（104个详细任务）已独立为专门文档，详见：
+> **💡 重要提示**：MVP 2.0完整任务清单（120个详细任务）已独立为专门文档，详见：
 > [**MVP-2.0-任务清单.md**](./docs/MVP-2.0-任务清单.md) ⭐⭐⭐
 >
 > 本部分仅展示宏观进度，每个任务的详细验收标准、测试要求、文档更新要求请参考完整任务清单。
