@@ -1394,6 +1394,55 @@
 
 ---
 
+### 附加：19国完整数据谱系导出 ✅（2025-11-10完成）
+
+> **背景**：用户关键反馈："我过程抓取了很多数据，但是导入到appwrite中的数据很少"
+> **问题**：57个数据文件（19国×3文件）中，只有19个merged文件导入Appwrite，base-data和specific-data层未持久化
+> **解决方案**：建立完整数据飞轮，多层次数据备份
+
+#### 实施任务
+
+- [x] **Persist 1**: 修复export-data-lineage.ts导出逻辑
+  - ✅ 智能选择正确导出对象（避免SUMMARY对象干扰）
+  - ✅ 添加sanitizeForJSON()清理TypeScript构造（as const等）
+  - ✅ 移除data_quality_summary的错误JSON.parse
+  - ✅ 成功导出19/19国家（0失败）
+
+- [x] **Persist 2**: 创建debug-export.ts诊断工具
+  - ✅ 诊断8个失败国家（US/DE/VN/UK/JP/CA/FR/AU）
+  - ✅ 发现问题：多导出对象选择错误 + TypeScript特定构造
+  - ✅ 验证所有文件可JSON序列化
+
+- [x] **Persist 3**: 完成数据导出
+  - ✅ 21个JSON文件（19国 + _summary.json + _all-countries.json）
+  - ✅ 总计884KB完整数据
+  - ✅ 3层数据结构（base/specific/merged）
+  - ✅ 完整字段统计和数据质量元信息
+
+- [x] **Persist 4**: Git提交并推送
+  - ✅ commit fd56427: 23文件变更，6719行插入
+  - ✅ 推送到远程分支
+
+**验收标准**：
+- ✅ 19/19国家完整导出（100%成功率）
+- ✅ 3层数据完整保存（base/specific/merged）
+- ✅ 数据质量元信息完整（tier分布、置信度）
+- ✅ JSON文件可正常解析和导入
+
+**数据飞轮层级建立**：
+- ✅ Layer 1: Git版本控制（57个TypeScript文件）
+- ✅ Layer 2: 本地JSON备份（21个文件，884KB）⭐新增
+- ✅ Layer 3: Appwrite数据库（19条merged记录）
+- 🎯 Layer 4: data_lineage Collection（待Week 4创建）
+
+**核心成果**：
+- 📊 数据完整性：从19条记录扩展到57个文件+21个JSON的多层备份
+- 🔄 数据可溯源性：完整保留采集过程数据，支持版本对比
+- 💾 数据持久化：多格式（TS/JSON/Appwrite）三重保障
+- ⚡ 导出性能：19国导出仅需12秒（平均0.6秒/国）
+
+---
+
 ### Day 15: 墨西哥+巴西数据采集 🎯
 
 **目标国家**: MX（墨西哥）+ BR（巴西）
