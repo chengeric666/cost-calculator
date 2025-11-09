@@ -1,12 +1,13 @@
 #!/usr/bin/env tsx
 /**
- * 导入17国数据到Appwrite（Week 3 Day 13完成）
+ * 导入19国数据到Appwrite（Week 3 Day 14完成）🎉
  *
  * 功能：
- * 1. 导入17国数据（US/DE/VN/UK/JP/CA/FR/AU/IT/ES/SG/MY/PH/TH/ID/IN/KR）
+ * 1. 导入19国数据（US/DE/VN/UK/JP/CA/FR/AU/IT/ES/SG/MY/PH/TH/ID/IN/KR/SA/AE）
  * 2. 支持67个P0字段 + 扩展字段
  * 3. 自动过滤metadata字段
  * 4. 性能测试：批量查询<500ms
+ * 5. 🎉完成19国目标（100%）
  */
 
 import { config } from 'dotenv';
@@ -14,7 +15,7 @@ import { Client, Databases, ID, Query } from 'node-appwrite';
 
 config({ path: '.env.local' });
 
-// 导入17国数据（3文件模式合并后）
+// 导入19国数据（3文件模式合并后）🎉
 import { US_PET_FOOD } from '../data/cost-factors/US-pet-food';
 import { DE_PET_FOOD } from '../data/cost-factors/DE-pet-food';
 import { VN_PET_FOOD } from '../data/cost-factors/VN-pet-food';
@@ -32,6 +33,8 @@ import { TH_PET_FOOD } from '../data/cost-factors/TH-pet-food';
 import { ID_PET_FOOD } from '../data/cost-factors/ID-pet-food';
 import { IN_PET_FOOD } from '../data/cost-factors/IN-pet-food';
 import { KR_PET_FOOD } from '../data/cost-factors/KR-pet-food';
+import { SA_PET_FOOD } from '../data/cost-factors/SA-pet-food';
+import { AE_PET_FOOD } from '../data/cost-factors/AE-pet-food';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -177,11 +180,11 @@ async function importCountryData(countryName: string, countryCode: string, rawDa
 }
 
 /**
- * 导入所有17国数据
+ * 导入所有19国数据 🎉
  */
 async function importAllCountries() {
   console.log('\n========================================');
-  console.log('🌍 导入17国数据到Appwrite（Week 3 Day 13完成）');
+  console.log('🌍 导入19国数据到Appwrite（Week 3 Day 14完成）🎉');
   console.log('========================================\n');
   console.log(`Database: ${DB_ID}`);
   console.log(`Collection: ${COL_ID}`);
@@ -205,6 +208,8 @@ async function importAllCountries() {
     { name: '印尼', code: 'ID', flag: '🇮🇩', data: ID_PET_FOOD },
     { name: '印度', code: 'IN', flag: '🇮🇳', data: IN_PET_FOOD },
     { name: '韩国', code: 'KR', flag: '🇰🇷', data: KR_PET_FOOD },
+    { name: '沙特阿拉伯', code: 'SA', flag: '🇸🇦', data: SA_PET_FOOD },
+    { name: '阿联酋', code: 'AE', flag: '🇦🇪', data: AE_PET_FOOD },
   ];
 
   const results = {
@@ -265,19 +270,24 @@ async function importAllCountries() {
     });
 
     console.log('\n========================================');
-    console.log('🎉 17国数据导入完成！');
+    console.log('🎉🎉🎉 19国数据导入完成！100%目标达成！🎉🎉🎉');
     console.log('\n📌 数据质量验证：');
     console.log(`   - P0字段填充率: 100% (67个P0字段全部填充)`);
     console.log(`   - Tier 1+2平均: 90%+ (高质量数据)`);
     console.log(`   - 溯源信息: 100% (完整的collected_at/data_source/tier)`);
-    console.log('\n📌 Day 13完成总结：');
-    console.log('   - 韩国(KR): VAT 10%, 关税0% (KORUS FTA), CAC $35, 市场$1.71B');
-    console.log('   - KORUS FTA零关税优势（vs MFN 8%），中韩航线短（3-5天）');
-    console.log('   - 进度: 17/19国 (89.5%) 🎉接近90%！');
+    console.log('\n📌 Day 14完成总结（中东2国）：');
+    console.log('   - 沙特(SA): VAT 15%, 关税5%, CAC $40, 市场$75-297M（中东最大经济体）');
+    console.log('   - 阿联酋(AE): VAT 5% (GCC最低), 关税5%, CAC $42, 市场$107-164M（Jebel Ali中东最大港）');
+    console.log('   - 进度: 19/19国 (100%) 🎉🎉🎉完成19国目标！');
+    console.log('\n📌 Week 2-3总结（19国覆盖）：');
+    console.log('   - 北美: US + CA (2国)');
+    console.log('   - 欧洲: DE + UK + FR + IT + ES (5国)');
+    console.log('   - 亚太: VN + JP + AU + SG + MY + PH + TH + ID + IN + KR (10国)');
+    console.log('   - 中东: SA + AE (2国)');
     console.log('\n📌 下一步：');
-    console.log('   - Git提交Day 13成果（KR数据）');
-    console.log('   - 更新MVP-2.0-任务清单.md（标记Day 13完成）');
-    console.log('   - Day 14: 继续剩余2国数据采集（目标19国）');
+    console.log('   - Git提交Day 14成果（SA + AE数据）');
+    console.log('   - 更新MVP-2.0-任务清单.md（标记Day 14完成，Week 2-3验收）');
+    console.log('   - Week 4: 继续Vape行业数据采集（19国×2行业=38条记录）');
     console.log('========================================\n');
 
   } catch (error: any) {
