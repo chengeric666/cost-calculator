@@ -934,69 +934,99 @@
 
 ---
 
-### Day 10: 新加坡+马来西亚数据采集 🎯
+### Day 10: 新加坡+马来西亚数据采集 ✅
 
 **目标国家**: SG（新加坡）+ MY（马来西亚）
 
+**完成时间**: 2025-11-09
+
 #### 新加坡 (SG)
 
-- [ ] **Task 10.1**: 新加坡关税研究
-  - 查询Singapore Customs
-  - HS Code: 2309.10.00
-  - 新加坡零关税政策（预期0%）
-  - 数据来源：Singapore Customs（Tier 1）
+- [x] **Task 10.1**: 新加坡关税研究
+  - ✅ 查询Singapore Customs
+  - ✅ HS Code: 2309.10.00
+  - ✅ 关税: 0%（自由贸易港，全球最低）
+  - ✅ 数据来源：Singapore Customs（Tier 1）
 
-- [ ] **Task 10.2**: 新加坡GST税率
-  - GST: 9%（2024年起，从8%调整）
-  - 数据来源：IRAS官网（Tier 1）
+- [x] **Task 10.2**: 新加坡GST税率
+  - ✅ GST: 9%（2024年起，从8%调整）
+  - ✅ 数据来源：IRAS官网（Tier 1）
 
-- [ ] **Task 10.3**: 新加坡物流+FBA成本
-  - Lazada SG佣金（预期8-12%）
-  - Shopee SG佣金（预期6-10%）
-  - 海运/空运成本
-  - 数据来源：Lazada/Shopee卖家中心（Tier 2）
+- [x] **Task 10.3**: 新加坡物流+FBA成本
+  - ✅ Lazada SG佣金：5-9%
+  - ✅ Shopee SG佣金：4.36-14%
+  - ✅ 海运成本：$325-2,500/20ft
+  - ✅ FBA: N/A（无Amazon，依赖Lazada/Shopee）
+  - ✅ 数据来源：Lazada/Shopee卖家中心（Tier 2）
 
-- [ ] **Task 10.4**: 新加坡M1-M2合规成本
-  - ACRA公司注册费
-  - AVA宠物食品进口许可
-  - 数据来源：ACRA + AVA官网（Tier 1）
+- [x] **Task 10.4**: 新加坡M1-M2合规成本
+  - ✅ ACRA公司注册：$1,500-4,000
+  - ✅ SFA/AVS宠物食品进口许可
+  - ✅ AVS-approved sources限制（仅限AU/CA/NZ/UK/US）
+  - ✅ 数据来源：ACRA + SFA/AVS官网（Tier 1）
 
-- [ ] **Task 10.5**: 创建SG-pet-food.ts数据文件
+- [x] **Task 10.5**: 创建SG-pet-food.ts数据文件
+  - ✅ SG-base-data.ts: 35个通用字段
+  - ✅ SG-pet-food-specific.ts: 55个行业特定字段
+  - ✅ SG-pet-food.ts: 90个合并字段
 
 #### 马来西亚 (MY)
 
-- [ ] **Task 10.6**: 马来西亚关税研究
-  - 查询Malaysia Royal Customs
-  - HS Code: 2309.10.00
-  - ASEAN优惠关税（预期0-5%）
-  - 数据来源：Royal Malaysian Customs（Tier 1）
+- [x] **Task 10.6**: 马来西亚关税研究
+  - ✅ 查询Royal Malaysian Customs
+  - ✅ HS Code: 2309.10.00
+  - ✅ 关税: 0%（ASEAN优惠关税）
+  - ✅ 数据来源：Royal Malaysian Customs（Tier 1）
 
-- [ ] **Task 10.7**: 马来西亚销售税/服务税
-  - SST (Sales and Service Tax): 10%（替代GST）
-  - 数据来源：Royal Malaysian Customs（Tier 1）
+- [x] **Task 10.7**: 马来西亚销售税/服务税
+  - ✅ SST: 0%（宠物食品免税，essential goods）⭐双零税率
+  - ✅ 数据来源：Royal Malaysian Customs, Ministry of Finance（Tier 1）
 
-- [ ] **Task 10.8**: 马来西亚物流+平台成本
-  - Lazada MY佣金
-  - Shopee MY佣金
-  - 海运成本（巴生港）
-  - 数据来源：平台卖家中心（Tier 2）
+- [x] **Task 10.8**: 马来西亚物流+平台成本
+  - ✅ Lazada MY佣金：16-22.5%
+  - ✅ Shopee MY佣金：3.78% + RM0.50
+  - ✅ 海运成本：$450-1,500/20ft（Port Klang）
+  - ✅ 数据来源：平台卖家中心, Sino Shipping（Tier 2）
 
-- [ ] **Task 10.9**: 马来西亚M1-M2合规成本
-  - SSM公司注册
-  - DVS宠物食品许可
-  - 数据来源：SSM + DVS官网（Tier 1-2）
+- [x] **Task 10.9**: 马来西亚M1-M2合规成本
+  - ✅ SSM公司注册：RM 1,010-4,000 (~$700)
+  - ✅ DVS+MAQIS双审批流程
+  - ✅ Halal认证（非强制但有市场优势）
+  - ✅ 数据来源：SSM + DVS/MAQIS官网（Tier 1）
 
-- [ ] **Task 10.10**: 创建MY-pet-food.ts数据文件
+- [x] **Task 10.10**: 创建MY-pet-food.ts数据文件
+  - ✅ MY-base-data.ts: 35个通用字段
+  - ✅ MY-pet-food-specific.ts: 55个行业特定字段
+  - ✅ MY-pet-food.ts: 90个合并字段
 
 #### 验证与导入
 
-- [ ] **Task 10.11**: 验证SG+MY数据完整性
-- [ ] **Task 10.12**: 导入2国数据到Appwrite
-- [ ] **Task 10.13**: Git提交Day 8成果（9/19国）
+- [x] **Task 10.11**: 验证SG+MY数据完整性
+  - ✅ P0字段: 67/67 (100%)
+  - ✅ Tier 1: 72%（官方数据）
+  - ✅ Tier 2: 23%（权威数据）
+  - ✅ Tier 3: 5%（推算数据）
+  - ✅ 置信度: 91%
+
+- [x] **Task 10.12**: 导入2国数据到Appwrite
+  - ✅ SG导入成功: 69107f5b00196a4a808d
+  - ✅ MY导入成功: 69107f5c00001fd826c1
+  - ✅ 查询性能: 219ms（<500ms目标，性能达标）
+
+- [x] **Task 10.13**: Git提交Day 10成果
+  - ✅ Commit 154e2c7: SG数据文件
+  - ✅ Commit 68c8e36: MY数据文件
+  - ✅ Commit ed65463: import脚本更新
+  - ✅ Push成功到远程仓库
 
 **验收标准**：
 - ✅ 2国数据完整（SG+MY）
-- ✅ 进度：9/19国（47%）
+- ✅ 进度：12/19国（63.2%）🎉突破60%
+
+**核心成果**：
+- 新加坡(SG): 关税0%, GST 9%, CAC $30, 市场$112M
+- 马来西亚(MY): 关税0%, SST 0%（双零税率优势）, CAC $22, 市场$340M
+- 东南亚数据收集完成（SG/MY/VN），为ASEAN区域分析奠定基础
 
 ---
 
@@ -1066,73 +1096,73 @@
 
 ---
 
-### Day 10: 印尼+印度数据采集 🎯
+### Day 12: 印尼+印度数据采集 🎯
 
 **目标国家**: ID（印尼）+ IN（印度）
 
 #### 印尼 (ID)
 
-- [ ] **Task 10.1**: 印尼关税研究
+- [ ] **Task 12.1**: 印尼关税研究
   - 查询Indonesia Customs (DJBC)
   - HS Code: 2309.10.00
   - ASEAN优惠关税
   - 数据来源：DJBC官网（Tier 1）
 
-- [ ] **Task 10.2**: 印尼VAT税率
+- [ ] **Task 12.2**: 印尼VAT税率
   - PPN (VAT): 11%
   - 数据来源：DJP官网（Tier 1）
 
-- [ ] **Task 10.3**: 印尼平台+物流成本
+- [ ] **Task 12.3**: 印尼平台+物流成本
   - Lazada ID佣金
   - Shopee ID佣金
   - Tokopedia佣金（印尼本土最大平台）
   - 雅加达港海运成本
   - 数据来源：平台卖家中心（Tier 2）
 
-- [ ] **Task 10.4**: 印尼M1-M2合规成本
+- [ ] **Task 12.4**: 印尼M1-M2合规成本
   - PT注册（外资公司）
   - BPOM宠物食品许可
   - Halal认证（如需清真市场）
   - 数据来源：BKPM + BPOM（Tier 1-2）
 
-- [ ] **Task 10.5**: 创建ID-pet-food.ts数据文件
+- [ ] **Task 12.5**: 创建ID-pet-food.ts数据文件
 
 #### 印度 (IN)
 
-- [ ] **Task 10.6**: 印度关税研究
+- [ ] **Task 12.6**: 印度关税研究
   - 查询CBIC (Central Board of Indirect Taxes and Customs)
   - HS Code: 2309.10.00
   - MFN关税（预期30-40%，印度关税普遍较高）
   - 数据来源：CBIC官网（Tier 1）
 
-- [ ] **Task 10.7**: 印度GST税率
+- [ ] **Task 12.7**: 印度GST税率
   - CGST + SGST: 18%（9% + 9%）
   - 或IGST: 18%（跨邦交易）
   - 数据来源：GST Council（Tier 1）
 
-- [ ] **Task 10.8**: 印度平台+物流成本
+- [ ] **Task 12.8**: 印度平台+物流成本
   - Amazon India佣金
   - Flipkart佣金
   - Mumbai港海运成本
   - 数据来源：Amazon.in + Flipkart卖家中心（Tier 2）
 
-- [ ] **Task 10.9**: 印度M1-M2合规成本
+- [ ] **Task 12.9**: 印度M1-M2合规成本
   - ROC公司注册
   - FSSAI宠物食品许可
   - Import Export Code (IEC)
   - 数据来源：MCA + FSSAI（Tier 1-2）
 
-- [ ] **Task 10.10**: 创建IN-pet-food.ts数据文件
+- [ ] **Task 12.10**: 创建IN-pet-food.ts数据文件
 
 #### 验证与导入
 
-- [ ] **Task 10.11**: 验证ID+IN数据完整性
-- [ ] **Task 10.12**: 导入2国数据到Appwrite
-- [ ] **Task 10.13**: Git提交Day 10成果（13/19国）
+- [ ] **Task 12.11**: 验证ID+IN数据完整性
+- [ ] **Task 12.12**: 导入2国数据到Appwrite
+- [ ] **Task 12.13**: Git提交Day 12成果（14/19国）
 
 **验收标准**：
 - ✅ 2国数据完整（ID+IN）
-- ✅ 进度：13/19国（68%）
+- ✅ 进度：14/19国（73.7%）
 
 ---
 
@@ -1164,89 +1194,91 @@
 
 ## Week 3: 继续数据采集（完成19国+Vape行业）
 
-### Day 11: 韩国+澳大利亚数据采集 🎯
+### Day 13: 韩国数据采集 🎯
 
-**目标国家**: KR（韩国）+ AU（澳大利亚）
+**目标国家**: KR（韩国）
+
+**备注**: 澳大利亚(AU)已在Day 8完成，此处仅采集韩国数据
 
 #### 韩国 (KR)
 
-- [ ] **Task 11.1**: 韩国关税研究（Korea Customs Service）
-- [ ] **Task 11.2**: 韩国VAT税率（10%）
-- [ ] **Task 11.3**: 韩国平台成本（Coupang, Naver Shopping）
-- [ ] **Task 11.4**: 韩国M1-M2合规（MFDS宠物食品许可）
-- [ ] **Task 11.5**: 创建KR-pet-food.ts数据文件
+- [ ] **Task 13.1**: 韩国关税研究（Korea Customs Service）
+- [ ] **Task 13.2**: 韩国VAT税率（10%）
+- [ ] **Task 13.3**: 韩国平台成本（Coupang, Naver Shopping）
+- [ ] **Task 13.4**: 韩国M1-M2合规（MFDS宠物食品许可）
+- [ ] **Task 13.5**: 创建KR-pet-food.ts数据文件
 
-#### 澳大利亚 (AU)
+#### 验证与导入
 
-- [ ] **Task 11.6**: 澳大利亚关税研究（ABF）
-- [ ] **Task 11.7**: 澳大利亚GST税率（10%）
-- [ ] **Task 11.8**: 澳大利亚平台成本（Amazon AU, Catch）
-- [ ] **Task 11.9**: 澳大利亚M1-M2合规（APVMA宠物食品许可）
-- [ ] **Task 11.10**: 创建AU-pet-food.ts数据文件
+- [ ] **Task 13.6**: 验证KR数据完整性
+- [ ] **Task 13.7**: 导入KR数据到Appwrite
+- [ ] **Task 13.8**: Git提交Day 13成果（13/19国）
 
-- [ ] **Task 11.11**: 验证KR+AU数据
-- [ ] **Task 11.12**: 导入2国数据
-- [ ] **Task 11.13**: Git提交（15/19国）
-
-**验收标准**：进度 15/19国（79%）
+**验收标准**：进度 13/19国（68.4%）
 
 ---
 
-### Day 12: 沙特+阿联酋数据采集 🎯
+### Day 14: 沙特+阿联酋数据采集 🎯
 
 **目标国家**: SA（沙特）+ AE（阿联酋）
 
 #### 沙特 (SA)
 
-- [ ] **Task 12.1**: 沙特关税研究（ZATCA）
-- [ ] **Task 12.2**: 沙特VAT税率（15%）
-- [ ] **Task 12.3**: 沙特平台成本（Noon, Amazon.sa）
-- [ ] **Task 12.4**: 沙特M1-M2合规（SFDA宠物食品许可）
-- [ ] **Task 12.5**: 创建SA-pet-food.ts数据文件
+- [ ] **Task 14.1**: 沙特关税研究（ZATCA）
+- [ ] **Task 14.2**: 沙特VAT税率（15%）
+- [ ] **Task 14.3**: 沙特平台成本（Noon, Amazon.sa）
+- [ ] **Task 14.4**: 沙特M1-M2合规（SFDA宠物食品许可）
+- [ ] **Task 14.5**: 创建SA-pet-food.ts数据文件
 
 #### 阿联酋 (AE)
 
-- [ ] **Task 12.6**: 阿联酋关税研究（FTA）
-- [ ] **Task 12.7**: 阿联酋VAT税率（5%）
-- [ ] **Task 12.8**: 阿联酋平台成本（Noon, Amazon.ae, Namshi）
-- [ ] **Task 12.9**: 阿联酋M1-M2合规（迪拜经济部许可）
-- [ ] **Task 12.10**: 创建AE-pet-food.ts数据文件
+- [ ] **Task 14.6**: 阿联酋关税研究（FTA）
+- [ ] **Task 14.7**: 阿联酋VAT税率（5%）
+- [ ] **Task 14.8**: 阿联酋平台成本（Noon, Amazon.ae, Namshi）
+- [ ] **Task 14.9**: 阿联酋M1-M2合规（迪拜经济部许可）
+- [ ] **Task 14.10**: 创建AE-pet-food.ts数据文件
 
-- [ ] **Task 12.11**: 验证SA+AE数据
-- [ ] **Task 12.12**: 导入2国数据
-- [ ] **Task 12.13**: Git提交（17/19国）
+#### 验证与导入
 
-**验收标准**：进度 17/19国（89%）
+- [ ] **Task 14.11**: 验证SA+AE数据完整性
+- [ ] **Task 14.12**: 导入2国数据到Appwrite
+- [ ] **Task 14.13**: Git提交Day 14成果（15/19国）
+
+**验收标准**：进度 15/19国（78.9%）
 
 ---
 
-### Day 13: 墨西哥+巴西数据采集 🎯
+### Day 15: 墨西哥+巴西数据采集 🎯
 
 **目标国家**: MX（墨西哥）+ BR（巴西）
 
 #### 墨西哥 (MX)
 
-- [ ] **Task 13.1**: 墨西哥关税研究（SAT）
-- [ ] **Task 13.2**: 墨西哥VAT税率（IVA 16%）
-- [ ] **Task 13.3**: 墨西哥平台成本（Mercado Libre MX, Amazon.com.mx）
-- [ ] **Task 13.4**: 墨西哥M1-M2合规（SENASICA宠物食品许可）
-- [ ] **Task 13.5**: 创建MX-pet-food.ts数据文件
+- [ ] **Task 15.1**: 墨西哥关税研究（SAT）
+- [ ] **Task 15.2**: 墨西哥VAT税率（IVA 16%）
+- [ ] **Task 15.3**: 墨西哥平台成本（Mercado Libre MX, Amazon.com.mx）
+- [ ] **Task 15.4**: 墨西哥M1-M2合规（SENASICA宠物食品许可）
+- [ ] **Task 15.5**: 创建MX-pet-food.ts数据文件
 
 #### 巴西 (BR)
 
-- [ ] **Task 13.6**: 巴西关税研究（Receita Federal）
-- [ ] **Task 13.7**: 巴西税收体系（ICMS + IPI + PIS/COFINS，综合≈60-80%）⚠️
-- [ ] **Task 13.8**: 巴西平台成本（Mercado Livre, B2W, Amazon.com.br）
-- [ ] **Task 13.9**: 巴西M1-M2合规（MAPA宠物食品许可，复杂度极高）
-- [ ] **Task 13.10**: 创建BR-pet-food.ts数据文件
+- [ ] **Task 15.6**: 巴西关税研究（Receita Federal）
+- [ ] **Task 15.7**: 巴西税收体系（ICMS + IPI + PIS/COFINS，综合≈60-80%）⚠️
+- [ ] **Task 15.8**: 巴西平台成本（Mercado Livre, B2W, Amazon.com.br）
+- [ ] **Task 15.9**: 巴西M1-M2合规（MAPA宠物食品许可，复杂度极高）
+- [ ] **Task 15.10**: 创建BR-pet-food.ts数据文件
 
-- [ ] **Task 13.11**: 验证MX+BR数据
-- [ ] **Task 13.12**: 导入2国数据
-- [ ] **Task 13.13**: Git提交（19/19国Pet Food完成）🎉
+#### 验证与导入
+
+- [ ] **Task 15.11**: 验证MX+BR数据完整性
+- [ ] **Task 15.12**: 导入2国数据到Appwrite
+- [ ] **Task 15.13**: Git提交Day 15成果（17/19国）
 
 **验收标准**：
-- ✅ 19国Pet Food数据100%完成
-- ✅ 数据覆盖：19/38记录（50%）
+- ✅ 2国数据完整（MX+BR）
+- ✅ 进度：17/19国（89.5%）
+
+**备注**: 还需2国数据以达到19国目标（建议：台湾TW + 波兰PL或荷兰NL）
 
 ---
 
