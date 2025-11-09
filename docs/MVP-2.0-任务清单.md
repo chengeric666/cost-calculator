@@ -126,11 +126,20 @@
 
 ---
 
-## Week 2: 14国数据采集（Pet Food行业）
+## Week 2: 5国历史数据重构 + 14国新数据采集
 
-> **目标**: 完成剩余14国宠物食品数据，达到19/19国（100%）
-> **策略**: 数据质量优先，通用vs特定数据分离
-> **验收**: 每国必须通过完整验证清单
+> **⚠️ 重要调整**：Week 2 Day 6专门用于5国历史数据完整重构（策略B）
+>
+> **调整原因**：
+> - ✅ 先将已有5国数据（US/DE/VN/UK/JP）标准化为3文件模式
+> - ✅ 建立完整示例，后续14国采集直接参考
+> - ✅ 所有数据统一质量标准，避免历史遗留问题
+> - ✅ 5国重构完成后，Week 2剩余时间采集新国家（Day 7-10）
+>
+> **Week 2调整后目标**：
+> - Day 6: 5国历史数据重构（策略B完整重构）
+> - Day 7-10: 新采集8-10国（每天2-2.5国）
+> - Week 3: 继续采集剩余4-6国 + Vape行业
 >
 > **📊 数据质量强制要求**（所有采集任务必须遵守）⭐
 > - ✅ **P0字段100%填充**：67个核心字段无null值
@@ -143,9 +152,188 @@
 > **📋 完整规范参考**：
 > - [DATA-COLLECTION-STANDARD.md](./DATA-COLLECTION-STANDARD.md) - 数据采集标准与规范
 > - [DATA-TEMPLATE-EXAMPLE.md](./templates/DATA-TEMPLATE-EXAMPLE.md) - 数据模板示例
+> - [BACKFILL-5-COUNTRIES-GUIDE.md](./BACKFILL-5-COUNTRIES-GUIDE.md) - 历史数据重构指南
 > - [CLAUDE.md - 数据质量标准](../CLAUDE.md#数据质量标准与成功指标-) - 成功指标
 
-### Day 6: 加拿大数据采集 🎯
+---
+
+### Day 6: 5国历史数据完整重构（策略B）🔧
+
+**目标**：将已有5国数据（US/DE/VN/UK/JP）重构为3文件模式，补充完整溯源信息
+
+**策略**：执行BACKFILL-5-COUNTRIES-GUIDE.md策略B（完整重构）
+
+**预计时间**：7.5小时（每国1.5小时）
+
+**重构价值**：
+- ✅ 建立5个完整示例，后续14国直接参考
+- ✅ Vape行业可直接复用5国通用数据（base-data.ts）
+- ✅ 所有数据统一质量标准，数据一致性100%
+- ✅ 验证3文件模式可行性，优化后续采集流程
+
+---
+
+#### 🇺🇸 美国数据重构（1.5小时）
+
+**当前状态**：单文件US-pet-food.ts（490行）
+
+**目标状态**：3文件模式
+- US-base-data.ts（通用数据35字段）
+- US-pet-food-specific.ts（特定数据55字段）
+- US-pet-food.ts（合并数据，保持向后兼容）
+
+- [ ] **Task 6.1.1**: 读取现有US-pet-food.ts，分析字段通用性
+  - 标记35个通用字段（m1_company_registration, m4_vat, m7_payment等）
+  - 标记55个特定字段（m4_hs_code, m4_tariff, m6_cac等）
+
+- [ ] **Task 6.1.2**: 创建US-base-data.ts
+  - 参考模板：docs/templates/DATA-TEMPLATE-EXAMPLE.md模板1
+  - 提取35个通用字段
+  - 补充溯源信息：
+    - collected_at: '2025-11-08T10:00:00+08:00'（Week 1 Day 2）
+    - collected_by: 'Claude AI + Manual Research'
+    - 每个字段补充完整URL（如USITC - https://...）
+    - 修正Tier格式（'Tier 2' → 'tier2_authoritative'）
+  - 添加注释：`// ✅通用 - 可被pet_food和vape复用`
+
+- [ ] **Task 6.1.3**: 创建US-pet-food-specific.ts
+  - 参考模板：docs/templates/DATA-TEMPLATE-EXAMPLE.md模板2
+  - 提取55个行业特定字段
+  - 补充溯源信息（同上）
+  - 添加注释：`// ❌特定 - 仅pet_food行业`
+
+- [ ] **Task 6.1.4**: 更新US-pet-food.ts为合并模式
+  - 保留原文件名（向后兼容）
+  - 改为：`import { US_BASE_DATA } from './US-base-data'`
+  - 改为：`import { US_PET_FOOD_SPECIFIC } from './US-pet-food-specific'`
+  - 合并：`export const US_PET_FOOD = { ...US_BASE_DATA, ...US_PET_FOOD_SPECIFIC, ... }`
+  - 添加data_quality_notes标注重构信息
+
+- [ ] **Task 6.1.5**: 验证美国数据
+  - TypeScript编译通过（3个文件）
+  - P0字段67个100%填充
+  - Tier 1/2数据≥80%
+  - 所有data_source有完整URL
+  - 通用vs特定字段标注100%
+
+---
+
+#### 🇩🇪 德国数据重构（1.5小时）
+
+- [ ] **Task 6.2.1**: 分析DE-pet-food.ts字段通用性
+- [ ] **Task 6.2.2**: 创建DE-base-data.ts（35个通用字段）
+  - collected_at: '2025-11-09T10:00:00+08:00'（Week 1 Day 4）
+- [ ] **Task 6.2.3**: 创建DE-pet-food-specific.ts（55个特定字段）
+- [ ] **Task 6.2.4**: 更新DE-pet-food.ts为合并模式
+- [ ] **Task 6.2.5**: 验证德国数据
+
+---
+
+#### 🇻🇳 越南数据重构（1.5小时）
+
+- [ ] **Task 6.3.1**: 分析VN-pet-food.ts字段通用性
+- [ ] **Task 6.3.2**: 创建VN-base-data.ts
+  - collected_at: '2025-11-09T11:00:00+08:00'
+- [ ] **Task 6.3.3**: 创建VN-pet-food-specific.ts
+- [ ] **Task 6.3.4**: 更新VN-pet-food.ts为合并模式
+- [ ] **Task 6.3.5**: 验证越南数据
+
+---
+
+#### 🇬🇧 英国数据重构（1.5小时）
+
+- [ ] **Task 6.4.1**: 分析UK-pet-food.ts字段通用性
+- [ ] **Task 6.4.2**: 创建UK-base-data.ts
+  - collected_at: '2025-11-09T12:00:00+08:00'
+- [ ] **Task 6.4.3**: 创建UK-pet-food-specific.ts
+- [ ] **Task 6.4.4**: 更新UK-pet-food.ts为合并模式
+- [ ] **Task 6.4.5**: 验证英国数据
+
+---
+
+#### 🇯🇵 日本数据重构（1.5小时）
+
+- [ ] **Task 6.5.1**: 分析JP-pet-food.ts字段通用性
+- [ ] **Task 6.5.2**: 创建JP-base-data.ts
+  - collected_at: '2025-11-09T13:00:00+08:00'
+- [ ] **Task 6.5.3**: 创建JP-pet-food-specific.ts
+- [ ] **Task 6.5.4**: 更新JP-pet-food.ts为合并模式
+- [ ] **Task 6.5.5**: 验证日本数据
+
+---
+
+#### 📊 整体验证与重新导入
+
+- [ ] **Task 6.6**: 运行完整验证（5国）
+  - **完整性验证**：
+    - [ ] 5国各3个文件共15个文件创建完成
+    - [ ] P0字段67个×5国=335个字段100%填充
+    - [ ] 每个模块M1-M8有完整data_source（含URL）
+    - [ ] collected_at格式正确（ISO 8601）
+  - **Tier质量验证**：
+    - [ ] 5国平均Tier 1数据占比≥60%
+    - [ ] 5国平均Tier 2数据占比≥25%
+    - [ ] M4关税/VAT 100% Tier 1
+  - **通用性验证**：
+    - [ ] 35个通用字段在5个base-data.ts中标注一致
+    - [ ] 55个特定字段在5个specific.ts中标注一致
+  - **合理性验证**：
+    - [ ] 5国关税率均<100%
+    - [ ] 5国VAT率均<30%
+    - [ ] 5国CAC均>0且<$100
+
+- [ ] **Task 6.7**: 重新导入到Appwrite
+  - 创建import-5-countries-refactored.ts脚本
+  - 导入重构后的5国数据
+  - 验证导入成功（Appwrite Console）
+  - 性能测试：批量查询5国<500ms
+
+- [ ] **Task 6.8**: 创建对比验证报告
+  - 对比重构前后数据一致性
+  - 统计溯源信息完整度提升
+  - 验证3文件模式可行性
+  - 输出：REFACTOR-5-COUNTRIES-REPORT.md
+
+- [ ] **Task 6.9**: Git提交Day 6重构成果
+  - **新增文件**（10个）：
+    - US-base-data.ts, US-pet-food-specific.ts
+    - DE-base-data.ts, DE-pet-food-specific.ts
+    - VN-base-data.ts, VN-pet-food-specific.ts
+    - UK-base-data.ts, UK-pet-food-specific.ts
+    - JP-base-data.ts, JP-pet-food-specific.ts
+  - **修改文件**（5个）：
+    - US-pet-food.ts, DE-pet-food.ts, VN-pet-food.ts, UK-pet-food.ts, JP-pet-food.ts
+  - **新增脚本**：import-5-countries-refactored.ts
+  - **新增报告**：REFACTOR-5-COUNTRIES-REPORT.md
+  - **提交消息**：
+    ```
+    重构：5国历史数据完整重构为3文件模式（策略B）
+
+    - 拆分为base-data（通用）+ specific（特定）+ merged（合并）
+    - 补充完整溯源信息（URL + Tier + 时间戳）
+    - 建立标准示例，后续14国直接参考
+    - Vape行业可复用5个base-data.ts
+    ```
+
+**Day 6验收标准**（必须100%通过）：
+- ✅ 5国各3个文件（共15个文件）创建完成
+- ✅ P0字段67个×5国100%填充
+- ✅ Tier 1/2数据平均≥85%
+- ✅ 数据溯源100%完整（每个data_source有完整URL）
+- ✅ 通用vs特定字段标注100%
+- ✅ 重新导入Appwrite成功，性能<500ms
+- ✅ 对比验证报告确认数据一致性
+- ✅ Git提交，包含15个数据文件+脚本+报告
+
+**Day 6成果价值**：
+- 🎯 建立5个完整标准示例（US/DE/VN/UK/JP）
+- 🎯 Week 3 Vape行业可直接复用5个base-data.ts
+- 🎯 后续14国采集有明确参考模板
+- 🎯 数据质量标准落地验证
+
+---
+
+### Day 7: 加拿大数据采集 🎯
 
 **目标国家**: CA（加拿大）
 **采集策略**: 通用vs特定数据分离（3文件模式）
