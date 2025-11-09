@@ -71,6 +71,9 @@ export const DE_PET_FOOD_SPECIFIC = {
   /** M2总CAPEX（❌特定）*/
   m2_total_capex_usd: 4130,  // product_certification $2000 + compliance_testing $1200 + trademark $330 + labeling $600
 
+  /** M2估算总成本（P0必需字段）*/
+  m2_estimated_cost_usd: 4130,  // 与total_capex一致
+
   /** 认证周期（❌特定）*/
   m2_timeline_days: 35,  // 快于美国45天
 
