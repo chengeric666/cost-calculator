@@ -1129,67 +1129,94 @@
 
 #### 印尼 (ID)
 
-- [ ] **Task 12.1**: 印尼关税研究
-  - 查询Indonesia Customs (DJBC)
-  - HS Code: 2309.10.00
-  - ASEAN优惠关税
-  - 数据来源：DJBC官网（Tier 1）
+- [x] **Task 12.1**: 印尼关税研究
+  - ✅ 查询Indonesia Customs (DJBC)
+  - ✅ HS Code: 2309.10.00
+  - ✅ ASEAN AFTA优惠关税: 0%
+  - ✅ 数据来源：DJBC官网（Tier 1）
 
-- [ ] **Task 12.2**: 印尼VAT税率
-  - PPN (VAT): 11%
-  - 数据来源：DJP官网（Tier 1）
+- [x] **Task 12.2**: 印尼VAT税率
+  - ✅ PPN (VAT): 12%（法定税率，实际11% via DPP=11/12）
+  - ✅ 数据来源：DJP官网, PMK-131/2024（Tier 1）
 
-- [ ] **Task 12.3**: 印尼平台+物流成本
-  - Lazada ID佣金
-  - Shopee ID佣金
-  - Tokopedia佣金（印尼本土最大平台）
-  - 雅加达港海运成本
-  - 数据来源：平台卖家中心（Tier 2）
+- [x] **Task 12.3**: 印尼平台+物流成本
+  - ✅ Lazada ID佣金: 4.25-18.24%
+  - ✅ Shopee ID佣金: 4.25-8% + Rp1,250订单处理费
+  - ✅ Tokopedia佣金: 1-8% + 4-6% dynamic（最高15.8%）
+  - ✅ 雅加达港海运成本: $350-1,500/20ft
+  - ✅ 数据来源：平台卖家中心（Tier 2）
 
-- [ ] **Task 12.4**: 印尼M1-M2合规成本
-  - PT注册（外资公司）
-  - BPOM宠物食品许可
-  - Halal认证（如需清真市场）
-  - 数据来源：BKPM + BPOM（Tier 1-2）
+- [x] **Task 12.4**: 印尼M1-M2合规成本
+  - ✅ PT PMA注册: $3,000（最低实缴资本IDR 2.5B）
+  - ✅ Kementan宠物食品许可（非BPOM）: FBU注册1-3年
+  - ✅ Halal认证: 宠物食品需清真认证（MUI认可机构）
+  - ✅ 数据来源：BKPM + Kementan（Tier 1-2）
 
-- [ ] **Task 12.5**: 创建ID-pet-food.ts数据文件
+- [x] **Task 12.5**: 创建ID-pet-food.ts数据文件
+  - ✅ ID-base-data.ts: 35个通用字段
+  - ✅ ID-pet-food-specific.ts: 55个行业字段
+  - ✅ ID-pet-food.ts: 90个合并字段
 
 #### 印度 (IN)
 
-- [ ] **Task 12.6**: 印度关税研究
-  - 查询CBIC (Central Board of Indirect Taxes and Customs)
-  - HS Code: 2309.10.00
-  - MFN关税（预期30-40%，印度关税普遍较高）
-  - 数据来源：CBIC官网（Tier 1）
+- [x] **Task 12.6**: 印度关税研究
+  - ✅ 查询CBIC (Central Board of Indirect Taxes and Customs)
+  - ✅ HS Code: 2309.10.00
+  - ✅ BCD关税: 20%（vs 预期30-40%，实际20%）
+  - ✅ 数据来源：CBIC官网（Tier 1）
 
-- [ ] **Task 12.7**: 印度GST税率
-  - CGST + SGST: 18%（9% + 9%）
-  - 或IGST: 18%（跨邦交易）
-  - 数据来源：GST Council（Tier 1）
+- [x] **Task 12.7**: 印度GST税率
+  - ✅ GST: 18%（标准税率，2025年9月GST 2.0改革后）
+  - ✅ CGST + SGST: 9% + 9%（州内），或IGST 18%（跨州/进口）
+  - ✅ 数据来源：GST Council 56th Meeting（Tier 1）
 
-- [ ] **Task 12.8**: 印度平台+物流成本
-  - Amazon India佣金
-  - Flipkart佣金
-  - Mumbai港海运成本
-  - 数据来源：Amazon.in + Flipkart卖家中心（Tier 2）
+- [x] **Task 12.8**: 印度平台+物流成本
+  - ✅ Amazon India佣金: 2-18%（₹300以下免佣金，2025年3月起）
+  - ✅ Flipkart佣金: 10-25%
+  - ✅ Mumbai港海运成本: $700-1,800/20ft
+  - ✅ 数据来源：Amazon.in + Flipkart卖家中心（Tier 2）
 
-- [ ] **Task 12.9**: 印度M1-M2合规成本
-  - ROC公司注册
-  - FSSAI宠物食品许可
-  - Import Export Code (IEC)
-  - 数据来源：MCA + FSSAI（Tier 1-2）
+- [x] **Task 12.9**: 印度M1-M2合规成本
+  - ✅ MCA公司注册: $300（Private Limited，₹8,000-40,000）
+  - ✅ FSSAI宠物食品许可: 进口商许可证必需
+  - ✅ SIP + AQCS: 农业部卫生进口许可 + 动物检疫清关
+  - ✅ 数据来源：MCA + FSSAI + AQCS（Tier 1-2）
 
-- [ ] **Task 12.10**: 创建IN-pet-food.ts数据文件
+- [x] **Task 12.10**: 创建IN-pet-food.ts数据文件
+  - ✅ IN-base-data.ts: 35个通用字段
+  - ✅ IN-pet-food-specific.ts: 55个行业字段
+  - ✅ IN-pet-food.ts: 90个合并字段
 
 #### 验证与导入
 
-- [ ] **Task 12.11**: 验证ID+IN数据完整性
-- [ ] **Task 12.12**: 导入2国数据到Appwrite
-- [ ] **Task 12.13**: Git提交Day 12成果（14/19国）
+- [x] **Task 12.11**: 验证ID+IN数据完整性
+  - ✅ P0字段: 67/67 (100%)
+  - ✅ ID Tier 1: 73%（官方数据）
+  - ✅ ID Tier 2: 22%（权威数据）
+  - ✅ ID 置信度: 91%
+  - ✅ IN Tier 1: 76%（官方数据）
+  - ✅ IN Tier 2: 19%（权威数据）
+  - ✅ IN 置信度: 92%
+
+- [x] **Task 12.12**: 导入2国数据到Appwrite
+  - ✅ ID导入成功: 69109064002c9209ead3
+  - ✅ IN导入成功: 69109065000c946548fa
+  - ✅ 查询性能: 259ms（<500ms目标，性能达标）
+
+- [x] **Task 12.13**: Git提交Day 12成果
+  - ✅ Commit 9a01410: ID数据文件（3个文件，555行）
+  - ✅ Commit 403ea1f: IN数据文件（3个文件，571行）
+  - ✅ Commit fb2f76e: import脚本更新（支持16国）
+  - ✅ Push成功到远程仓库
 
 **验收标准**：
 - ✅ 2国数据完整（ID+IN）
-- ✅ 进度：14/19国（73.7%）
+- ✅ 进度：16/19国（84.2%）🎉突破80%
+
+**核心成果**：
+- 印尼(ID): 关税0%, VAT 12%, CAC $22, 市场$1.87B（东南亚最大市场，Shopee主导）
+- 印度(IN): 关税20%, GST 18%, CAC $15, 市场$1.01B（总税负41.6%，Amazon ₹300以下免佣金）
+- 南亚+东南亚数据收集完成（ID/IN/PH/TH/SG/MY/VN），多区域覆盖
 
 ---
 
