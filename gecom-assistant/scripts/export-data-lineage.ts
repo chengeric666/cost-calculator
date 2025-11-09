@@ -19,14 +19,64 @@ const COUNTRIES = [
 ];
 
 /**
- * 动态导入TypeScript模块
+ * 深度克隆并清理对象，移除TypeScript特定构造（如 'as const'）
+ * 确保可以被JSON.stringify正确序列化
  */
-async function importModule(filePath: string) {
+function sanitizeForJSON(obj: any): any {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(sanitizeForJSON);
+  }
+
+  const cleaned: any = {};
+  for (const [key, value] of Object.entries(obj)) {
+    // 跳过函数和symbol
+    if (typeof value === 'function' || typeof value === 'symbol') {
+      continue;
+    }
+
+    // 递归清理对象
+    cleaned[key] = sanitizeForJSON(value);
+  }
+
+  return cleaned;
+}
+
+/**
+ * 动态导入TypeScript模块
+ * 优先选择主数据对象（XX_BASE_DATA, XX_PET_FOOD_SPECIFIC, XX_PET_FOOD）
+ * 而非SUMMARY对象
+ */
+async function importModule(filePath: string, expectedPattern: string) {
   try {
     const module = await import(filePath);
-    // 获取命名导出或默认导出
-    const namedExports = Object.values(module).filter(v => typeof v === 'object' && v !== null);
-    return namedExports[0] || module.default || {};
+
+    // 先尝试通过命名匹配找到正确的导出
+    for (const [key, value] of Object.entries(module)) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        key.includes(expectedPattern) &&
+        !key.includes('SUMMARY')
+      ) {
+        return value;
+      }
+    }
+
+    // 如果没找到，尝试找最大的对象（字段最多的）
+    const namedExports = Object.entries(module)
+      .filter(([key, value]) => typeof value === 'object' && value !== null && !key.includes('SUMMARY'))
+      .map(([key, value]) => ({ key, value, size: Object.keys(value as object).length }))
+      .sort((a, b) => b.size - a.size);
+
+    return namedExports[0]?.value || module.default || {};
   } catch (error) {
     console.error(`导入失败: ${filePath}`, error);
     return null;
@@ -63,10 +113,10 @@ async function exportCountryLineage(countryCode: string) {
   }
 
   try {
-    // 动态导入数据
-    const baseData = await importModule(baseDataPath);
-    const specificData = await importModule(specificDataPath);
-    const mergedData = await importModule(mergedDataPath);
+    // 动态导入数据，传入期望的命名模式
+    const baseData = await importModule(baseDataPath, `${countryCode}_BASE_DATA`);
+    const specificData = await importModule(specificDataPath, `${countryCode}_PET_FOOD_SPECIFIC`);
+    const mergedData = await importModule(mergedDataPath, `${countryCode}_PET_FOOD`);
 
     if (!baseData || !specificData || !mergedData) {
       console.log(`   ❌ 导入失败`);
@@ -77,6 +127,11 @@ async function exportCountryLineage(countryCode: string) {
     console.log(`      - base: ${Object.keys(baseData).length} 字段`);
     console.log(`      - specific: ${Object.keys(specificData).length} 字段`);
     console.log(`      - merged: ${Object.keys(mergedData).length} 字段`);
+
+    // 清理数据，确保可JSON序列化
+    const cleanedBaseData = sanitizeForJSON(baseData);
+    const cleanedSpecificData = sanitizeForJSON(specificData);
+    const cleanedMergedData = sanitizeForJSON(mergedData);
 
     // 构建完整数据谱系
     const lineage = {
@@ -91,18 +146,18 @@ async function exportCountryLineage(countryCode: string) {
       layers: {
         base_data: {
           description: '通用基础数据（跨行业复用）',
-          field_count: Object.keys(baseData).length,
-          data: baseData,
+          field_count: Object.keys(cleanedBaseData).length,
+          data: cleanedBaseData,
         },
         industry_specific: {
           description: 'Pet Food行业特定数据',
-          field_count: Object.keys(specificData).length,
-          data: specificData,
+          field_count: Object.keys(cleanedSpecificData).length,
+          data: cleanedSpecificData,
         },
         merged: {
           description: '合并后完整数据',
-          field_count: Object.keys(mergedData).length,
-          data: mergedData,
+          field_count: Object.keys(cleanedMergedData).length,
+          data: cleanedMergedData,
         },
       },
 
@@ -115,12 +170,10 @@ async function exportCountryLineage(countryCode: string) {
 
       // 数据质量元信息
       metadata: {
-        collected_at: mergedData.collected_at || baseData.collected_at,
-        collected_by: mergedData.collected_by || baseData.collected_by,
-        verified_at: mergedData.verified_at,
-        data_quality_summary: mergedData.data_quality_summary
-          ? JSON.parse(mergedData.data_quality_summary)
-          : null,
+        collected_at: cleanedMergedData.collected_at || cleanedBaseData.collected_at,
+        collected_by: cleanedMergedData.collected_by || cleanedBaseData.collected_by,
+        verified_at: cleanedMergedData.verified_at,
+        data_quality_summary: cleanedMergedData.data_quality_summary || null,
       },
     };
 

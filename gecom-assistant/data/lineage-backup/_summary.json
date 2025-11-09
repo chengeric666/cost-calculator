@@ -1,11 +1,203 @@
 {
-  "export_timestamp": "2025-11-09T14:48:38.910Z",
+  "export_timestamp": "2025-11-09T14:57:04.912Z",
   "total_countries": 19,
-  "successful_exports": 11,
-  "failed_exports": 8,
+  "successful_exports": 19,
+  "failed_exports": 0,
   "industry": "pet_food",
   "version": "2025Q1",
   "lineages": [
+    {
+      "country": "US",
+      "country_name": "美国",
+      "field_counts": {
+        "base": 73,
+        "specific": 88,
+        "merged": 144
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 23,
+        "tier1_count": 52,
+        "tier2_count": 36,
+        "tier3_count": 2,
+        "tier1_percentage": 0.78,
+        "tier2_percentage": 0.2,
+        "tier3_percentage": 0.02,
+        "verified": true,
+        "confidence_score": 0.95
+      }
+    },
+    {
+      "country": "DE",
+      "country_name": "德国",
+      "field_counts": {
+        "base": 73,
+        "specific": 88,
+        "merged": 144
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 23,
+        "tier1_count": 52,
+        "tier2_count": 36,
+        "tier3_count": 2,
+        "tier1_percentage": 0.78,
+        "tier2_percentage": 0.2,
+        "tier3_percentage": 0.02,
+        "verified": true,
+        "confidence_score": 0.95
+      }
+    },
+    {
+      "country": "VN",
+      "country_name": "越南",
+      "field_counts": {
+        "base": 73,
+        "specific": 90,
+        "merged": 146
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 23,
+        "tier1_count": 47,
+        "tier2_count": 41,
+        "tier3_count": 2,
+        "tier1_percentage": 0.7,
+        "tier2_percentage": 0.28,
+        "tier3_percentage": 0.02,
+        "verified": true,
+        "confidence_score": 0.88
+      }
+    },
+    {
+      "country": "UK",
+      "country_name": "英国",
+      "field_counts": {
+        "base": 73,
+        "specific": 90,
+        "merged": 146
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 23,
+        "tier1_count": 54,
+        "tier2_count": 34,
+        "tier3_count": 2,
+        "tier1_percentage": 0.8,
+        "tier2_percentage": 0.18,
+        "tier3_percentage": 0.02,
+        "verified": true,
+        "confidence_score": 0.93
+      }
+    },
+    {
+      "country": "JP",
+      "country_name": "日本",
+      "field_counts": {
+        "base": 73,
+        "specific": 90,
+        "merged": 146
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 23,
+        "tier1_count": 56,
+        "tier2_count": 32,
+        "tier3_count": 2,
+        "tier1_percentage": 0.84,
+        "tier2_percentage": 0.14,
+        "tier3_percentage": 0.02,
+        "verified": true,
+        "confidence_score": 0.94
+      }
+    },
+    {
+      "country": "CA",
+      "country_name": "加拿大",
+      "field_counts": {
+        "base": 74,
+        "specific": 62,
+        "merged": 125
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 25,
+        "tier1_count": 50,
+        "tier2_count": 30,
+        "tier3_count": 10,
+        "tier1_percentage": 0.55,
+        "tier2_percentage": 0.33,
+        "tier3_percentage": 0.12,
+        "verified": false,
+        "confidence_score": 0.8
+      }
+    },
+    {
+      "country": "FR",
+      "country_name": "法国",
+      "field_counts": {
+        "base": 74,
+        "specific": 77,
+        "merged": 135
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 25,
+        "tier1_count": 65,
+        "tier2_count": 21,
+        "tier3_count": 4,
+        "tier1_percentage": 0.72,
+        "tier2_percentage": 0.23,
+        "tier3_percentage": 0.05,
+        "verified": true,
+        "confidence_score": 0.9
+      }
+    },
+    {
+      "country": "AU",
+      "country_name": "澳大利亚",
+      "field_counts": {
+        "base": 74,
+        "specific": 77,
+        "merged": 135
+      },
+      "data_quality": {
+        "total_fields": 90,
+        "p0_fields": 67,
+        "p0_fields_filled": 67,
+        "p1_fields": 30,
+        "p1_fields_filled": 25,
+        "tier1_count": 62,
+        "tier2_count": 23,
+        "tier3_count": 5,
+        "tier1_percentage": 0.69,
+        "tier2_percentage": 0.26,
+        "tier3_percentage": 0.05,
+        "verified": true,
+        "confidence_score": 0.88
+      }
+    },
     {
       "country": "IT",
       "country_name": "意大利",
@@ -14,33 +206,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 63,
-          "tier2_count": 22,
-          "tier3_count": 5,
-          "tier1_percentage": 0.7,
-          "tier2_percentage": 0.25,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.89,
-        "last_verified": "2025-11-09",
-        "data_sources": [
-          "Agenzia delle Entrate (VAT官方)",
-          "EU TARIC Database (关税官方)",
-          "Italian Company Formations (公司注册)",
-          "Ministry of Health Italy (监管)",
-          "EU Regulation 767/2009 (法规)",
-          "Amazon Seller Central Europe (FBA)",
-          "Freightos / Welltrans (物流)",
-          "Stripe (支付)",
-          "Mordor Intelligence / Ken Research (市场数据)"
-        ],
-        "notes": "意大利作为EU成员国，关税/法规与FR/DE一致，但VAT更高（22% vs 20%/19%）。监管相对简化，不需向MOH单独通知。市场规模€3.1B，年增长4.42%。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":63,\"tier2_count\":22,\"tier3_count\":5,\"tier1_percentage\":0.7,\"tier2_percentage\":0.25,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agenzia delle Entrate (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Italian Company Formations (公司注册)\",\"Ministry of Health Italy (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Freightos / Welltrans (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / Ken Research (市场数据)\"],\"notes\":\"意大利作为EU成员国，关税/法规与FR/DE一致，但VAT更高（22% vs 20%/19%）。监管相对简化，不需向MOH单独通知。市场规模€3.1B，年增长4.42%。\"}"
     },
     {
       "country": "ES",
@@ -50,33 +216,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 64,
-          "tier2_count": 22,
-          "tier3_count": 4,
-          "tier1_percentage": 0.71,
-          "tier2_percentage": 0.24,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.89,
-        "last_verified": "2025-11-09",
-        "data_sources": [
-          "Agencia Tributaria (VAT官方)",
-          "EU TARIC Database (关税官方)",
-          "Company Formation Spain (公司注册)",
-          "AESAN (监管)",
-          "EU Regulation 767/2009 (法规)",
-          "Amazon Seller Central Europe (FBA)",
-          "Welltrans / Sino Shipping (物流)",
-          "Stripe (支付)",
-          "Mordor Intelligence / IMARC Group (市场数据)"
-        ],
-        "notes": "西班牙作为EU成员国，关税/法规与FR/DE/IT一致，但VAT 21%（与FR相同）。市场规模€2.5B，年增长4.45%，CAC $28（与德国相当）。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":22,\"tier3_count\":4,\"tier1_percentage\":0.71,\"tier2_percentage\":0.24,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agencia Tributaria (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Company Formation Spain (公司注册)\",\"AESAN (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Welltrans / Sino Shipping (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / IMARC Group (市场数据)\"],\"notes\":\"西班牙作为EU成员国，关税/法规与FR/DE/IT一致，但VAT 21%（与FR相同）。市场规模€2.5B，年增长4.45%，CAC $28（与德国相当）。\"}"
     },
     {
       "country": "SG",
@@ -86,32 +226,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 65,
-          "tier2_count": 20,
-          "tier3_count": 5,
-          "tier1_percentage": 0.72,
-          "tier2_percentage": 0.23,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.91,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "IRAS (GST官方)",
-          "Singapore Customs (关税官方)",
-          "ACRA (公司注册官方)",
-          "SFA / NParks AVS (监管)",
-          "Sino Shipping / Super Intl (物流)",
-          "Lazada / Shopee Seller Center (平台)",
-          "Stripe (支付)",
-          "Statista / Pet Fair SEA (市场数据)"
-        ],
-        "notes": "新加坡作为自由贸易港，关税0%（全球最低）。GST 9%，物流效率亚洲第一。AVS-approved sources限制严格（仅限AU/CA/NZ/UK/US）。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"IRAS (GST官方)\",\"Singapore Customs (关税官方)\",\"ACRA (公司注册官方)\",\"SFA / NParks AVS (监管)\",\"Sino Shipping / Super Intl (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Statista / Pet Fair SEA (市场数据)\"],\"notes\":\"新加坡作为自由贸易港，关税0%（全球最低）。GST 9%，物流效率亚洲第一。AVS-approved sources限制严格（仅限AU/CA/NZ/UK/US）。\"}"
     },
     {
       "country": "MY",
@@ -121,31 +236,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 65,
-          "tier2_count": 20,
-          "tier3_count": 5,
-          "tier1_percentage": 0.72,
-          "tier2_percentage": 0.23,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.91,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "Royal Malaysian Customs (关税/SST官方)",
-          "SSM (公司注册官方)",
-          "DVS / MAQIS (监管)",
-          "Sino Shipping / Basenton (物流)",
-          "Lazada / Shopee Seller Center (平台)",
-          "Stripe (支付)",
-          "Mordor Intelligence / Statista (市场数据)"
-        ],
-        "notes": "马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Royal Malaysian Customs (关税/SST官方)\",\"SSM (公司注册官方)\",\"DVS / MAQIS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。\"}"
     },
     {
       "country": "PH",
@@ -155,32 +246,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 65,
-          "tier2_count": 20,
-          "tier3_count": 5,
-          "tier1_percentage": 0.72,
-          "tier2_percentage": 0.22,
-          "tier3_percentage": 0.06
-        },
-        "confidence_score": 0.9,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "Bureau of Customs PH (关税官方)",
-          "BIR (VAT官方)",
-          "SEC (公司注册官方)",
-          "BAI / FDA Philippines (监管)",
-          "Sino Shipping / Basenton (物流)",
-          "Lazada / Shopee Seller Center (平台)",
-          "Stripe (支付)",
-          "Mordor Intelligence / Statista (市场数据)"
-        ],
-        "notes": "菲律宾ASEAN AFTA零关税优势。Shopee第二大市场（仅次于印尼）。BAI多层审批但流程标准化。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.22,\"tier3_percentage\":0.06},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Bureau of Customs PH (关税官方)\",\"BIR (VAT官方)\",\"SEC (公司注册官方)\",\"BAI / FDA Philippines (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"菲律宾ASEAN AFTA零关税优势。Shopee第二大市场（仅次于印尼）。BAI多层审批但流程标准化。\"}"
     },
     {
       "country": "TH",
@@ -190,32 +256,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 64,
-          "tier2_count": 21,
-          "tier3_count": 5,
-          "tier1_percentage": 0.71,
-          "tier2_percentage": 0.23,
-          "tier3_percentage": 0.06
-        },
-        "confidence_score": 0.89,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "Thai Customs (关税)",
-          "Revenue Department (VAT官方)",
-          "DBD (公司注册官方)",
-          "DLD (监管 - Animal Feed Quality Control)",
-          "Sino Shipping / Basenton (物流)",
-          "Lazada / Shopee / TikTok Shop (平台)",
-          "Stripe (支付)",
-          "Mordor Intelligence (市场数据)"
-        ],
-        "notes": "泰国VAT 7%东南亚最低。DLD Animal Feed Quality Control Act B.E. 2558监管。Laem Chabang港东南亚第二大港。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":21,\"tier3_count\":5,\"tier1_percentage\":0.71,\"tier2_percentage\":0.23,\"tier3_percentage\":0.06},\"confidence_score\":0.89,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Thai Customs (关税)\",\"Revenue Department (VAT官方)\",\"DBD (公司注册官方)\",\"DLD (监管 - Animal Feed Quality Control)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee / TikTok Shop (平台)\",\"Stripe (支付)\",\"Mordor Intelligence (市场数据)\"],\"notes\":\"泰国VAT 7%东南亚最低。DLD Animal Feed Quality Control Act B.E. 2558监管。Laem Chabang港东南亚第二大港。\"}"
     },
     {
       "country": "ID",
@@ -225,32 +266,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 66,
-          "tier2_count": 19,
-          "tier3_count": 5,
-          "tier1_percentage": 0.73,
-          "tier2_percentage": 0.21,
-          "tier3_percentage": 0.06
-        },
-        "confidence_score": 0.91,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "DJBC (关税官方)",
-          "DJP (VAT官方)",
-          "BKPM (公司注册官方)",
-          "Ministry of Agriculture / Kementan (监管)",
-          "Sino Shipping / Basenton (物流)",
-          "Shopee / Tokopedia / Lazada Seller Center (平台)",
-          "Stripe (支付)",
-          "Mordor Intelligence / Statista (市场数据)"
-        ],
-        "notes": "印尼ASEAN AFTA零关税优势。Shopee最大市场（2.7亿人口）。Kementan FBU注册1-3年流程复杂。Halal认证必需。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":66,\"tier2_count\":19,\"tier3_count\":5,\"tier1_percentage\":0.73,\"tier2_percentage\":0.21,\"tier3_percentage\":0.06},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"DJBC (关税官方)\",\"DJP (VAT官方)\",\"BKPM (公司注册官方)\",\"Ministry of Agriculture / Kementan (监管)\",\"Sino Shipping / Basenton (物流)\",\"Shopee / Tokopedia / Lazada Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"印尼ASEAN AFTA零关税优势。Shopee最大市场（2.7亿人口）。Kementan FBU注册1-3年流程复杂。Halal认证必需。\"}"
     },
     {
       "country": "IN",
@@ -260,32 +276,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 68,
-          "tier2_count": 17,
-          "tier3_count": 5,
-          "tier1_percentage": 0.76,
-          "tier2_percentage": 0.19,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.92,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "CBIC (关税官方)",
-          "GST Council (GST官方)",
-          "MCA (公司注册官方)",
-          "FSSAI + AQCS (监管)",
-          "Sino Shipping / Basenton (物流)",
-          "Amazon India / Flipkart Seller Center (平台)",
-          "Razorpay / Stripe (支付)",
-          "Mordor Intelligence / Grand View Research (市场数据)"
-        ],
-        "notes": "印度关税20%+GST 18%总税负~41.6%（南亚较高）。Amazon ₹300以下免佣金优势。FSSAI+SIP+AQCS三重审批。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.92,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"CBIC (关税官方)\",\"GST Council (GST官方)\",\"MCA (公司注册官方)\",\"FSSAI + AQCS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Amazon India / Flipkart Seller Center (平台)\",\"Razorpay / Stripe (支付)\",\"Mordor Intelligence / Grand View Research (市场数据)\"],\"notes\":\"印度关税20%+GST 18%总税负~41.6%（南亚较高）。Amazon ₹300以下免佣金优势。FSSAI+SIP+AQCS三重审批。\"}"
     },
     {
       "country": "KR",
@@ -295,32 +286,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 68,
-          "tier2_count": 17,
-          "tier3_count": 5,
-          "tier1_percentage": 0.76,
-          "tier2_percentage": 0.19,
-          "tier3_percentage": 0.05
-        },
-        "confidence_score": 0.93,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "Korea Customs Service (关税官方)",
-          "Korea Tax Service (VAT官方)",
-          "MAFRA / MFDS (监管官方)",
-          "Korea Company Registration Services (公司注册)",
-          "Sino Shipping / Basenton (物流)",
-          "Coupang / Naver Seller Center (平台)",
-          "Stripe (支付)",
-          "Mordor Intelligence / Statista (市场数据)"
-        ],
-        "notes": "韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.93,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Korea Customs Service (关税官方)\",\"Korea Tax Service (VAT官方)\",\"MAFRA / MFDS (监管官方)\",\"Korea Company Registration Services (公司注册)\",\"Sino Shipping / Basenton (物流)\",\"Coupang / Naver Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。\"}"
     },
     {
       "country": "SA",
@@ -330,31 +296,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 65,
-          "tier2_count": 21,
-          "tier3_count": 4,
-          "tier1_percentage": 0.72,
-          "tier2_percentage": 0.23,
-          "tier3_percentage": 0.04
-        },
-        "confidence_score": 0.9,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方",
-          "SFDA Feed Department - 宠物食品监管官方",
-          "MISA (Ministry of Investment) - 公司注册官方",
-          "Sino Shipping / Basenton (物流)",
-          "Noon / Amazon.sa Seller Center (平台)",
-          "Stripe (支付)",
-          "IMARC / Grand View Research / TechSci Research (市场数据)"
-        ],
-        "notes": "沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":21,\"tier3_count\":4,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.04},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方\",\"SFDA Feed Department - 宠物食品监管官方\",\"MISA (Ministry of Investment) - 公司注册官方\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.sa Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Grand View Research / TechSci Research (市场数据)\"],\"notes\":\"沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。\"}"
     },
     {
       "country": "AE",
@@ -364,32 +306,7 @@
         "specific": 60,
         "merged": 93
       },
-      "data_quality": {
-        "total_fields": 90,
-        "p0_fields_filled": 67,
-        "p0_fill_rate": 1,
-        "tier_distribution": {
-          "tier1_count": 67,
-          "tier2_count": 18,
-          "tier3_count": 5,
-          "tier1_percentage": 0.74,
-          "tier2_percentage": 0.2,
-          "tier3_percentage": 0.06
-        },
-        "confidence_score": 0.92,
-        "last_verified": "2025-11-10",
-        "data_sources": [
-          "FTA (Federal Tax Authority) - 关税+VAT官方",
-          "MOCCAE (Ministry of Climate Change & Environment) - 宠物食品监管",
-          "Dubai Municipality - 食品安全+标签",
-          "Dubai Economy / Free Zone Authorities - 公司注册",
-          "Sino Shipping / Basenton (物流)",
-          "Noon / Amazon.ae Seller Center (平台)",
-          "Stripe (支付)",
-          "IMARC / Statista / Grand View Research (市场数据)"
-        ],
-        "notes": "阿联酋VAT 5%（GCC最低），关税5%。MOCCAE 5年注册有效期。Noon起源地。Free Zone 100%外资所有权。Jebel Ali中东最大港。"
-      }
+      "data_quality": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":67,\"tier2_count\":18,\"tier3_count\":5,\"tier1_percentage\":0.74,\"tier2_percentage\":0.2,\"tier3_percentage\":0.06},\"confidence_score\":0.92,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"FTA (Federal Tax Authority) - 关税+VAT官方\",\"MOCCAE (Ministry of Climate Change & Environment) - 宠物食品监管\",\"Dubai Municipality - 食品安全+标签\",\"Dubai Economy / Free Zone Authorities - 公司注册\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.ae Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Statista / Grand View Research (市场数据)\"],\"notes\":\"阿联酋VAT 5%（GCC最低），关税5%。MOCCAE 5年注册有效期。Noon起源地。Free Zone 100%外资所有权。Jebel Ali中东最大港。\"}"
     }
   ]
 }

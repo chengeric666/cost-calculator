@@ -4,7 +4,7 @@
   "country_flag": "🇸🇬",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:37.923Z",
+  "export_timestamp": "2025-11-09T14:57:03.883Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,31 +223,6 @@
     "collected_at": "2025-11-10T00:00:00+08:00",
     "collected_by": "Claude AI + WebSearch (IRAS, ACRA, Sino Shipping)",
     "verified_at": "2025-11-10T00:30:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 65,
-        "tier2_count": 20,
-        "tier3_count": 5,
-        "tier1_percentage": 0.72,
-        "tier2_percentage": 0.23,
-        "tier3_percentage": 0.05
-      },
-      "confidence_score": 0.91,
-      "last_verified": "2025-11-10",
-      "data_sources": [
-        "IRAS (GST官方)",
-        "Singapore Customs (关税官方)",
-        "ACRA (公司注册官方)",
-        "SFA / NParks AVS (监管)",
-        "Sino Shipping / Super Intl (物流)",
-        "Lazada / Shopee Seller Center (平台)",
-        "Stripe (支付)",
-        "Statista / Pet Fair SEA (市场数据)"
-      ],
-      "notes": "新加坡作为自由贸易港，关税0%（全球最低）。GST 9%，物流效率亚洲第一。AVS-approved sources限制严格（仅限AU/CA/NZ/UK/US）。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"IRAS (GST官方)\",\"Singapore Customs (关税官方)\",\"ACRA (公司注册官方)\",\"SFA / NParks AVS (监管)\",\"Sino Shipping / Super Intl (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Statista / Pet Fair SEA (市场数据)\"],\"notes\":\"新加坡作为自由贸易港，关税0%（全球最低）。GST 9%，物流效率亚洲第一。AVS-approved sources限制严格（仅限AU/CA/NZ/UK/US）。\"}"
   }
 }

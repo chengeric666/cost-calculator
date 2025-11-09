@@ -4,7 +4,7 @@
   "country_flag": "🇲🇾",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:38.037Z",
+  "export_timestamp": "2025-11-09T14:57:04.002Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,30 +223,6 @@
     "collected_at": "2025-11-10T01:00:00+08:00",
     "collected_by": "Claude AI + WebSearch (SSM, Royal Malaysian Customs, Sino Shipping)",
     "verified_at": "2025-11-10T01:30:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 65,
-        "tier2_count": 20,
-        "tier3_count": 5,
-        "tier1_percentage": 0.72,
-        "tier2_percentage": 0.23,
-        "tier3_percentage": 0.05
-      },
-      "confidence_score": 0.91,
-      "last_verified": "2025-11-10",
-      "data_sources": [
-        "Royal Malaysian Customs (关税/SST官方)",
-        "SSM (公司注册官方)",
-        "DVS / MAQIS (监管)",
-        "Sino Shipping / Basenton (物流)",
-        "Lazada / Shopee Seller Center (平台)",
-        "Stripe (支付)",
-        "Mordor Intelligence / Statista (市场数据)"
-      ],
-      "notes": "马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Royal Malaysian Customs (关税/SST官方)\",\"SSM (公司注册官方)\",\"DVS / MAQIS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。\"}"
   }
 }

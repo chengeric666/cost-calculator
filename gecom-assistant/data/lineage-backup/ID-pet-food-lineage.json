@@ -4,7 +4,7 @@
   "country_flag": "🇮🇩",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:38.375Z",
+  "export_timestamp": "2025-11-09T14:57:04.362Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,31 +223,6 @@
     "collected_at": "2025-11-10T04:00:00+08:00",
     "collected_by": "Claude AI + WebSearch (BKPM, DJP, Sino Shipping, Stripe)",
     "verified_at": "2025-11-10T04:30:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 66,
-        "tier2_count": 19,
-        "tier3_count": 5,
-        "tier1_percentage": 0.73,
-        "tier2_percentage": 0.21,
-        "tier3_percentage": 0.06
-      },
-      "confidence_score": 0.91,
-      "last_verified": "2025-11-10",
-      "data_sources": [
-        "DJBC (关税官方)",
-        "DJP (VAT官方)",
-        "BKPM (公司注册官方)",
-        "Ministry of Agriculture / Kementan (监管)",
-        "Sino Shipping / Basenton (物流)",
-        "Shopee / Tokopedia / Lazada Seller Center (平台)",
-        "Stripe (支付)",
-        "Mordor Intelligence / Statista (市场数据)"
-      ],
-      "notes": "印尼ASEAN AFTA零关税优势。Shopee最大市场（2.7亿人口）。Kementan FBU注册1-3年流程复杂。Halal认证必需。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":66,\"tier2_count\":19,\"tier3_count\":5,\"tier1_percentage\":0.73,\"tier2_percentage\":0.21,\"tier3_percentage\":0.06},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"DJBC (关税官方)\",\"DJP (VAT官方)\",\"BKPM (公司注册官方)\",\"Ministry of Agriculture / Kementan (监管)\",\"Sino Shipping / Basenton (物流)\",\"Shopee / Tokopedia / Lazada Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"印尼ASEAN AFTA零关税优势。Shopee最大市场（2.7亿人口）。Kementan FBU注册1-3年流程复杂。Halal认证必需。\"}"
   }
 }

@@ -4,7 +4,7 @@
   "country_flag": "🇰🇷",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:38.593Z",
+  "export_timestamp": "2025-11-09T14:57:04.581Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,31 +223,6 @@
     "collected_at": "2025-11-10T06:00:00+08:00",
     "collected_by": "Claude AI + WebSearch (KTS, Korea Company Registration, Sino Shipping, Stripe)",
     "verified_at": "2025-11-10T06:30:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 68,
-        "tier2_count": 17,
-        "tier3_count": 5,
-        "tier1_percentage": 0.76,
-        "tier2_percentage": 0.19,
-        "tier3_percentage": 0.05
-      },
-      "confidence_score": 0.93,
-      "last_verified": "2025-11-10",
-      "data_sources": [
-        "Korea Customs Service (关税官方)",
-        "Korea Tax Service (VAT官方)",
-        "MAFRA / MFDS (监管官方)",
-        "Korea Company Registration Services (公司注册)",
-        "Sino Shipping / Basenton (物流)",
-        "Coupang / Naver Seller Center (平台)",
-        "Stripe (支付)",
-        "Mordor Intelligence / Statista (市场数据)"
-      ],
-      "notes": "韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.93,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Korea Customs Service (关税官方)\",\"Korea Tax Service (VAT官方)\",\"MAFRA / MFDS (监管官方)\",\"Korea Company Registration Services (公司注册)\",\"Sino Shipping / Basenton (物流)\",\"Coupang / Naver Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。\"}"
   }
 }

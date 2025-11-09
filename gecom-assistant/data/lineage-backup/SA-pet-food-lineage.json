@@ -4,7 +4,7 @@
   "country_flag": "🇸🇦",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:38.700Z",
+  "export_timestamp": "2025-11-09T14:57:04.696Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,30 +223,6 @@
     "collected_at": "2025-11-10T08:00:00+08:00",
     "collected_by": "Claude AI + WebSearch (ZATCA, MISA, Sino Shipping, Stripe)",
     "verified_at": "2025-11-10T08:30:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 65,
-        "tier2_count": 21,
-        "tier3_count": 4,
-        "tier1_percentage": 0.72,
-        "tier2_percentage": 0.23,
-        "tier3_percentage": 0.04
-      },
-      "confidence_score": 0.9,
-      "last_verified": "2025-11-10",
-      "data_sources": [
-        "ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方",
-        "SFDA Feed Department - 宠物食品监管官方",
-        "MISA (Ministry of Investment) - 公司注册官方",
-        "Sino Shipping / Basenton (物流)",
-        "Noon / Amazon.sa Seller Center (平台)",
-        "Stripe (支付)",
-        "IMARC / Grand View Research / TechSci Research (市场数据)"
-      ],
-      "notes": "沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":21,\"tier3_count\":4,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.04},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方\",\"SFDA Feed Department - 宠物食品监管官方\",\"MISA (Ministry of Investment) - 公司注册官方\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.sa Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Grand View Research / TechSci Research (市场数据)\"],\"notes\":\"沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。\"}"
   }
 }

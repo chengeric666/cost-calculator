@@ -4,7 +4,7 @@
   "country_flag": "🇪🇸",
   "industry": "pet_food",
   "version": "2025Q1",
-  "export_timestamp": "2025-11-09T14:48:37.811Z",
+  "export_timestamp": "2025-11-09T14:57:03.764Z",
   "layers": {
     "base_data": {
       "description": "通用基础数据（跨行业复用）",
@@ -223,32 +223,6 @@
     "collected_at": "2025-11-09T22:30:00+08:00",
     "collected_by": "Claude AI + WebSearch (Agencia Tributaria, Company Formation Spain, Welltrans)",
     "verified_at": "2025-11-09T23:00:00+08:00",
-    "data_quality_summary": {
-      "total_fields": 90,
-      "p0_fields_filled": 67,
-      "p0_fill_rate": 1,
-      "tier_distribution": {
-        "tier1_count": 64,
-        "tier2_count": 22,
-        "tier3_count": 4,
-        "tier1_percentage": 0.71,
-        "tier2_percentage": 0.24,
-        "tier3_percentage": 0.05
-      },
-      "confidence_score": 0.89,
-      "last_verified": "2025-11-09",
-      "data_sources": [
-        "Agencia Tributaria (VAT官方)",
-        "EU TARIC Database (关税官方)",
-        "Company Formation Spain (公司注册)",
-        "AESAN (监管)",
-        "EU Regulation 767/2009 (法规)",
-        "Amazon Seller Central Europe (FBA)",
-        "Welltrans / Sino Shipping (物流)",
-        "Stripe (支付)",
-        "Mordor Intelligence / IMARC Group (市场数据)"
-      ],
-      "notes": "西班牙作为EU成员国，关税/法规与FR/DE/IT一致，但VAT 21%（与FR相同）。市场规模€2.5B，年增长4.45%，CAC $28（与德国相当）。"
-    }
+    "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":22,\"tier3_count\":4,\"tier1_percentage\":0.71,\"tier2_percentage\":0.24,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agencia Tributaria (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Company Formation Spain (公司注册)\",\"AESAN (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Welltrans / Sino Shipping (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / IMARC Group (市场数据)\"],\"notes\":\"西班牙作为EU成员国，关税/法规与FR/DE/IT一致，但VAT 21%（与FR相同）。市场规模€2.5B，年增长4.45%，CAC $28（与德国相当）。\"}"
   }
 }
