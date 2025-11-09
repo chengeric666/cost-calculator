@@ -4,9 +4,9 @@
 >
 > **交互语言：** 中文（所有对话必须使用中文） ⭐
 >
-> **文档版本：** v2.0 (MVP 2.0)
-> **最后更新：** 2025-11-08
-> **项目阶段：** MVP 2.0（19国真实数据 + AI深度集成 + 专业报告生成）
+> **文档版本：** v2.1 (MVP 2.0)
+> **最后更新：** 2025-11-09
+> **项目阶段：** MVP 2.0 Week 1（Appwrite数据库已搭建，5国数据已导入）
 
 ---
 
@@ -144,6 +144,12 @@ Step 5: AI智能助手
 - Endpoint: https://apps.aotsea.com/v1
 
 **数据库结构（MVP 2.0）：**
+
+> **💡 数据库设置指南**：详见 [DATABASE-SETUP.md](./docs/DATABASE-SETUP.md)
+> - 自动化脚本：`npm run db:setup`
+> - 完整127字段Schema定义
+> - 19国M1-M8数据结构
+
 ```
 gecom_database (690d4fdd0035c2f63f20)/
 ├─ cost_factors                 # ⭐ 19国成本因子库（核心）
@@ -441,6 +447,65 @@ breakEvenVolume = CAPEX.total / grossProfit
 - 集成测试：API调用（Appwrite, DeepSeek）
 - E2E测试：完整向导流程（Playwright）
 
+### Appwrite开发规范
+
+#### 重要经验：避免并发操作问题
+
+**问题描述**：使用Promise.all()并行创建Collections时报"authorization error"
+**根本原因**：Appwrite对并发操作有限制，而非API权限问题
+**解决方案**：改用顺序创建（for循环 + await）
+
+**错误示例**：
+```typescript
+// ❌ 失败：并行创建导致authorization error
+const results = await Promise.all([
+  databases.createCollection(DB_ID, 'collection1', 'Name 1'),
+  databases.createCollection(DB_ID, 'collection2', 'Name 2'),
+  databases.createCollection(DB_ID, 'collection3', 'Name 3'),
+]);
+```
+
+**正确示例**：
+```typescript
+// ✅ 成功：顺序创建
+for (const col of collections) {
+  await databases.createCollection(DB_ID, col.id, col.name);
+  // 可选：添加延迟确保操作完成
+  await new Promise(resolve => setTimeout(resolve, 500));
+}
+```
+
+**适用场景**：
+- 创建Collections
+- 批量添加字段（Attributes）
+- 创建索引（Indexes）
+- 批量创建文档（Documents）时建议分批处理
+
+**排查技巧**：
+- 如果遇到"authorization error"但API key权限正确，优先检查是否有并发操作
+- 使用简单的单个操作测试来验证权限是否真的有问题
+- 查看scripts/archive/目录的测试脚本了解问题排查过程
+
+#### 字段创建注意事项
+
+1. **Required字段不能有默认值**
+   ```typescript
+   // ❌ 错误：required + default会失败
+   { key: 'industry', required: true, default: 'pet_food' }
+
+   // ✅ 正确：设为optional可以有默认值
+   { key: 'industry', required: false, default: 'pet_food' }
+   ```
+
+2. **字段大小总量限制**
+   - Appwrite对单个Collection的字段总大小有限制
+   - 如遇到"maximum size reached"错误，需要调整字段大小
+   - 示例：scope(10000) + costResult(10000) → scope(5000) + costResult(5000)
+
+3. **字段创建间隔**
+   - 批量创建字段时建议每个字段间隔500ms，等待索引完成
+   - 避免因创建过快导致的冲突或失败
+
 ---
 
 ## 🚀 部署流程
@@ -503,13 +568,24 @@ appwrite sites create-deployment \
 - [x] CLAUDE.md和GECOM-03更新指南
 - [x] **MVP 2.0完整任务清单创建**（104个任务，详细验收标准）
 
-### 🚧 进行中（MVP 2.0 实施 - Week 1）
-**当前状态：0/28 任务完成**（详见：[MVP-2.0-任务清单.md](./docs/MVP-2.0-任务清单.md)）
+### ✅ 已完成（MVP 2.0 实施 - Week 1 Day 5）
+- [x] Appwrite数据库完整搭建
+  - ✅ 创建4个Collections（cost_factors, projects, calculations, cost_factor_versions）
+  - ✅ 添加53个字段（cost_factors: 36, projects: 7, calculations: 6, versions: 4）
+  - ✅ 创建9个查询优化索引
+- [x] 5国成本数据导入
+  - ✅ 美国(US)、德国(DE)、越南(VN)、英国(UK)、日本(JP)
+  - ✅ 包含M1-M8完整数据（关税/VAT/物流等）
+  - ✅ 数据质量：Tier 2级别
+- [x] 开发脚本创建（7个生产脚本 + 7个归档测试脚本）
+- [x] 数据库完整性验证
+- [x] Appwrite开发经验总结（避免并发操作等）
 
-- [ ] Day 1: Appwrite数据库架构创建（6个任务）
-- [ ] Day 2-3: 美国市场真实数据采集（10个任务）
-- [ ] Day 4: 德国/越南市场数据采集（6个任务）
-- [ ] Day 5: 数据导入与SDK封装（10个任务）
+### 🚧 进行中（MVP 2.0 实施 - Week 1）
+**当前状态：已完成Day 5数据库搭建**
+
+- [x] Day 5: 数据导入与数据库搭建 ⭐
+- [ ] Day 6-7: 继续导入剩余14国数据
 
 ### 📋 待开发（MVP 2.0 - Week 2）
 **计划：0/28 任务**（详见：[MVP-2.0-任务清单.md](./docs/MVP-2.0-任务清单.md)）
