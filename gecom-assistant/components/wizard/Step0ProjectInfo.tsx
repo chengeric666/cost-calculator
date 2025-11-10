@@ -98,19 +98,23 @@ export default function Step0ProjectInfo({ onNext, initialData }: Step0Props) {
 
     setLoading(true);
     try {
-      // 创建项目记录
-      const project = await createProject({
+      // TODO: MVP 2.0 - Appwrite权限配置后启用数据库保存
+      // 暂时使用本地生成的临时ID，避免anonymous权限问题
+      const tempProject: Project = {
+        id: `temp-${Date.now()}`, // 临时ID
         name: formState.projectName.trim(),
         industry: formState.industry,
-        userId: 'anonymous', // 未来集成用户认证
-      });
+        targetCountry: 'US', // 默认值，Step 1会更新
+        salesChannel: 'amazon_fba', // 默认值，Step 1会更新
+        userId: 'anonymous',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-      if (project) {
-        // 传递项目信息到下一步
-        onNext(project);
-      } else {
-        throw new Error('创建项目失败');
-      }
+      console.log('✅ 项目创建成功（本地模式）:', tempProject);
+
+      // 传递项目信息到下一步
+      onNext(tempProject);
     } catch (error) {
       console.error('创建项目失败:', error);
       setErrors({ projectName: '创建项目失败，请重试' });
