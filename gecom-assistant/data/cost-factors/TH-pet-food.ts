@@ -17,17 +17,7 @@
 import { TH_BASE_DATA } from './TH-base-data';
 import { TH_PET_FOOD_SPECIFIC } from './TH-pet-food-specific';
 
-export const TH_PET_FOOD: any = {
-  // ============================================================
-  // 核心标识 Core Identification
-  // ============================================================
-  country: 'TH',
-  country_name_cn: '泰国',
-  country_flag: '🇹🇭',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ============================================================
+export const TH_PET_FOOD: any = {// ============================================================
   // 合并基础数据和行业数据
   // Merge Base Data + Industry Specific Data
   // ============================================================

@@ -17,17 +17,7 @@
 import { IN_BASE_DATA } from './IN-base-data';
 import { IN_PET_FOOD_SPECIFIC } from './IN-pet-food-specific';
 
-export const IN_PET_FOOD: any = {
-  // ============================================================
-  // 核心标识 Core Identification
-  // ============================================================
-  country: 'IN',
-  country_name_cn: '印度',
-  country_flag: '🇮🇳',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ============================================================
+export const IN_PET_FOOD: any = {// ============================================================
   // 合并基础数据和行业数据
   // Merge Base Data + Industry Specific Data
   // ============================================================

@@ -17,17 +17,7 @@
 import { PH_BASE_DATA } from './PH-base-data';
 import { PH_PET_FOOD_SPECIFIC } from './PH-pet-food-specific';
 
-export const PH_PET_FOOD: any = {
-  // ============================================================
-  // 核心标识 Core Identification
-  // ============================================================
-  country: 'PH',
-  country_name_cn: '菲律宾',
-  country_flag: '🇵🇭',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ============================================================
+export const PH_PET_FOOD: any = {// ============================================================
   // 合并基础数据和行业数据
   // Merge Base Data + Industry Specific Data
   // ============================================================

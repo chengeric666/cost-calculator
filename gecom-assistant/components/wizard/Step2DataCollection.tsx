@@ -1,241 +1,1029 @@
 'use client';
 
-import { Project } from '@/types/gecom';
-import { Package, DollarSign, TrendingUp } from 'lucide-react';
+/**
+ * Step 2: 成本参数配置（完整M1-M8模块展示）
+ *
+ * MVP 2.0核心设计：
+ * - 双阶段分组：CAPEX（M1-M3）+ OPEX（M4-M8）
+ * - 快速模式/专家模式切换
+ * - 智能预填系统（从cost_factors加载）
+ * - 用户覆盖值追踪
+ * - 实时成本计算预览
+ * - 数据溯源可视化（Tier 1/2/3徽章）
+ */
 
-interface Step2DataCollectionProps {
+import { useState, useEffect, useMemo } from 'react';
+import { Project, CostResult, CostFactor, TargetCountry, Industry } from '@/types/gecom';
+import {
+  ChevronDown,
+  ChevronRight,
+  Info,
+  AlertCircle,
+  Edit2,
+  Check,
+  Calculator,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Lock,
+  Unlock,
+} from 'lucide-react';
+
+interface Step2Props {
   project: Partial<Project>;
   onUpdate: (updates: Partial<Project>) => void;
+  costResult: CostResult | null;
 }
 
-export default function Step2DataCollection({ project, onUpdate }: Step2DataCollectionProps) {
-  const handleProductUpdate = (field: string, value: any) => {
-    onUpdate({
-      scope: {
-        ...project.scope!,
-        productInfo: {
-          ...project.scope!.productInfo,
-          [field]: value,
-        },
-      },
-    });
+interface CostParamsState {
+  // 快速模式 vs 专家模式
+  mode: 'quick' | 'expert';
+
+  // 各模块展开状态
+  expandedSections: {
+    capex: boolean;
+    m1: boolean;
+    m2: boolean;
+    m3: boolean;
+    opex: boolean;
+    m4: boolean;
+    m5: boolean;
+    m6: boolean;
+    m7: boolean;
+    m8: boolean;
   };
 
-  const handleAssumptionsUpdate = (field: string, value: any) => {
-    onUpdate({
-      scope: {
-        ...project.scope!,
-        assumptions: {
-          ...project.scope!.assumptions,
-          [field]: value,
-        },
-      },
-    });
-  };
+  // 用户覆盖值（存储用户自定义的字段）
+  userOverrides: Record<string, any>;
+
+  // 成本因子数据（从数据库加载）
+  costFactor: CostFactor | null;
+}
+
+/**
+ * 获取Tier徽章颜色
+ */
+function getTierBadgeColor(tier?: string): string {
+  if (!tier) return 'bg-gray-100 text-gray-700 border-gray-300';
+
+  if (tier.includes('1') || tier.includes('official')) {
+    return 'bg-green-100 text-green-700 border-green-300';
+  } else if (tier.includes('2') || tier.includes('authoritative')) {
+    return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+  } else {
+    return 'bg-gray-100 text-gray-700 border-gray-300';
+  }
+}
+
+/**
+ * Tier徽章组件
+ */
+function TierBadge({ tier }: { tier?: string }) {
+  if (!tier) return null;
+
+  const displayText = tier.includes('1')
+    ? 'Tier 1'
+    : tier.includes('2')
+    ? 'Tier 2'
+    : 'Tier 3';
 
   return (
-    <div className="space-y-8">
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getTierBadgeColor(tier)}`}>
+      {displayText}
+    </span>
+  );
+}
+
+export default function Step2DataCollection({ project, onUpdate, costResult }: Step2Props) {
+  const [state, setState] = useState<CostParamsState>({
+    mode: 'quick',
+    expandedSections: {
+      capex: false,
+      m1: false,
+      m2: false,
+      m3: false,
+      opex: true, // OPEX默认展开
+      m4: true,   // M4默认展开（最重要）
+      m5: false,
+      m6: false,
+      m7: false,
+      m8: false,
+    },
+    userOverrides: {},
+    costFactor: null,
+  });
+
+  // 模拟从数据库加载成本因子数据（MVP 2.0将从Appwrite加载）
+  useEffect(() => {
+    // TODO: 从Appwrite cost_factors表加载数据
+    // const factor = await getCostFactor(project.targetCountry, project.industry);
+    // setState(prev => ({ ...prev, costFactor: factor }));
+
+    // 临时使用Mock数据
+    const mockCostFactor: Partial<CostFactor> = {
+      country: project.targetCountry as TargetCountry,
+      country_name_cn: getCountryName(project.targetCountry as TargetCountry),
+      industry: project.industry as Industry,
+      version: '2025Q1',
+
+      // M1
+      m1_regulatory_agency: 'FDA, APHIS',
+      m1_complexity: '高',
+      m1_estimated_cost_usd: 5000,
+      m1_tier: 'tier2_authoritative',
+
+      // M2
+      m2_certifications_required: 'AAFCO认证、FDA合规',
+      m2_estimated_cost_usd: 3000,
+      m2_tier: 'tier2_authoritative',
+
+      // M3
+      m3_packaging_rate: 0.02,
+      m3_initial_inventory_usd: 10000,
+      m3_warehouse_deposit_usd: 5000,
+      m3_tier: 'tier2_authoritative',
+
+      // M4
+      m4_effective_tariff_rate: 0.55,
+      m4_tariff_notes: '10%互惠关税 + 25% Section 301 + 20%附加',
+      m4_tariff_tier: 'tier1_official',
+      m4_vat_rate: 0.06,
+      m4_vat_notes: '州税差异，范围0-10%+',
+      m4_vat_tier: 'tier1_official',
+      m4_logistics: JSON.stringify({
+        sea_freight: {
+          usd_per_kg: 0.14,
+          transit_days_min: 15,
+          transit_days_max: 25,
+          data_source: 'tier2',
+        },
+        air_freight: {
+          usd_per_kg: 4.5,
+          transit_days_min: 3,
+          transit_days_max: 7,
+          data_source: 'tier2',
+        },
+      }),
+      m4_logistics_tier: 'tier2_authoritative',
+
+      // M5
+      m5_last_mile_delivery_usd: 7.5,
+      m5_return_rate: 0.10,
+      m5_return_cost_rate: 0.30,
+      m5_tier: 'tier2_authoritative',
+
+      // M6
+      m6_marketing_rate: 0.15,
+      m6_notes: 'ACOS 20-40%, ACOAS 15-20%行业均值',
+      m6_tier: 'tier2_authoritative',
+
+      // M7
+      m7_payment_rate: 0.029,
+      m7_payment_fixed_usd: 0.30,
+      m7_platform_commission_rate: 0.15,
+      m7_notes: 'Stripe/PayPal标准费率 + Amazon佣金',
+      m7_tier: 'tier1_official',
+
+      // M8
+      m8_ga_rate: 0.03,
+      m8_notes: '本地客服等运营人员成本',
+      m8_tier: 'tier2_authoritative',
+    };
+
+    setState((prev) => ({ ...prev, costFactor: mockCostFactor as CostFactor }));
+  }, [project.targetCountry, project.industry]);
+
+  /**
+   * 切换展开/折叠状态
+   */
+  const toggleSection = (section: keyof CostParamsState['expandedSections']) => {
+    setState((prev) => ({
+      ...prev,
+      expandedSections: {
+        ...prev.expandedSections,
+        [section]: !prev.expandedSections[section],
+      },
+    }));
+  };
+
+  /**
+   * 切换模式
+   */
+  const toggleMode = () => {
+    setState((prev) => ({
+      ...prev,
+      mode: prev.mode === 'quick' ? 'expert' : 'quick',
+      userOverrides: prev.mode === 'expert' ? {} : prev.userOverrides,
+    }));
+  };
+
+  /**
+   * 更新用户覆盖值
+   */
+  const setUserOverride = (field: string, value: any) => {
+    setState((prev) => ({
+      ...prev,
+      userOverrides: {
+        ...prev.userOverrides,
+        [field]: value,
+      },
+    }));
+  };
+
+  /**
+   * 获取有效值（用户覆盖 > 系统预设）
+   */
+  const getEffectiveValue = (field: keyof CostFactor): any => {
+    return state.userOverrides[field] ?? state.costFactor?.[field];
+  };
+
+  /**
+   * 检查字段是否被用户覆盖
+   */
+  const isOverridden = (field: string): boolean => {
+    return field in state.userOverrides;
+  };
+
+  if (!state.costFactor) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-500 mb-4" />
+          <p className="text-gray-600">加载成本因子数据...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* 标题区域 */}
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">数据采集与验证</h2>
-        <p className="text-gray-600">
-          提供详细的产品和业务信息以实现精确的成本计算
-        </p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">成本参数配置</h2>
+        <p className="text-gray-600">完整M1-M8模块展示，数据基于{state.costFactor.version}版本</p>
       </div>
 
-      {/* Product information */}
+      {/* 模式切换 + 市场信息 */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <Package className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">产品信息</h3>
+        <div className="flex items-center justify-between mb-4">
+          {/* 模式切换 */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={toggleMode}
+              className={`
+                px-4 py-2 rounded-lg border-2 transition-all font-medium flex items-center gap-2
+                ${
+                  state.mode === 'quick'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                }
+              `}
+            >
+              <Lock className={`h-4 w-4 ${state.mode === 'quick' ? 'text-blue-500' : 'text-gray-500'}`} />
+              快速模式（使用全部预设）
+            </button>
+            <button
+              onClick={toggleMode}
+              className={`
+                px-4 py-2 rounded-lg border-2 transition-all font-medium flex items-center gap-2
+                ${
+                  state.mode === 'expert'
+                    ? 'border-purple-500 bg-purple-50 text-purple-700'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                }
+              `}
+            >
+              <Unlock className={`h-4 w-4 ${state.mode === 'expert' ? 'text-purple-500' : 'text-gray-500'}`} />
+              专家模式（逐项自定义）
+            </button>
+          </div>
+
+          {/* 市场信息 */}
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span className="flex items-center gap-2">
+              <span className="font-medium">目标市场:</span>
+              <span className="px-3 py-1 bg-gray-100 rounded-lg font-semibold">
+                {state.costFactor.country_flag || ''} {state.costFactor.country_name_cn}
+              </span>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="font-medium">数据版本:</span>
+              <span className="px-3 py-1 bg-gray-100 rounded-lg font-semibold">{state.costFactor.version}</span>
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              产品名称 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={project.scope?.productInfo.name || ''}
-              onChange={(e) => handleProductUpdate('name', e.target.value)}
-              placeholder="例如：高端狗粮"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              SKU / 产品编码
-            </label>
-            <input
-              type="text"
-              value={project.scope?.productInfo.sku || ''}
-              onChange={(e) => handleProductUpdate('sku', e.target.value)}
-              placeholder="例如：PET-DOG-001"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              产品类别
-            </label>
-            <input
-              type="text"
-              value={project.scope?.productInfo.category || ''}
-              onChange={(e) => handleProductUpdate('category', e.target.value)}
-              placeholder="例如：宠物食品"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              重量 (千克) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              value={project.scope?.productInfo.weight || ''}
-              onChange={(e) => handleProductUpdate('weight', parseFloat(e.target.value) || 0)}
-              placeholder="例如：2.5"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
+        {/* Tier说明 */}
+        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-blue-900 mb-2">数据质量分级说明</h4>
+              <div className="flex items-center gap-6 text-sm text-blue-800">
+                <div className="flex items-center gap-2">
+                  <TierBadge tier="tier1_official" />
+                  <span>官方来源，100%可信</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TierBadge tier="tier2_authoritative" />
+                  <span>权威来源，90%可信</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TierBadge tier="tier3_estimated" />
+                  <span>估算来源，80%可信</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Pricing information */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <DollarSign className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">定价信息</h3>
+      {/* 主内容区域：2/3参数配置 + 1/3实时预览 */}
+      <div className="grid grid-cols-3 gap-6">
+        {/* 左侧：参数配置区域 */}
+        <div className="col-span-2 space-y-6">
+          {/* CAPEX Section */}
+          <CAPEXSection
+            state={state}
+            toggleSection={toggleSection}
+            getEffectiveValue={getEffectiveValue}
+            isOverridden={isOverridden}
+            setUserOverride={setUserOverride}
+            project={project}
+          />
+
+          {/* OPEX Section */}
+          <OPEXSection
+            state={state}
+            toggleSection={toggleSection}
+            getEffectiveValue={getEffectiveValue}
+            isOverridden={isOverridden}
+            setUserOverride={setUserOverride}
+            project={project}
+          />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              制造成本 (COGS) <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-2 text-gray-500">$</span>
-              <input
-                type="number"
-                step="0.01"
-                value={project.scope?.productInfo.cogs || ''}
-                onChange={(e) => handleProductUpdate('cogs', parseFloat(e.target.value) || 0)}
-                placeholder="10.00"
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              />
-            </div>
-            <p className="mt-1 text-xs text-gray-500">单位制造成本</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              目标售价 <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-2 text-gray-500">$</span>
-              <input
-                type="number"
-                step="0.01"
-                value={project.scope?.productInfo.targetPrice || ''}
-                onChange={(e) => handleProductUpdate('targetPrice', parseFloat(e.target.value) || 0)}
-                placeholder="29.99"
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              />
-            </div>
-            <p className="mt-1 text-xs text-gray-500">建议零售价</p>
-          </div>
-        </div>
-
-        {project.scope?.productInfo.cogs && project.scope?.productInfo.targetPrice && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <div className="text-sm text-gray-700">
-              <span className="font-medium">初始毛利率:</span>{' '}
-              {(
-                ((project.scope.productInfo.targetPrice - project.scope.productInfo.cogs) /
-                  project.scope.productInfo.targetPrice) *
-                100
-              ).toFixed(1)}
-              %
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              注：这是扣除物流、营销等成本前的毛利
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Business assumptions */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <TrendingUp className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">业务假设</h3>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              预期月销量（单位） <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              value={project.scope?.assumptions.monthlySales || ''}
-              onChange={(e) => handleAssumptionsUpdate('monthlySales', parseInt(e.target.value) || 0)}
-              placeholder="例如：1000"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-            <p className="mt-1 text-xs text-gray-500">月平均销售量</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              退货率 (%)
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              value={(project.scope?.assumptions.returnRate || 0) * 100}
-              onChange={(e) => handleAssumptionsUpdate('returnRate', parseFloat(e.target.value) / 100 || 0)}
-              placeholder="例如：8"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-            <p className="mt-1 text-xs text-gray-500">默认值：宠物用品为8%</p>
-          </div>
-        </div>
-
-        {project.scope?.assumptions.monthlySales && project.scope?.productInfo.targetPrice && (
-          <div className="mt-4 p-4 bg-green-50 rounded-lg">
-            <div className="text-sm text-gray-700">
-              <span className="font-medium">预计月营收:</span> $
-              {(project.scope.assumptions.monthlySales * project.scope.productInfo.targetPrice).toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-700 mt-1">
-              <span className="font-medium">预计年营收:</span> $
-              {(project.scope.assumptions.monthlySales * project.scope.productInfo.targetPrice * 12).toLocaleString()}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Data quality indicator */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 mt-0.5">
-            <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">
-              ℹ
-            </div>
-          </div>
-          <div className="flex-1">
-            <h4 className="text-sm font-semibold text-blue-900 mb-1">数据源等级</h4>
-            <p className="text-sm text-blue-800">
-              行业因子为Tier 2等级（90%可信度），基于GECOM白皮书案例研究和市场调研。
-            </p>
-          </div>
+        {/* 右侧：实时成本预览 */}
+        <div className="col-span-1">
+          <CostPreviewPanel
+            project={project}
+            costResult={costResult}
+            state={state}
+          />
         </div>
       </div>
     </div>
   );
+}
+
+/**
+ * CAPEX折叠面板组件（M1-M3）
+ */
+function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, setUserOverride, project }: any) {
+  const capexTotal =
+    (getEffectiveValue('m1_estimated_cost_usd') || 0) +
+    (getEffectiveValue('m2_estimated_cost_usd') || 0) +
+    ((getEffectiveValue('m3_initial_inventory_usd') || 0) + (getEffectiveValue('m3_warehouse_deposit_usd') || 0));
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* CAPEX Header */}
+      <button
+        onClick={() => toggleSection('capex')}
+        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 transition-colors border-b border-blue-200"
+      >
+        <div className="flex items-center gap-3">
+          {state.expandedSections.capex ? (
+            <ChevronDown className="h-5 w-5 text-blue-600" />
+          ) : (
+            <ChevronRight className="h-5 w-5 text-blue-600" />
+          )}
+          <h3 className="text-lg font-semibold text-gray-900">阶段 0-1: CAPEX（一次性启动成本）</h3>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600">总计:</span>
+          <span className="text-xl font-bold text-blue-700">${capexTotal.toLocaleString()} USD</span>
+        </div>
+      </button>
+
+      {/* CAPEX Content */}
+      {state.expandedSections.capex && (
+        <div className="p-6 space-y-4">
+          {/* M1 */}
+          <ModuleCard
+            moduleId="m1"
+            title="M1: 市场准入（Market Entry）"
+            expanded={state.expandedSections.m1}
+            onToggle={() => toggleSection('m1')}
+            total={getEffectiveValue('m1_estimated_cost_usd') || 0}
+          >
+            <CostItemRow
+              label="监管机构"
+              value={getEffectiveValue('m1_regulatory_agency')}
+              tier={getEffectiveValue('m1_tier')}
+              readOnly
+            />
+            <CostItemRow
+              label="合规复杂度"
+              value={getEffectiveValue('m1_complexity')}
+              tier={getEffectiveValue('m1_tier')}
+              readOnly
+            />
+            <CostItemRow
+              label="预估准入成本"
+              value={getEffectiveValue('m1_estimated_cost_usd')}
+              unit="USD"
+              tier={getEffectiveValue('m1_tier')}
+              isOverridden={isOverridden('m1_estimated_cost_usd')}
+              onEdit={(val) => setUserOverride('m1_estimated_cost_usd', val)}
+              mode={state.mode}
+              description="包括公司注册、法务咨询、税务登记"
+            />
+          </ModuleCard>
+
+          {/* M2 */}
+          <ModuleCard
+            moduleId="m2"
+            title="M2: 技术合规（Technical Compliance）"
+            expanded={state.expandedSections.m2}
+            onToggle={() => toggleSection('m2')}
+            total={getEffectiveValue('m2_estimated_cost_usd') || 0}
+          >
+            <CostItemRow
+              label="认证要求"
+              value={getEffectiveValue('m2_certifications_required')}
+              tier={getEffectiveValue('m2_tier')}
+              readOnly
+            />
+            <CostItemRow
+              label="预估认证成本"
+              value={getEffectiveValue('m2_estimated_cost_usd')}
+              unit="USD"
+              tier={getEffectiveValue('m2_tier')}
+              isOverridden={isOverridden('m2_estimated_cost_usd')}
+              onEdit={(val) => setUserOverride('m2_estimated_cost_usd', val)}
+              mode={state.mode}
+              description="产品检测、认证申请费用"
+            />
+          </ModuleCard>
+
+          {/* M3 */}
+          <ModuleCard
+            moduleId="m3"
+            title="M3: 供应链搭建（Supply Chain Setup）"
+            expanded={state.expandedSections.m3}
+            onToggle={() => toggleSection('m3')}
+            total={(getEffectiveValue('m3_initial_inventory_usd') || 0) + (getEffectiveValue('m3_warehouse_deposit_usd') || 0)}
+          >
+            <CostItemRow
+              label="包装本地化费率"
+              value={`${((getEffectiveValue('m3_packaging_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m3_tier')}
+              readOnly
+              description={`计算: $${project.scope?.productInfo?.targetPrice || 0} × ${((getEffectiveValue('m3_packaging_rate') || 0) * 100).toFixed(1)}% = $${((project.scope?.productInfo?.targetPrice || 0) * (getEffectiveValue('m3_packaging_rate') || 0)).toFixed(2)}/单位`}
+            />
+            <CostItemRow
+              label="初始库存投资"
+              value={getEffectiveValue('m3_initial_inventory_usd')}
+              unit="USD"
+              tier={getEffectiveValue('m3_tier')}
+              isOverridden={isOverridden('m3_initial_inventory_usd')}
+              onEdit={(val) => setUserOverride('m3_initial_inventory_usd', val)}
+              mode={state.mode}
+            />
+            <CostItemRow
+              label="仓储押金"
+              value={getEffectiveValue('m3_warehouse_deposit_usd')}
+              unit="USD"
+              tier={getEffectiveValue('m3_tier')}
+              isOverridden={isOverridden('m3_warehouse_deposit_usd')}
+              onEdit={(val) => setUserOverride('m3_warehouse_deposit_usd', val)}
+              mode={state.mode}
+            />
+          </ModuleCard>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * OPEX折叠面板组件（M4-M8）
+ */
+function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, setUserOverride, project }: any) {
+  // 简化的OPEX计算（详细计算在CostPreviewPanel中）
+  const cogsUsd = project.scope?.productInfo?.cogs || 0;
+  const sellingPrice = project.scope?.productInfo?.targetPrice || 0;
+  const productWeight = project.scope?.productInfo?.weight || 0;
+
+  const logistics = state.costFactor?.m4_logistics ? JSON.parse(state.costFactor.m4_logistics) : null;
+  const logisticsCost = logistics ? logistics.air_freight.usd_per_kg * productWeight : 0;
+  const tariffCost = cogsUsd * (getEffectiveValue('m4_effective_tariff_rate') || 0);
+  const vatCost = (cogsUsd + logisticsCost + tariffCost) * (getEffectiveValue('m4_vat_rate') || 0);
+  const m4Total = cogsUsd + logisticsCost + tariffCost + vatCost;
+
+  const m5Total = (getEffectiveValue('m5_last_mile_delivery_usd') || 0) +
+    sellingPrice * (getEffectiveValue('m5_return_cost_rate') || 0) * (getEffectiveValue('m5_return_rate') || 0);
+
+  const m6Total = sellingPrice * (getEffectiveValue('m6_marketing_rate') || 0);
+
+  const m7Total =
+    sellingPrice * (getEffectiveValue('m7_payment_rate') || 0) +
+    (getEffectiveValue('m7_payment_fixed_usd') || 0) +
+    sellingPrice * (getEffectiveValue('m7_platform_commission_rate') || 0);
+
+  const m8Total = sellingPrice * (getEffectiveValue('m8_ga_rate') || 0);
+
+  const opexTotal = m4Total + m5Total + m6Total + m7Total + m8Total;
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* OPEX Header */}
+      <button
+        onClick={() => toggleSection('opex')}
+        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-150 transition-colors border-b border-green-200"
+      >
+        <div className="flex items-center gap-3">
+          {state.expandedSections.opex ? (
+            <ChevronDown className="h-5 w-5 text-green-600" />
+          ) : (
+            <ChevronRight className="h-5 w-5 text-green-600" />
+          )}
+          <h3 className="text-lg font-semibold text-gray-900">阶段 1-N: OPEX（单位运营成本）</h3>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600">单位成本:</span>
+          <span className="text-xl font-bold text-green-700">${opexTotal.toFixed(2)} USD/单位</span>
+        </div>
+      </button>
+
+      {/* OPEX Content */}
+      {state.expandedSections.opex && (
+        <div className="p-6 space-y-4">
+          {/* M4: 货物税费 */}
+          <M4Module
+            state={state}
+            toggleSection={toggleSection}
+            getEffectiveValue={getEffectiveValue}
+            isOverridden={isOverridden}
+            setUserOverride={setUserOverride}
+            project={project}
+            logistics={logistics}
+            total={m4Total}
+          />
+
+          {/* M5-M8简化显示 */}
+          <ModuleCard
+            moduleId="m5"
+            title="M5: 物流配送（Logistics & Delivery）"
+            expanded={state.expandedSections.m5}
+            onToggle={() => toggleSection('m5')}
+            total={m5Total}
+          >
+            <CostItemRow
+              label="尾程配送费（如FBA）"
+              value={getEffectiveValue('m5_last_mile_delivery_usd')}
+              unit="USD/单位"
+              tier={getEffectiveValue('m5_tier')}
+              isOverridden={isOverridden('m5_last_mile_delivery_usd')}
+              onEdit={(val) => setUserOverride('m5_last_mile_delivery_usd', val)}
+              mode={state.mode}
+            />
+            <CostItemRow
+              label="退货率"
+              value={`${((getEffectiveValue('m5_return_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m5_tier')}
+              readOnly
+            />
+            <CostItemRow
+              label="退货处理成本率"
+              value={`${((getEffectiveValue('m5_return_cost_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m5_tier')}
+              readOnly
+              description={`计算: $${sellingPrice.toFixed(2)} × ${((getEffectiveValue('m5_return_cost_rate') || 0) * 100).toFixed(1)}% × ${((getEffectiveValue('m5_return_rate') || 0) * 100).toFixed(1)}% = $${(sellingPrice * (getEffectiveValue('m5_return_cost_rate') || 0) * (getEffectiveValue('m5_return_rate') || 0)).toFixed(2)}/单位`}
+            />
+          </ModuleCard>
+
+          <ModuleCard
+            moduleId="m6"
+            title="M6: 营销获客（Marketing & Acquisition）"
+            expanded={state.expandedSections.m6}
+            onToggle={() => toggleSection('m6')}
+            total={m6Total}
+          >
+            <CostItemRow
+              label="营销费率"
+              value={`${((getEffectiveValue('m6_marketing_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m6_tier')}
+              isOverridden={isOverridden('m6_marketing_rate')}
+              onEdit={(val) => setUserOverride('m6_marketing_rate', val / 100)}
+              mode={state.mode}
+              description={getEffectiveValue('m6_notes')}
+            />
+          </ModuleCard>
+
+          <ModuleCard
+            moduleId="m7"
+            title="M7: 支付手续费（Payment Processing）"
+            expanded={state.expandedSections.m7}
+            onToggle={() => toggleSection('m7')}
+            total={m7Total}
+          >
+            <CostItemRow
+              label="支付网关费用"
+              value={`${((getEffectiveValue('m7_payment_rate') || 0) * 100).toFixed(1)}% + $${getEffectiveValue('m7_payment_fixed_usd')}`}
+              tier={getEffectiveValue('m7_tier')}
+              readOnly
+              description="Stripe/PayPal标准费率"
+            />
+            <CostItemRow
+              label="平台佣金"
+              value={`${((getEffectiveValue('m7_platform_commission_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m7_tier')}
+              readOnly
+            />
+          </ModuleCard>
+
+          <ModuleCard
+            moduleId="m8"
+            title="M8: 运营管理（Operations & Management）"
+            expanded={state.expandedSections.m8}
+            onToggle={() => toggleSection('m8')}
+            total={m8Total}
+          >
+            <CostItemRow
+              label="本地人力与行政 (G&A)"
+              value={`${((getEffectiveValue('m8_ga_rate') || 0) * 100).toFixed(1)}%`}
+              tier={getEffectiveValue('m8_tier')}
+              isOverridden={isOverridden('m8_ga_rate')}
+              onEdit={(val) => setUserOverride('m8_ga_rate', val / 100)}
+              mode={state.mode}
+              description={getEffectiveValue('m8_notes')}
+            />
+          </ModuleCard>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * M4模块（货物税费）- 最复杂的模块
+ */
+function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUserOverride, project, logistics, total }: any) {
+  const cogsUsd = project.scope?.productInfo?.cogs || 0;
+  const productWeight = project.scope?.productInfo?.weight || 0;
+  const logisticsCost = logistics ? logistics.air_freight.usd_per_kg * productWeight : 0;
+  const tariffCost = cogsUsd * (getEffectiveValue('m4_effective_tariff_rate') || 0);
+  const vatCost = (cogsUsd + logisticsCost + tariffCost) * (getEffectiveValue('m4_vat_rate') || 0);
+
+  return (
+    <ModuleCard
+      moduleId="m4"
+      title="M4: 货物税费（Goods & Tax）"
+      expanded={state.expandedSections.m4}
+      onToggle={() => toggleSection('m4')}
+      total={total}
+    >
+      {/* COGS */}
+      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-2xl">📦</span>
+          <h4 className="font-semibold text-gray-900">商品成本 (COGS)</h4>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-bold text-gray-900">${cogsUsd.toFixed(2)}</span>
+          <span className="text-sm text-gray-600">USD/单位（用户输入）</span>
+        </div>
+      </div>
+
+      {/* 头程物流 */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">🚢</span>
+          <h4 className="font-semibold text-gray-900">头程物流</h4>
+        </div>
+        <CostItemRow
+          label="运输方式"
+          value="空运"
+          tier={getEffectiveValue('m4_logistics_tier')}
+          readOnly
+        />
+        <CostItemRow
+          label="空运费率"
+          value={`$${logistics?.air_freight.usd_per_kg}/kg`}
+          tier={getEffectiveValue('m4_logistics_tier')}
+          readOnly
+        />
+        <CostItemRow
+          label="产品重量"
+          value={`${productWeight} kg`}
+          readOnly
+        />
+        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
+          计算: ${logistics?.air_freight.usd_per_kg} × {productWeight} kg = <span className="font-bold">${logisticsCost.toFixed(2)}/单位</span>
+        </div>
+      </div>
+
+      {/* 进口关税 */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">💰</span>
+          <h4 className="font-semibold text-gray-900">进口关税</h4>
+        </div>
+        <CostItemRow
+          label="关税税率"
+          value={`${((getEffectiveValue('m4_effective_tariff_rate') || 0) * 100).toFixed(1)}%`}
+          tier={getEffectiveValue('m4_tariff_tier')}
+          isOverridden={isOverridden('m4_effective_tariff_rate')}
+          onEdit={(val) => setUserOverride('m4_effective_tariff_rate', val / 100)}
+          mode={state.mode}
+          description={getEffectiveValue('m4_tariff_notes')}
+          warning={(getEffectiveValue('m4_effective_tariff_rate') || 0) > 0.3}
+        />
+        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
+          计算: ${cogsUsd.toFixed(2)} × {((getEffectiveValue('m4_effective_tariff_rate') || 0) * 100).toFixed(1)}% = <span className="font-bold">${tariffCost.toFixed(2)}/单位</span>
+        </div>
+      </div>
+
+      {/* 增值税 */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">📊</span>
+          <h4 className="font-semibold text-gray-900">增值税 (VAT)</h4>
+        </div>
+        <CostItemRow
+          label="VAT税率"
+          value={`${((getEffectiveValue('m4_vat_rate') || 0) * 100).toFixed(1)}%`}
+          tier={getEffectiveValue('m4_vat_tier')}
+          readOnly
+          description={getEffectiveValue('m4_vat_notes')}
+        />
+        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
+          计算: (${cogsUsd.toFixed(2)} + ${logisticsCost.toFixed(2)} + ${tariffCost.toFixed(2)}) × {((getEffectiveValue('m4_vat_rate') || 0) * 100).toFixed(1)}% = <span className="font-bold">${vatCost.toFixed(2)}/单位</span>
+        </div>
+      </div>
+    </ModuleCard>
+  );
+}
+
+/**
+ * 模块卡片组件（可折叠）
+ */
+function ModuleCard({ moduleId, title, expanded, onToggle, total, children }: any) {
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          {expanded ? <ChevronDown className="h-4 w-4 text-gray-600" /> : <ChevronRight className="h-4 w-4 text-gray-600" />}
+          <span className="font-semibold text-gray-900">{title}</span>
+        </div>
+        <span className="text-sm font-semibold text-gray-700">
+          {moduleId.startsWith('m') && moduleId <= 'm3' ? `$${total.toLocaleString()} USD` : `$${total.toFixed(2)}/单位`}
+        </span>
+      </button>
+      {expanded && <div className="p-4 space-y-3 bg-white">{children}</div>}
+    </div>
+  );
+}
+
+/**
+ * 成本项行组件
+ */
+function CostItemRow({
+  label,
+  value,
+  unit,
+  tier,
+  readOnly,
+  isOverridden,
+  onEdit,
+  mode,
+  description,
+  warning,
+}: {
+  label: string;
+  value: any;
+  unit?: string;
+  tier?: string;
+  readOnly?: boolean;
+  isOverridden?: boolean;
+  onEdit?: (value: any) => void;
+  mode?: 'quick' | 'expert';
+  description?: string;
+  warning?: boolean;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [tempValue, setTempValue] = useState(value);
+
+  const handleSave = () => {
+    if (onEdit) {
+      onEdit(parseFloat(tempValue) || 0);
+    }
+    setEditing(false);
+  };
+
+  const canEdit = mode === 'expert' && !readOnly && onEdit;
+
+  return (
+    <div className={`flex items-start gap-3 p-3 rounded-lg ${isOverridden ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'}`}>
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-sm font-medium text-gray-900">{label}</span>
+          {tier && <TierBadge tier={tier} />}
+          {isOverridden && (
+            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">已自定义</span>
+          )}
+          {warning && <AlertCircle className="h-4 w-4 text-red-500" />}
+        </div>
+        {editing ? (
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              step="any"
+              value={tempValue}
+              onChange={(e) => setTempValue(e.target.value)}
+              className="w-32 px-2 py-1 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+            {unit && <span className="text-sm text-gray-600">{unit}</span>}
+            <button onClick={handleSave} className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <Check className="h-3 w-3" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-semibold text-gray-900">
+              {typeof value === 'number' ? value.toLocaleString() : value}
+            </span>
+            {unit && <span className="text-sm text-gray-600">{unit}</span>}
+            {canEdit && (
+              <button
+                onClick={() => {
+                  setTempValue(value);
+                  setEditing(true);
+                }}
+                className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 flex items-center gap-1"
+              >
+                <Edit2 className="h-3 w-3" />
+                自定义
+              </button>
+            )}
+          </div>
+        )}
+        {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 实时成本预览面板
+ */
+function CostPreviewPanel({ project, costResult, state }: any) {
+  const sellingPrice = project.scope?.productInfo?.targetPrice || 0;
+  const unitCost = costResult?.opex?.total || 0;
+  const grossProfit = sellingPrice - unitCost;
+  const grossMargin = sellingPrice > 0 ? (grossProfit / sellingPrice) * 100 : 0;
+
+  const isProfitable = grossProfit > 0;
+  const isWarning = grossMargin < 20;
+
+  return (
+    <div className="sticky top-6 bg-white rounded-xl border border-gray-200 shadow-lg p-6 space-y-6">
+      <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
+        <Calculator className="h-5 w-5 text-blue-600" />
+        <h3 className="text-lg font-semibold text-gray-900">成本预览</h3>
+        <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full ml-auto">实时计算</span>
+      </div>
+
+      {/* 单位经济模型 */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">单位收入</span>
+          <span className="text-lg font-semibold text-gray-900">${sellingPrice.toFixed(2)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">单位成本</span>
+          <span className="text-lg font-semibold text-gray-900">${unitCost.toFixed(2)}</span>
+        </div>
+        <div className="h-px bg-gray-200" />
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-900">单位毛利</span>
+          <div className="flex items-center gap-2">
+            {isProfitable ? (
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            ) : (
+              <TrendingDown className="h-4 w-4 text-red-600" />
+            )}
+            <span className={`text-xl font-bold ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
+              ${grossProfit.toFixed(2)}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-900">毛利率</span>
+          <span className={`text-xl font-bold ${isProfitable ? (isWarning ? 'text-yellow-600' : 'text-green-600') : 'text-red-600'}`}>
+            {grossMargin.toFixed(1)}%
+          </span>
+        </div>
+      </div>
+
+      {/* 状态提示 */}
+      {!isProfitable && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-semibold text-red-900 mb-1">❌ 严重亏损</h4>
+              <p className="text-xs text-red-800">当前定价下该市场不可行</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isProfitable && isWarning && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-semibold text-yellow-900 mb-1">⚠️ 利润偏低</h4>
+              <p className="text-xs text-yellow-800">毛利率低于20%，建议优化</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isProfitable && !isWarning && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-start gap-2">
+            <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-semibold text-green-900 mb-1">✅ 健康盈利</h4>
+              <p className="text-xs text-green-800">成本结构合理，可继续优化</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 建议 */}
+      <div className="bg-blue-50 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-blue-900 mb-2">💡 优化建议</h4>
+        <ul className="text-xs text-blue-800 space-y-1">
+          {!isProfitable && (
+            <>
+              <li>• 提高零售价至 ${(unitCost / 0.7).toFixed(2)}+ 实现30%毛利率</li>
+              <li>• 选择低成本市场（如越南/泰国）</li>
+              <li>• 优化物流方式（空运改海运）</li>
+            </>
+          )}
+          {isProfitable && isWarning && (
+            <>
+              <li>• 优化供应链降低COGS</li>
+              <li>• 提高零售价提升利润空间</li>
+              <li>• 控制营销费用率</li>
+            </>
+          )}
+          {isProfitable && !isWarning && (
+            <>
+              <li>• 当前成本结构健康</li>
+              <li>• 可考虑规模化降低单位成本</li>
+              <li>• 多市场对比寻找最优</li>
+            </>
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 辅助函数：获取国家中文名称
+ */
+function getCountryName(code: TargetCountry): string {
+  const names: Record<string, string> = {
+    US: '美国',
+    DE: '德国',
+    GB: '英国',
+    FR: '法国',
+    VN: '越南',
+    TH: '泰国',
+    MY: '马来西亚',
+    PH: '菲律宾',
+    ID: '印度尼西亚',
+    IN: '印度',
+    JP: '日本',
+    KR: '韩国',
+    AU: '澳大利亚',
+    SA: '沙特阿拉伯',
+    AE: '阿联酋',
+    CA: '加拿大',
+    MX: '墨西哥',
+    BR: '巴西',
+    SG: '新加坡',
+  };
+  return names[code] || code;
 }

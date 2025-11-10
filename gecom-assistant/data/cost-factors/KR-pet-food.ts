@@ -17,17 +17,7 @@
 import { KR_BASE_DATA } from './KR-base-data';
 import { KR_PET_FOOD_SPECIFIC } from './KR-pet-food-specific';
 
-export const KR_PET_FOOD: any = {
-  // ============================================================
-  // 核心标识 Core Identification
-  // ============================================================
-  country: 'KR',
-  country_name_cn: '韩国',
-  country_flag: '🇰🇷',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ============================================================
+export const KR_PET_FOOD: any = {// ============================================================
   // 合并基础数据和行业数据
   // Merge Base Data + Industry Specific Data
   // ============================================================

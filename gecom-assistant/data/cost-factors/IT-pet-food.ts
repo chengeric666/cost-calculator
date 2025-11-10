@@ -17,17 +17,7 @@
 import { IT_BASE_DATA } from './IT-base-data';
 import { IT_PET_FOOD_SPECIFIC } from './IT-pet-food-specific';
 
-export const IT_PET_FOOD: any = {
-  // ============================================================
-  // 核心标识 Core Identification
-  // ============================================================
-  country: 'IT',
-  country_name_cn: '意大利',
-  country_flag: '🇮🇹',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ============================================================
+export const IT_PET_FOOD: any = {// ============================================================
   // 合并基础数据和行业数据
   // Merge Base Data + Industry Specific Data
   // ============================================================
