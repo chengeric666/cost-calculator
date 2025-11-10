@@ -18,15 +18,21 @@ export default function Step4ScenarioAnalysis({ project, costResult }: Step4Scen
     );
   }
 
+  // Helper to get unit economics and kpis with fallback
+  const unitEcon = costResult.unit_economics || costResult.unitEconomics;
+  const getGrossMargin = () => unitEcon?.gross_margin ?? (unitEcon as any)?.grossMargin ?? 0;
+  const getRoi = () => costResult.kpis.roi ?? 0;
+  const getPaybackPeriod = () => costResult.kpis.payback_period_months ?? costResult.kpis.paybackPeriod ?? 0;
+
   // Scenario comparison data
   const scenarios = [
     {
       name: '当前配置',
       country: project.targetCountry,
       channel: project.salesChannel,
-      margin: costResult.unitEconomics.grossMargin,
-      roi: costResult.kpis.roi,
-      payback: costResult.kpis.paybackPeriod,
+      margin: getGrossMargin(),
+      roi: getRoi(),
+      payback: getPaybackPeriod(),
       isCurrent: true,
     },
     {

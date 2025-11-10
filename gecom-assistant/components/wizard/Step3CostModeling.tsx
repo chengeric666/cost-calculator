@@ -21,20 +21,44 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
   }
 
   // Prepare data for OPEX breakdown chart
+  // MVP 2.0 uses simplified structure: use compat fields if available, otherwise calculate
+  const m4Total = costResult.opex.m4_goodsTax?.total ??
+    (costResult.opex.m4_cogs + costResult.opex.m4_tariff + costResult.opex.m4_logistics + costResult.opex.m4_vat);
+  const m5Total = costResult.opex.m5_logistics?.total ??
+    (costResult.opex.m5_last_mile + costResult.opex.m5_return);
+  const m6Total = typeof costResult.opex.m6_marketing === 'number'
+    ? costResult.opex.m6_marketing
+    : (costResult.opex.m6_marketing as any)?.total ?? 0;
+  const m7Total = typeof costResult.opex.m7_payment === 'number'
+    ? costResult.opex.m7_payment + (costResult.opex.m7_platform_commission ?? 0)
+    : (costResult.opex.m7_payment as any)?.total ?? 0;
+  const m8Total = costResult.opex.m8_operations?.total ?? costResult.opex.m8_ga;
+
   const opexData = [
-    { name: 'M4: 货物税费', value: costResult.opex.m4_goodsTax.total, color: '#3b82f6' },
-    { name: 'M5: 物流配送', value: costResult.opex.m5_logistics.total, color: '#10b981' },
-    { name: 'M6: 营销获客', value: costResult.opex.m6_marketing.total, color: '#f59e0b' },
-    { name: 'M7: 支付手续费', value: costResult.opex.m7_payment.total, color: '#8b5cf6' },
-    { name: 'M8: 运营管理', value: costResult.opex.m8_operations.total, color: '#ec4899' },
+    { name: 'M4: 货物税费', value: m4Total, color: '#3b82f6' },
+    { name: 'M5: 物流配送', value: m5Total, color: '#10b981' },
+    { name: 'M6: 营销获客', value: m6Total, color: '#f59e0b' },
+    { name: 'M7: 支付手续费', value: m7Total, color: '#8b5cf6' },
+    { name: 'M8: 运营管理', value: m8Total, color: '#ec4899' },
   ];
 
-  // Unit economics comparison
+  // Unit economics comparison - MVP 2.0 uses unit_economics
+  const unitEcon = costResult.unit_economics || costResult.unitEconomics;
   const unitEconomicsData = [
-    { name: '营收', amount: costResult.unitEconomics.revenue },
-    { name: '总成本', amount: costResult.unitEconomics.totalCost },
-    { name: '毛利', amount: costResult.unitEconomics.grossProfit },
+    { name: '营收', amount: unitEcon?.revenue ?? 0 },
+    { name: '总成本', amount: unitEcon?.cost ?? (unitEcon as any)?.totalCost ?? 0 },
+    { name: '毛利', amount: unitEcon?.gross_profit ?? (unitEcon as any)?.grossProfit ?? 0 },
   ];
+
+  // Helper to get unit economics fields with fallback
+  const getGrossMargin = () => unitEcon?.gross_margin ?? (unitEcon as any)?.grossMargin ?? 0;
+  const getGrossProfit = () => unitEcon?.gross_profit ?? (unitEcon as any)?.grossProfit ?? 0;
+  const getRoi = () => costResult.kpis.roi ?? 0;
+  const getPaybackPeriod = () => costResult.kpis.payback_period_months ?? costResult.kpis.paybackPeriod ?? 0;
+  const getLtv = () => costResult.kpis.ltv ?? 0;
+  const getLtvCacRatio = () => costResult.kpis.ltvCacRatio ?? 0;
+  const getBreakEvenPrice = () => costResult.kpis.breakeven_price ?? costResult.kpis.breakEvenPrice ?? 0;
+  const getBreakEvenVolume = () => costResult.kpis.breakeven_volume ?? costResult.kpis.breakEvenVolume ?? 0;
 
   return (
     <div className="space-y-8">
@@ -46,7 +70,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
       </div>
 
       {/* Warnings */}
-      {costResult.warnings.length > 0 && (
+      {costResult.warnings && costResult.warnings.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -66,31 +90,31 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
       <div className="grid grid-cols-4 gap-4">
         <MetricCard
           title="毛利率"
-          value={`${costResult.unitEconomics.grossMargin.toFixed(1)}%`}
-          subtitle={`单位毛利 $${costResult.unitEconomics.grossProfit.toFixed(2)}`}
-          trend={costResult.unitEconomics.grossMargin >= 30 ? 'up' : 'down'}
-          color={costResult.unitEconomics.grossMargin >= 30 ? 'green' : 'red'}
+          value={`${getGrossMargin().toFixed(1)}%`}
+          subtitle={`单位毛利 $${getGrossProfit().toFixed(2)}`}
+          trend={getGrossMargin() >= 30 ? 'up' : 'down'}
+          color={getGrossMargin() >= 30 ? 'green' : 'red'}
         />
         <MetricCard
           title="投资回报率"
-          value={`${costResult.kpis.roi.toFixed(0)}%`}
+          value={`${getRoi().toFixed(0)}%`}
           subtitle="年化回报"
-          trend={costResult.kpis.roi >= 100 ? 'up' : 'down'}
-          color={costResult.kpis.roi >= 100 ? 'green' : 'yellow'}
+          trend={getRoi() >= 100 ? 'up' : 'down'}
+          color={getRoi() >= 100 ? 'green' : 'yellow'}
         />
         <MetricCard
           title="回本周期"
-          value={`${costResult.kpis.paybackPeriod.toFixed(1)}`}
+          value={`${getPaybackPeriod().toFixed(1)}`}
           subtitle="个月"
-          trend={costResult.kpis.paybackPeriod <= 12 ? 'up' : 'down'}
-          color={costResult.kpis.paybackPeriod <= 12 ? 'green' : 'yellow'}
+          trend={getPaybackPeriod() <= 12 ? 'up' : 'down'}
+          color={getPaybackPeriod() <= 12 ? 'green' : 'yellow'}
         />
         <MetricCard
           title="LTV:CAC比率"
-          value={`${costResult.kpis.ltvCacRatio.toFixed(1)}:1`}
-          subtitle={`LTV $${costResult.kpis.ltv.toFixed(0)}`}
-          trend={costResult.kpis.ltvCacRatio >= 3 ? 'up' : 'down'}
-          color={costResult.kpis.ltvCacRatio >= 3 ? 'green' : 'red'}
+          value={`${getLtvCacRatio().toFixed(1)}:1`}
+          subtitle={`LTV $${getLtv().toFixed(0)}`}
+          trend={getLtvCacRatio() >= 3 ? 'up' : 'down'}
+          color={getLtvCacRatio() >= 3 ? 'green' : 'red'}
         />
       </div>
 
@@ -130,28 +154,38 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
         <div className="space-y-3 mb-6">
           <CostRow
             label="M4: 货物税费"
-            amount={costResult.opex.m4_goodsTax.total}
-            details={`COGS $${costResult.opex.m4_goodsTax.cogs}, 关税 $${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}, 增值税 $${costResult.opex.m4_goodsTax.vat.toFixed(2)}`}
+            amount={m4Total}
+            details={costResult.opex.m4_goodsTax
+              ? `COGS $${costResult.opex.m4_goodsTax.cogs}, 关税 $${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}, 增值税 $${costResult.opex.m4_goodsTax.vat.toFixed(2)}`
+              : `COGS + 关税 + 物流 + 增值税`}
           />
           <CostRow
             label="M5: 物流配送"
-            amount={costResult.opex.m5_logistics.total}
-            details={`国际运输 $${costResult.opex.m5_logistics.intlShipping.toFixed(2)}, 本地配送 $${costResult.opex.m5_logistics.localDelivery.toFixed(2)}, FBA $${(costResult.opex.m5_logistics.fbaFee || 0).toFixed(2)}`}
+            amount={m5Total}
+            details={costResult.opex.m5_logistics
+              ? `国际运输 $${costResult.opex.m5_logistics.intlShipping.toFixed(2)}, 本地配送 $${costResult.opex.m5_logistics.localDelivery.toFixed(2)}, FBA $${(costResult.opex.m5_logistics.fbaFee || 0).toFixed(2)}`
+              : `尾程配送 + 退货物流`}
           />
           <CostRow
             label="M6: 营销获客"
-            amount={costResult.opex.m6_marketing.total}
-            details={`CAC $${costResult.opex.m6_marketing.cac.toFixed(2)}, 平台佣金 $${costResult.opex.m6_marketing.platformCommission.toFixed(2)}`}
+            amount={m6Total}
+            details={typeof costResult.opex.m6_marketing === 'object' && costResult.opex.m6_marketing !== null
+              ? `CAC $${(costResult.opex.m6_marketing as any).cac.toFixed(2)}, 平台佣金 $${(costResult.opex.m6_marketing as any).platformCommission.toFixed(2)}`
+              : `营销获客成本`}
           />
           <CostRow
             label="M7: 支付手续费"
-            amount={costResult.opex.m7_payment.total}
-            details={`网关费用 $${costResult.opex.m7_payment.paymentGatewayFee.toFixed(2)}, 汇率损失 $${costResult.opex.m7_payment.currencyConversion.toFixed(2)}`}
+            amount={m7Total}
+            details={typeof costResult.opex.m7_payment === 'object' && costResult.opex.m7_payment !== null
+              ? `网关费用 $${(costResult.opex.m7_payment as any).paymentGatewayFee.toFixed(2)}, 汇率损失 $${(costResult.opex.m7_payment as any).currencyConversion.toFixed(2)}`
+              : `支付手续费 + 平台佣金`}
           />
           <CostRow
             label="M8: 运营管理"
-            amount={costResult.opex.m8_operations.total}
-            details={`客服 $${costResult.opex.m8_operations.customerService.toFixed(2)}, 人员 $${costResult.opex.m8_operations.staff.toFixed(2)}, 软件 $${costResult.opex.m8_operations.software.toFixed(2)}`}
+            amount={m8Total}
+            details={costResult.opex.m8_operations
+              ? `客服 $${costResult.opex.m8_operations.customerService.toFixed(2)}, 人员 $${costResult.opex.m8_operations.staff.toFixed(2)}, 软件 $${costResult.opex.m8_operations.software.toFixed(2)}`
+              : `运营管理成本`}
           />
           <div className="pt-3 border-t border-gray-200">
             <CostRow
@@ -204,12 +238,12 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-600">盈亏平衡价格</div>
-            <div className="text-2xl font-bold text-gray-900">${costResult.kpis.breakEvenPrice.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-gray-900">${getBreakEvenPrice().toFixed(2)}</div>
             <div className="text-xs text-gray-500 mt-1">覆盖所有成本的最低价格</div>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-600">盈亏平衡销量</div>
-            <div className="text-2xl font-bold text-gray-900">{costResult.kpis.breakEvenVolume.toFixed(0)}</div>
+            <div className="text-2xl font-bold text-gray-900">{getBreakEvenVolume().toFixed(0)}</div>
             <div className="text-xs text-gray-500 mt-1">回收CAPEX所需单位数</div>
           </div>
         </div>

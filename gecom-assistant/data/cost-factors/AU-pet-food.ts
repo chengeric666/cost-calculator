@@ -32,21 +32,6 @@ import type { CostFactor } from '../../types/gecom';
  */
 
 export const AU_PET_FOOD: any = {
-  // ========== 基础元数据 ==========
-
-  country: 'AU',
-  country_name_cn: '澳大利亚',
-  country_flag: '🇦🇺',
-  industry: 'pet_food',
-  version: '2025Q1',
-
-  // ========== 数据溯源（顶层）==========
-
-  collected_at: '2025-11-09T20:00:00+08:00',  // Week 2 Day 8采集
-  collected_by: 'Claude AI + WebSearch (ASIC, ATO, DFAT, APVMA, DAFF, Freightos, Amazon.com.au)',
-  verified_at: '2025-11-09T22:00:00+08:00',
-  next_update_due: '2025-04-01',  // 下次更新时间（2025 Q2）
-
   // ========== 合并数据（优先级：specific > base）==========
 
   // 1️⃣ 先合并通用数据（优先级低，适用于所有行业）

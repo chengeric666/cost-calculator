@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import { Project, Industry, TargetCountry, SalesChannel, CostResult } from '@/types/gecom';
 import { calculateCostModel } from '@/lib/gecom/calculator';
+import Step0ProjectInfo from './wizard/Step0ProjectInfo';
 import Step1Strategic from './wizard/Step1Strategic';
 import Step2DataCollection from './wizard/Step2DataCollection';
 import Step3CostModeling from './wizard/Step3CostModeling';
@@ -15,7 +16,7 @@ interface CostCalculatorWizardProps {
 }
 
 export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // MVP 2.0: 从Step 0开始
   const [project, setProject] = useState<Partial<Project>>({
     name: '',
     industry: 'pet',
@@ -38,7 +39,9 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
   });
   const [costResult, setCostResult] = useState<CostResult | null>(null);
 
+  // MVP 2.0: 完整六步向导（Step 0-5）
   const steps = [
+    { number: 0, title: '项目信息', component: Step0ProjectInfo },
     { number: 1, title: '战略对齐', component: Step1Strategic },
     { number: 2, title: '数据采集', component: Step2DataCollection },
     { number: 3, title: '成本建模', component: Step3CostModeling },
@@ -59,13 +62,13 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
       }
     }
 
-    if (currentStep < steps.length) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (currentStep > 1) {
+    if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -78,7 +81,18 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
     }));
   };
 
-  const CurrentStepComponent = steps[currentStep - 1].component;
+  /**
+   * Step 0完成后的回调
+   */
+  const handleStep0Complete = (createdProject: Project) => {
+    setProject((prev) => ({
+      ...prev,
+      id: createdProject.id,
+      name: createdProject.name,
+      industry: createdProject.industry,
+    }));
+    setCurrentStep(1); // 进入Step 1
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -141,41 +155,60 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
       {/* Step content */}
       <div className="container mx-auto px-6 py-8">
         <div className="mx-auto max-w-4xl">
-          <CurrentStepComponent
-            project={project}
-            onUpdate={handleProjectUpdate}
-            costResult={costResult}
-          />
+          {/* Step 0 has different props than Step 1-5 */}
+          {currentStep === 0 ? (
+            <Step0ProjectInfo
+              onNext={handleStep0Complete}
+              initialData={project}
+            />
+          ) : (() => {
+              // TypeScript: currentStep > 0 means we're rendering Step 1-5, not Step 0
+              const StepComponent = steps[currentStep].component as React.ComponentType<{
+                project: Partial<Project>;
+                onUpdate: (updates: Partial<Project>) => void;
+                costResult: CostResult | null;
+              }>;
+              return (
+                <StepComponent
+                  project={project}
+                  onUpdate={handleProjectUpdate}
+                  costResult={costResult}
+                />
+              );
+            })()
+          }
 
-          {/* Navigation buttons */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
-            <button
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className="flex items-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              上一步
-            </button>
+          {/* Navigation buttons - only shown for Step 1-5 (Step 0 has its own button) */}
+          {currentStep > 0 && (
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+              <button
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                className="flex items-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                上一步
+              </button>
 
-            {currentStep < steps.length ? (
-              <button
-                onClick={handleNext}
-                className="flex items-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                下一步
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            ) : (
-              <button
-                onClick={onBack}
-                className="flex items-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <CheckCircle className="h-4 w-4" />
-                完成
-              </button>
-            )}
-          </div>
+              {currentStep < steps.length - 1 ? (
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  下一步
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={onBack}
+                  className="flex items-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  完成
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

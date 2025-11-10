@@ -18,6 +18,13 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
     );
   }
 
+  // Helper to get unit economics and kpis with fallback
+  const unitEcon = costResult.unit_economics || costResult.unitEconomics;
+  const getGrossMargin = () => unitEcon?.gross_margin ?? (unitEcon as any)?.grossMargin ?? 0;
+  const getGrossProfit = () => unitEcon?.gross_profit ?? (unitEcon as any)?.grossProfit ?? 0;
+  const getRoi = () => costResult.kpis.roi ?? 0;
+  const getBreakEvenVolume = () => costResult.kpis.breakeven_volume ?? costResult.kpis.breakEvenVolume ?? 0;
+
   const handleExport = () => {
     const exportData = {
       project: {
@@ -55,24 +62,24 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
           <div>
             <div className="text-blue-100 text-sm mb-1">商业模式</div>
             <div className="text-2xl font-bold">
-              {costResult.unitEconomics.grossMargin >= 30
+              {getGrossMargin() >= 30
                 ? '✅ 健康'
-                : costResult.unitEconomics.grossMargin >= 20
+                : getGrossMargin() >= 20
                 ? '⚠️ 可行'
                 : '❌ 高风险'}
             </div>
           </div>
           <div>
             <div className="text-blue-100 text-sm mb-1">预期ROI</div>
-            <div className="text-2xl font-bold">{costResult.kpis.roi.toFixed(0)}%</div>
+            <div className="text-2xl font-bold">{getRoi().toFixed(0)}%</div>
           </div>
           <div>
             <div className="text-blue-100 text-sm mb-1">单位利润</div>
-            <div className="text-2xl font-bold">${costResult.unitEconomics.grossProfit.toFixed(2)}</div>
+            <div className="text-2xl font-bold">${getGrossProfit().toFixed(2)}</div>
           </div>
           <div>
             <div className="text-blue-100 text-sm mb-1">盈亏平衡销量</div>
-            <div className="text-2xl font-bold">{costResult.kpis.breakEvenVolume.toFixed(0)} 单位</div>
+            <div className="text-2xl font-bold">{getBreakEvenVolume().toFixed(0)} 单位</div>
           </div>
         </div>
       </div>
@@ -85,7 +92,7 @@ export default function Step5Insights({ project, costResult }: Step5InsightsProp
         </div>
 
         <div className="space-y-3">
-          {costResult.recommendations.map((recommendation, index) => (
+          {(costResult.recommendations || []).map((recommendation, index) => (
             <div
               key={index}
               className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
