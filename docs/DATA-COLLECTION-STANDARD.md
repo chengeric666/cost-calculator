@@ -1,7 +1,8 @@
 # GECOM MVP 2.0 数据采集标准与规范
 
-> **文档版本**: v1.0
+> **文档版本**: v2.0 ⭐
 > **创建日期**: 2025-11-09
+> **最后更新**: 2025-11-10（添加第5章：三层数据架构策略）
 > **目的**: 建立统一的数据采集、验证、溯源标准，确保数据质量和可追溯性
 > **适用范围**: 19国×2行业共38条成本因子记录
 
@@ -13,9 +14,10 @@
 2. [数据溯源要求](#2-数据溯源要求)
 3. [字段优先级分级](#3-字段优先级分级)
 4. [通用vs行业特定数据区分](#4-通用vs行业特定数据区分)
-5. [数据采集流程](#5-数据采集流程)
-6. [数据验证清单](#6-数据验证清单)
-7. [成功指标](#7-成功指标)
+5. [三层数据架构策略](#5-三层数据架构策略) ⭐
+6. [数据采集流程](#6-数据采集流程)
+7. [数据验证清单](#7-数据验证清单)
+8. [成功指标](#8-成功指标)
 
 ---
 
@@ -364,9 +366,357 @@ export const CA_VAPE: CostFactor = {
 
 ---
 
-## 5. 数据采集流程
+## 5. 三层数据架构策略
 
-### 5.1 单国采集标准流程（每国10个步骤）
+> **⭐ 通用规范**：适用于所有行业（pet_food、vape、未来扩展行业）
+> **实施日期**：2025-11-10
+> **解决问题**：本地完整数据（144字段）vs Appwrite部分数据（60字段）的数据完整性问题
+
+### 5.1 问题背景
+
+#### 数据完整性挑战
+| 数据层级 | 字段数 | 完整度 | 位置 | 用途 |
+|---------|--------|--------|------|------|
+| **本地TypeScript文件** | 144 | 100% | `data/cost-factors/XX-vape.ts` | 开发环境、完整数据源 |
+| **Appwrite数据库** | 60 | 42% | `cost_factors` collection | 生产环境、核心计算 |
+| **缺失数据** | 84 | 58% | - | ⚠️ 未存储，无法访问 |
+
+#### 缺失的关键数据类型（84字段）
+1. **行业特定高级字段**（30个）：
+   - M1: `m1_fda_pmta_usd`（$50M PMTA费用）、`m1_fda_pmta_timeline_months`（48个月审批）
+   - M2: `m2_product_testing_usd`、`m2_child_resistant_packaging_usd`
+   - M5: `m5_fedex_dtc_banned`、`m5_ups_dtc_banned`、`m5_online_sales_ban`
+   - M6: `m6_amazon_banned`、`m6_ebay_banned`、`m6_ltv_usd`、`m6_repeat_purchase_rate`
+
+2. **数据质量追踪字段**（25个）：
+   - 每个模块的详细溯源：`m1_specific_data_source`、`m1_specific_tier`、`m1_specific_collected_at`
+   - M2-M8同样的3个溯源字段
+
+3. **市场洞察汇总字段**（29个）：
+   - `market_summary`（市场状态、准入难度、监管风险、推荐渠道、禁售渠道）
+   - `market_warnings`（市场警告数组）
+   - `key_advantages` / `key_challenges`
+   - `market_size_usd`、`growth_rate_yoy`、`competition_level`
+
+### 5.2 三层数据架构设计
+
+#### 架构总览
+```
+┌─────────────────────────────────────────────────────────┐
+│ Layer 1: TypeScript源文件（单一真相来源）               │
+│ ├─ 位置: data/cost-factors/XX-vape.ts                   │
+│ ├─ 字段: 144字段（100%完整）                            │
+│ ├─ 版本控制: Git                                         │
+│ └─ 用途: 数据源头、开发环境、离线计算                    │
+└─────────────────────────────────────────────────────────┘
+              ↓ 导入脚本（60字段过滤）
+┌─────────────────────────────────────────────────────────┐
+│ Layer 2: Appwrite数据库（核心计算）                      │
+│ ├─ Collection: cost_factors                             │
+│ ├─ 字段: 60字段（42%核心计算数据）                      │
+│ ├─ 访问: Appwrite SDK查询                               │
+│ └─ 用途: 生产环境成本计算引擎（快速查询）                │
+└─────────────────────────────────────────────────────────┘
+              ↓ 导出脚本（84字段提取）
+┌─────────────────────────────────────────────────────────┐
+│ Layer 3: JSON扩展文件（详细数据）                        │
+│ ├─ 位置: public/data/{industry}-extended/*.json         │
+│ ├─ 字段: 84字段（58%扩展数据）                          │
+│ ├─ 访问: fetch() HTTP请求                               │
+│ └─ 用途: 市场洞察、详情展示、按需加载                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+#### 三层对比
+| 维度 | Layer 1 | Layer 2 | Layer 3 |
+|------|---------|---------|---------|
+| **位置** | `data/cost-factors/*.ts` | Appwrite `cost_factors` | `public/data/{industry}-extended/*.json` |
+| **字段** | 144（完整） | 60（核心） | 84（扩展） |
+| **访问** | `import` | Appwrite SDK | `fetch()` |
+| **性能** | 编译时 | API查询（快） | HTTP请求（中） |
+| **用途** | 数据源头 | 成本计算 | 详细展示 |
+| **适用** | 开发/测试 | 生产核心 | 按需加载 |
+| **更新** | Git commit | 导入脚本 | 导出脚本 |
+
+### 5.3 实施规范
+
+#### 5.3.1 Layer 1：TypeScript源文件（SSOT）
+
+**文件命名规范**：
+```
+data/cost-factors/
+├── XX-base-data.ts          # 通用数据（跨行业复用）
+├── XX-{industry}-specific.ts # 行业特定数据
+└── XX-{industry}.ts         # 合并完整数据（导入Appwrite）
+```
+
+**数据完整性要求**：
+- ✅ 144字段100%填充（包括P0/P1/P2字段）
+- ✅ 所有市场洞察字段必填（market_summary、market_warnings）
+- ✅ 所有溯源字段必填（m1_specific_data_source等）
+- ✅ 通过TypeScript类型检查（tsc编译无错误）
+
+**示例**：
+```typescript
+// US-vape.ts（完整144字段）
+export const US_VAPE = {
+  // 核心60字段（Layer 2会导入）
+  country: 'US',
+  m4_effective_tariff_rate: 0.267,
+  m6_cac_usd: 35,
+
+  // 扩展84字段（Layer 3会导出）
+  market_summary: {
+    status: 'open_restricted',
+    entry_difficulty: 'extreme',
+    regulatory_risk: 'very_high',
+  },
+  m1_fda_pmta_usd: 50000000,
+  m6_amazon_banned: true,
+  m5_fedex_dtc_banned: true,
+};
+```
+
+#### 5.3.2 Layer 2：Appwrite核心数据（生产环境）
+
+**字段选择原则**：
+- ✅ P0核心计算字段（67个）
+- ✅ 关键数据来源字段（m1_data_source等）
+- ✅ 数据质量字段（tier、collected_at）
+- ❌ 不包括扩展洞察字段（market_summary等）
+
+**导入脚本规范**：
+```bash
+# scripts/import-{industry}-data.ts
+npm run db:import
+```
+
+**导入字段过滤**：
+```typescript
+const CORE_FIELDS = new Set([
+  'country', 'industry', 'version',
+  'm1_company_registration_usd', 'm1_complexity',
+  'm4_effective_tariff_rate', 'm4_vat_rate',
+  'm6_cac_usd', 'm7_payment_rate',
+  // ... 60个核心字段
+]);
+
+function filterCoreFields(fullData: any): any {
+  const coreData: any = {};
+  for (const [key, value] of Object.entries(fullData)) {
+    if (CORE_FIELDS.has(key)) {
+      coreData[key] = value;
+    }
+  }
+  return coreData;
+}
+```
+
+#### 5.3.3 Layer 3：JSON扩展数据（按需加载）
+
+**文件命名规范**：
+```
+public/data/
+├── vape-extended/
+│   ├── US-vape-extended.json    # 美国Vape扩展数据
+│   ├── ID-vape-extended.json    # 印尼Vape扩展数据
+│   └── ...
+└── pet-extended/
+    ├── US-pet-extended.json     # 美国Pet扩展数据
+    └── ...
+```
+
+**导出脚本规范**：
+```bash
+# scripts/export-{industry}-extended-data.ts
+npm run export:vape-extended
+npm run export:pet-extended
+```
+
+**JSON文件结构**：
+```json
+{
+  "_metadata": {
+    "source_file": "US-vape.ts",
+    "total_fields": 148,
+    "core_fields": 60,
+    "extended_fields": 88,
+    "exported_at": "2025-11-10T01:28:03.336Z"
+  },
+  "market_summary": {
+    "status": "open_restricted",
+    "entry_difficulty": "extreme",
+    "regulatory_risk": "very_high",
+    "recommended_channels": ["DTC独立站", "线下Vape店"],
+    "prohibited_channels": ["Amazon", "eBay", "FedEx DTC"]
+  },
+  "market_warnings": [
+    "⚠️ Amazon全面禁售",
+    "⚠️ FedEx/UPS禁止DTC运输"
+  ],
+  "m1_fda_pmta_usd": 50000000,
+  "m6_amazon_banned": true
+}
+```
+
+### 5.4 前端数据加载规范
+
+#### 5.4.1 数据加载器（lib/data-loader.ts）
+
+**核心函数**：
+```typescript
+// 1. 加载核心数据（Layer 2 - 快速）
+async function loadCostFactorCore(country: string, industry: string): Promise<CostFactorCore>;
+
+// 2. 加载扩展数据（Layer 3）
+async function loadCostFactorExtended(country: string, industry: string): Promise<CostFactorExtended>;
+
+// 3. 加载完整数据（Layer 2 + 3）
+async function loadCostFactor(country: string, industry: string, options?: LoadOptions): Promise<CostFactorComplete>;
+
+// 4. 批量加载多国数据
+async function loadMultipleCostFactors(countries: string[], industry: string, options?: LoadOptions): Promise<CostFactorComplete[]>;
+```
+
+**使用场景**：
+| 场景 | 数据源 | 字段数 | 性能 | 适用页面 |
+|------|--------|--------|------|----------|
+| 成本计算 | Layer 2 | 60 | 快 | Step 3成本建模 |
+| 市场详情 | Layer 2+3 | 144 | 中 | Step 4场景对比 |
+| 市场洞察 | Layer 3 | 84 | 中 | 市场分析组件 |
+| 多国对比 | Layer 2+3 | 144×N | 批量 | Step 4多国表格 |
+
+#### 5.4.2 使用示例
+
+**场景1：成本计算页面（仅核心数据）**
+```typescript
+// ✅ 只查询Appwrite，60核心字段足够
+const data = await loadCostFactor('US', 'vape', { includeExtended: false });
+console.log(data.m4_effective_tariff_rate); // 关税率
+console.log(data.m6_cac_usd); // CAC
+// ✅ 快速查询，适合成本计算引擎
+```
+
+**场景2：市场详情页面（完整数据）**
+```typescript
+// ✅ 查询Appwrite + 加载JSON扩展
+const data = await loadCostFactor('US', 'vape', { includeExtended: true });
+
+// 核心数据（Layer 2）
+console.log(data.m4_effective_tariff_rate);
+
+// 扩展数据（Layer 3）
+console.log(data.extended.market_summary);
+console.log(data.extended.m1_fda_pmta_usd); // $50M
+console.log(data.extended.m6_amazon_banned); // true
+// ✅ 完整数据，适合详情展示
+```
+
+**场景3：批量多国对比**
+```typescript
+const countries = await loadMultipleCostFactors(
+  ['US', 'ID', 'PH', 'CA'],
+  'vape',
+  { includeExtended: true }
+);
+
+countries.forEach(data => {
+  console.log(`${data.country}: 关税${data.m4_effective_tariff_rate}%`);
+  console.log(`准入难度: ${data.extended?.market_summary?.entry_difficulty}`);
+});
+```
+
+### 5.5 数据更新流程
+
+#### 单一数据源更新（SSOT）
+```
+1. 更新TypeScript源文件（Layer 1）
+   ├─ 编辑data/cost-factors/XX-vape.ts
+   ├─ 更新144字段中的任意字段
+   └─ Git commit
+
+2. 重新导入核心数据到Appwrite（Layer 2）
+   ├─ npm run db:import
+   └─ 验证Appwrite Console中的数据
+
+3. 重新导出扩展数据到JSON（Layer 3）
+   ├─ npm run export:vape-extended
+   └─ 验证public/data/vape-extended/*.json
+
+4. Git提交所有更改
+   ├─ git add data/ public/ gecom-assistant/data/
+   ├─ git commit -m "数据：更新XX国Vape数据（关税率调整）"
+   └─ git push
+```
+
+#### 批量更新多国数据
+```bash
+# 更新所有Vape数据
+npm run db:import          # 导入Layer 2
+npm run export:vape-extended   # 导出Layer 3
+
+# 更新所有Pet数据
+npm run db:import
+npm run export:pet-extended
+```
+
+### 5.6 验证清单
+
+#### 三层架构完整性检查
+```markdown
+## Layer 1验证（TypeScript源文件）
+- [ ] 144字段100%填充（无null/undefined）
+- [ ] 通过TypeScript类型检查（tsc编译无错误）
+- [ ] 包含所有market_summary字段
+- [ ] 包含所有m{X}_specific_data_source溯源字段
+- [ ] Git版本控制正常
+
+## Layer 2验证（Appwrite数据库）
+- [ ] 成功导入到cost_factors collection
+- [ ] 60核心字段全部存在
+- [ ] 查询性能 < 200ms
+- [ ] 可通过country + industry查询
+
+## Layer 3验证（JSON扩展文件）
+- [ ] JSON文件生成成功（public/data/{industry}-extended/）
+- [ ] 包含_metadata元数据字段
+- [ ] 扩展字段数量正确（84个左右）
+- [ ] JSON格式正确（可被fetch加载）
+- [ ] 关键扩展字段存在（market_summary、m1_fda_pmta_usd等）
+
+## 前端集成验证
+- [ ] loadCostFactorCore()返回60核心字段
+- [ ] loadCostFactorExtended()返回84扩展字段
+- [ ] loadCostFactor({includeExtended:true})返回144完整字段
+- [ ] 缓存机制正常工作（5分钟TTL）
+- [ ] 错误降级正常（扩展数据加载失败仍返回核心数据）
+```
+
+### 5.7 成功指标
+
+**数据完整性**：
+- ✅ Layer 1: 100%字段填充（144字段）
+- ✅ Layer 2: 100%核心字段（60字段）
+- ✅ Layer 3: 100%扩展字段（84字段）
+- ✅ 前端可访问率: 100%（Layer 2+3）
+
+**性能指标**：
+- ✅ Layer 2查询: < 200ms
+- ✅ Layer 3加载: < 500ms
+- ✅ 完整数据加载: < 700ms（Layer 2+3）
+- ✅ 缓存命中率: > 80%（5分钟内重复查询）
+
+**可维护性**：
+- ✅ 单一数据源（TypeScript文件）
+- ✅ 自动化导入/导出脚本
+- ✅ Git版本控制所有数据
+- ✅ 文档化更新流程
+
+---
+
+## 6. 数据采集流程
+
+### 6.1 单国采集标准流程（每国10个步骤）
 
 **输入**：国家代码（如CA）
 **输出**：3个文件 + 1条Appwrite记录
@@ -437,7 +787,7 @@ Step 10: 验证与导入
 └─ Git提交（含数据文件 + 验证报告）
 ```
 
-### 5.2 时间预算（每国）
+### 6.2 时间预算（每国）
 
 | 步骤 | 预计时间 | 并行可能 |
 |-----|---------|---------|
@@ -454,9 +804,9 @@ Step 10: 验证与导入
 
 ---
 
-## 6. 数据验证清单
+## 7. 数据验证清单
 
-### 6.1 完整性验证（每国必检）
+### 7.1 完整性验证（每国必检）
 
 ```markdown
 ## 数据完整性检查
@@ -488,7 +838,7 @@ Step 10: 验证与导入
 - [ ] 时间戳在2024-2025年范围内
 ```
 
-### 6.2 跨国对比验证
+### 7.2 跨国对比验证
 
 ```markdown
 ## 横向对比检查（与美国数据对比）
@@ -505,7 +855,7 @@ Step 10: 验证与导入
 - [ ] 识别异常值并标注（如沙特VAT 15%为特殊情况）
 ```
 
-### 6.3 技术验证
+### 7.3 技术验证
 
 ```markdown
 ## TypeScript类型检查
@@ -522,9 +872,9 @@ Step 10: 验证与导入
 
 ---
 
-## 7. 成功指标
+## 8. 成功指标
 
-### 7.1 MVP 2.0数据采集完成标准
+### 8.1 MVP 2.0数据采集完成标准
 
 **数据覆盖**：
 - ✅ 19国×2行业 = 38条完整记录
@@ -549,7 +899,7 @@ Step 10: 验证与导入
 - ✅ 支持新增第3个行业（仅采集55个特定字段）
 - ✅ 数据导入脚本可处理新国家
 
-### 7.2 单国验收标准（每国必须通过）
+### 8.2 单国验收标准（每国必须通过）
 
 | 验收项 | 最低标准 | 优秀标准 |
 |-------|---------|---------|
@@ -561,7 +911,7 @@ Step 10: 验证与导入
 | 导入成功 | 是 | 是 |
 | 查询性能 | <500ms | <200ms |
 
-### 7.3 Week 2-3里程碑
+### 8.3 Week 2-3里程碑
 
 **Week 2结束（Day 10）**：
 - ✅ 19国×Pet Food = 19条记录100%完成
@@ -578,9 +928,9 @@ Step 10: 验证与导入
 
 ---
 
-## 8. 风险与缓解
+## 9. 风险与缓解
 
-### 8.1 数据采集风险
+### 9.1 数据采集风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |-----|------|------|---------|
@@ -589,7 +939,7 @@ Step 10: 验证与导入
 | 数据不一致（同一字段多来源）| 数据质量下降 | 低 | 优先Tier 1来源，标注冲突 |
 | Vape行业数据受限（部分国家禁售）| 38条记录不完整 | 中 | 标注禁售国家，提供替代建议 |
 
-### 8.2 数据质量风险
+### 9.2 数据质量风险
 
 | 风险 | 缓解措施 |
 |-----|---------|
@@ -600,7 +950,7 @@ Step 10: 验证与导入
 
 ---
 
-## 9. 附录：数据文件模板
+## 10. 附录：数据文件模板
 
 ### 模板A：通用国家数据（XX-base-data.ts）
 

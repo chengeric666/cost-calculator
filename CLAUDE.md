@@ -145,14 +145,55 @@ Step 5: AI智能助手
 
 **数据库结构（MVP 2.0）：**
 
-> **💡 数据库设置指南**：详见 [DATABASE-SETUP.md](./docs/DATABASE-SETUP.md)
-> - 自动化脚本：`npm run db:setup`
+> **💡 数据架构核心规范**：详见 [DATA-COLLECTION-STANDARD.md](./docs/DATA-COLLECTION-STANDARD.md)
+> - ⭐ **三层数据架构**：TypeScript源文件（144字段）+ Appwrite数据库（60字段）+ JSON扩展文件（84字段）
+> - 自动化脚本：`npm run db:import`、`npm run export:vape-extended`、`npm run export:pet-extended`
 > - 完整127字段Schema定义
-> - 19国M1-M8数据结构
+> - 单一真相来源（SSOT）：TypeScript文件，Git版本控制
+
+### 三层数据架构总览 ⭐
+
+```
+Layer 1: TypeScript源文件（单一真相来源）
+├─ 位置: data/cost-factors/XX-vape.ts
+├─ 字段: 144字段（100%完整）
+├─ 版本控制: Git
+└─ 用途: 数据源头、开发环境
+        ↓ 导入脚本（60字段过滤）
+Layer 2: Appwrite数据库（核心计算）
+├─ Collection: cost_factors
+├─ 字段: 60字段（42%核心数据）
+├─ 访问: Appwrite SDK
+└─ 用途: 生产环境成本计算
+        ↓ 导出脚本（84字段提取）
+Layer 3: JSON扩展文件（详细数据）
+├─ 位置: public/data/{industry}-extended/*.json
+├─ 字段: 84字段（58%扩展数据）
+├─ 访问: fetch() HTTP
+└─ 用途: 市场洞察、详情展示
+```
+
+**为什么需要三层架构？**
+- **问题**：本地TypeScript有144字段，但Appwrite仅存储60核心字段，缺失84字段（market_summary、m1_fda_pmta_usd、m6_amazon_banned等关键洞察）
+- **解决**：Layer 3 JSON扩展文件补充84字段，前端可按需加载完整数据
+- **适用**：所有行业（pet_food、vape、未来扩展行业）通用策略
+
+**前端使用**：
+```typescript
+// 成本计算页面 - 仅Layer 2（快速）
+const data = await loadCostFactor('US', 'vape', { includeExtended: false });
+
+// 市场详情页面 - Layer 2 + Layer 3（完整）
+const data = await loadCostFactor('US', 'vape', { includeExtended: true });
+console.log(data.extended.market_summary); // 市场洞察
+console.log(data.extended.m1_fda_pmta_usd); // $50M PMTA费用
+```
+
+### Appwrite数据库Collection
 
 ```
 gecom_database (690d4fdd0035c2f63f20)/
-├─ cost_factors                 # ⭐ 19国成本因子库（核心）
+├─ cost_factors                 # ⭐ 19国成本因子库（Layer 2核心数据）
 │  ├─ id (string, unique)
 │  ├─ country (string)          # 国家代码（US/UK/DE/FR/JP/VN...）
 │  ├─ country_name (string)     # 国家名称（中文）
