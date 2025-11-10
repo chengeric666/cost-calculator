@@ -12,8 +12,9 @@
  * - 数据溯源可视化（Tier 1/2/3徽章）
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Project, CostResult, CostFactor, TargetCountry, Industry } from '@/types/gecom';
+import { GECOMEngine } from '@/lib/gecom/gecom-engine-v2';
 import {
   ChevronDown,
   ChevronRight,
@@ -192,6 +193,50 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
 
     setState((prev) => ({ ...prev, costFactor: mockCostFactor as CostFactor }));
   }, [project.targetCountry, project.industry]);
+
+  // ===== 实时成本计算（300ms节流）=====
+  const throttleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const gecomEngineRef = useRef(new GECOMEngine());
+
+  useEffect(() => {
+    // 条件检查：必须有完整的project数据和costFactor
+    if (!project.scope?.productInfo || !state.costFactor) {
+      return;
+    }
+
+    // 清除上一次的定时器
+    if (throttleTimerRef.current) {
+      clearTimeout(throttleTimerRef.current);
+    }
+
+    // 300ms节流执行计算
+    throttleTimerRef.current = setTimeout(() => {
+      try {
+        // 使用GECOM引擎v2.0计算成本
+        const result = gecomEngineRef.current.calculateCost(
+          project as Project,
+          state.costFactor!,
+          state.userOverrides
+        );
+
+        // 更新父组件（传递计算结果到CostCalculatorWizard）
+        onUpdate({
+          costData: result,
+        });
+
+        console.log('✅ 成本计算完成（实时）:', result);
+      } catch (error) {
+        console.error('成本计算失败:', error);
+      }
+    }, 300);
+
+    // 清理函数
+    return () => {
+      if (throttleTimerRef.current) {
+        clearTimeout(throttleTimerRef.current);
+      }
+    };
+  }, [state.userOverrides, state.costFactor, project.scope?.productInfo, onUpdate]);
 
   /**
    * 切换展开/折叠状态

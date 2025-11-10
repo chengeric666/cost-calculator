@@ -79,6 +79,11 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
       ...updates,
       scope: updates.scope ? { ...prev.scope, ...updates.scope } : prev.scope,
     }));
+
+    // MVP 2.0: 同步更新costResult（来自Step 2实时计算）
+    if (updates.costData) {
+      setCostResult(updates.costData);
+    }
   };
 
   /**

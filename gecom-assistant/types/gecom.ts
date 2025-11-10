@@ -96,7 +96,7 @@ export interface CostFactor {
   m1_regulatory_agency?: string;
   m1_pre_approval_required?: boolean;
   m1_registration_required?: boolean;
-  m1_complexity?: ComplexityLevel;
+  m1_complexity?: string; // 原ComplexityLevel，暂时放宽为string兼容Week 1数据
   m1_estimated_cost_usd?: number;
   m1_timeline_days?: number;
   m1_company_registration_usd?: number;
@@ -106,7 +106,7 @@ export interface CostFactor {
   m1_import_license_required?: boolean;
   m1_import_license_cost_usd?: number;
   m1_notes?: string;
-  m1_data_source?: DataSourceTier;
+  m1_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m1_data_updated_at?: string;
   m1_tier?: string;
 
@@ -122,7 +122,7 @@ export interface CostFactor {
   m2_packaging_requirements?: string;
   m2_third_party_testing_required?: boolean;
   m2_notes?: string;
-  m2_data_source?: DataSourceTier;
+  m2_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m2_data_updated_at?: string;
   m2_tier?: string;
 
@@ -135,7 +135,7 @@ export interface CostFactor {
   m3_warehouse_rent_per_sqm_usd?: number;
   m3_minimum_order_quantity?: number;
   m3_notes?: string;
-  m3_data_source?: DataSourceTier;
+  m3_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m3_data_updated_at?: string;
   m3_tier?: string;
   m3_total_estimated_usd?: number;
@@ -159,9 +159,9 @@ export interface CostFactor {
   m4_logistics_notes?: string;
   m4_cif_calculation_method?: string;
   m4_duty_drawback_available?: boolean;
-  m4_tariff_data_source?: DataSourceTier;
-  m4_vat_data_source?: DataSourceTier;
-  m4_logistics_data_source?: DataSourceTier;
+  m4_tariff_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
+  m4_vat_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
+  m4_logistics_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m4_tariff_tier?: string;
   m4_vat_tier?: string;
   m4_logistics_tier?: string;
@@ -170,7 +170,7 @@ export interface CostFactor {
   m4_logistics_updated_at?: string;
   m4_regulatory_changes_2025?: string;
   m4_notes?: string;
-  m4_data_source?: DataSourceTier;
+  m4_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m4_data_updated_at?: string;
   m4_tier?: string;
 
@@ -189,7 +189,7 @@ export interface CostFactor {
   m5_cod_available?: boolean;
   m5_cod_fee_rate?: number;
   m5_notes?: string;
-  m5_data_source?: DataSourceTier;
+  m5_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m5_data_updated_at?: string;
   m5_tier?: string;
   m5_total_estimated_per_unit_usd?: number;
@@ -202,7 +202,7 @@ export interface CostFactor {
   m6_conversion_rate?: number;
   m6_acos_target?: number;
   m6_notes?: string;
-  m6_data_source?: DataSourceTier;
+  m6_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m6_data_updated_at?: string;
   m6_tier?: string;
 
@@ -213,7 +213,7 @@ export interface CostFactor {
   m7_currency_conversion_rate?: number;
   m7_chargeback_rate?: number;
   m7_notes?: string;
-  m7_data_source?: DataSourceTier;
+  m7_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m7_data_updated_at?: string;
   m7_tier?: string;
 
@@ -226,13 +226,19 @@ export interface CostFactor {
   m8_utilities_usd?: number;
   m8_insurance_rate?: number;
   m8_notes?: string;
-  m8_data_source?: DataSourceTier;
+  m8_data_source?: string; // 原DataSourceTier，暂时放宽为string兼容Week 1数据
   m8_data_updated_at?: string;
   m8_tier?: string;
 
   // ========== 元数据 ==========
   created_at?: string;
   updated_at?: string;
+
+  // ========== 数据溯源（可选） ==========
+  collected_at?: string;
+  collected_by?: string;
+  verified_at?: string;
+  next_update_due?: string;
 }
 
 /**

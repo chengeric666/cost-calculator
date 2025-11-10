@@ -69,7 +69,7 @@ export default function CountrySelector({ selectedCountry, industry, onSelect }:
     );
 
     if (filtered.length > 0) {
-      acc[region] = filtered;
+      (acc as any)[region] = filtered;
     }
 
     return acc;
