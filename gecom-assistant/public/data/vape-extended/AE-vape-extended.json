@@ -1,0 +1,78 @@
+{
+  "_metadata": {
+    "source_file": "AE-vape.ts",
+    "total_fields": 58,
+    "core_fields": 38,
+    "extended_fields": 20,
+    "exported_at": "2025-11-10T01:28:03.346Z"
+  },
+  "m5_return_cost_usd": 4.5,
+  "data_quality_summary": {
+    "total_fields": 116,
+    "p0_fields": 67,
+    "p0_fields_filled": 67,
+    "p0_fill_rate": 1,
+    "tier1_count": 86,
+    "tier2_count": 26,
+    "tier3_count": 4,
+    "tier1_percentage": 0.74,
+    "tier2_percentage": 0.22,
+    "tier3_percentage": 0.04,
+    "verified": true,
+    "confidence_score": 0.88,
+    "last_verified": "2025-11-10",
+    "data_sources": [
+      "MOCCAE (Ministry of Climate Change)",
+      "Dubai Municipality",
+      "FTA (Federal Tax Authority)",
+      "Noon Seller Center",
+      "Free Zone Authorities"
+    ],
+    "notes": "UAE是中东最友好vape市场：2019年解禁，GCC统一5%关税+5% VAT（沙特15%），Noon起源地优势，Free Zone 100%外资所有权无需本地合伙人。"
+  },
+  "market_status": "open",
+  "m1_regulatory_agency": "MOCCAE + Dubai Municipality",
+  "m1_regulatory_complexity": "medium",
+  "m1_moccae_registration_usd": 3000,
+  "m1_specific_data_source": "MOCCAE + Dubai Municipality",
+  "m1_specific_tier": "tier1_official",
+  "m1_specific_collected_at": "2025-11-10T22:15:00+08:00",
+  "m4_nicotine_limit_mg_ml": 20,
+  "m4_specific_data_source": "FTA (Federal Tax Authority)",
+  "m4_specific_tier": "tier1_official",
+  "m6_noon_commission_rate": 0.15,
+  "m6_amazon_ae_commission_rate": 0,
+  "m6_ltv_usd": 200,
+  "m6_specific_data_source": "Noon Seller Center",
+  "m6_specific_tier": "tier1_official",
+  "market_summary": {
+    "status": "open",
+    "entry_difficulty": "medium",
+    "regulatory_risk": "low",
+    "recommended_channels": [
+      "Noon",
+      "DTC独立站",
+      "Free Zone批发"
+    ],
+    "prohibited_channels": [
+      "Amazon.ae"
+    ],
+    "key_advantages": [
+      "✅ 2019年解禁（GCC最早）",
+      "✅ GCC统一5%关税 + 5% VAT（vs 沙特15% VAT）",
+      "✅ Noon起源地优势（15%佣金 vs 沙特20%+）",
+      "✅ Free Zone 100%外资所有权",
+      "✅ MOCCAE注册5年有效期（$3K）"
+    ],
+    "key_challenges": [
+      "⚠️ Amazon.ae禁售vape",
+      "⚠️ 20mg/ml尼古丁限制（vs 美国50mg）",
+      "⚠️ 市场规模较小（vs 沙特3倍）"
+    ],
+    "market_size_usd": 180000000,
+    "growth_rate_yoy": 0.1,
+    "competition_level": "medium"
+  },
+  "backfill_status": "complete",
+  "backfill_date": "2025-11-10"
+}
