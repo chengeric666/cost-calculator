@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "MY-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T01:59:07.559Z"
+  },
+  "m5_return_cost_usd": 2,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Royal Malaysian Customs (关税/SST官方)\",\"SSM (公司注册官方)\",\"DVS / MAQIS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。\"}",
+  "m1_regulatory_agency": "DVS (Department of Veterinary Services), MAQIS",
+  "m2_certifications_required": "[\"DVS批准（SPS风险评估）\",\"MAQIS进口许可（E-Permit系统申请）\",\"产品标签合规（马来语+英语）\",\"Halal认证（穆斯林市场优势，非强制）\"]",
+  "m2_product_certification_notes": "DVS负责SPS评估，MAQIS签发许可（有效期30-90天）。Halal认证非强制但有市场优势（穆斯林占60%+）。",
+  "m2_trademark_notes": "MyIPO商标RM 1,000-1,500 (~$230-350)，注册周期12-18个月。",
+  "m2_labeling_review_usd": 250,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":11040,\"m1_market_entry\":3540,\"m2_technical_compliance\":2100,\"m3_supply_chain\":5400,\"payback_estimate_months\":5},\"unit_economics\":{\"total_opex_per_unit_usd\":11,\"m4_goods_tax\":0,\"m5_logistics\":5.5,\"m6_marketing\":3.3,\"m7_payment\":0.7,\"m8_operations\":1.5,\"gross_margin_target\":0.45},\"key_rates\":{\"sst_rate\":0,\"tariff_rate\":0,\"fba_fee_usd\":0,\"lazada_commission_rate\":-0.065,\"shopee_commission_rate\":0.0378,\"cac_usd\":22,\"payment_rate\":0.034},\"market_context\":{\"market_size_usd_2025\":\"340M\",\"market_size_myr_2025\":\"~1.5B\",\"cagr_2025_2030\":\"6.87%\",\"market_size_usd_2030\":\"474M\",\"cat_population_percentage\":\"55.3%\",\"main_platforms\":[\"Shopee\",\"Lazada\",\"PG Mall\"],\"main_warehouse_areas\":[\"Klang Valley\",\"Johor\"]},\"regulatory_highlights\":{\"primary_agency\":\"DVS (Department of Veterinary Services)\",\"secondary_agency\":\"MAQIS (Malaysian Quarantine and Inspection Services)\",\"permit_system\":\"E-Permit (online application)\",\"permit_validity\":\"30-90 days\",\"labeling_language\":\"Malay + English (mandatory)\",\"halal_certification\":\"Optional (but market advantage)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (DVS + MAQIS dual approval)\"}}"
+}

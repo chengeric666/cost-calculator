@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "ES-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T01:59:07.543Z"
+  },
+  "m5_return_cost_usd": 3.2,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":22,\"tier3_count\":4,\"tier1_percentage\":0.71,\"tier2_percentage\":0.24,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agencia Tributaria (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Company Formation Spain (公司注册)\",\"AESAN (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Welltrans / Sino Shipping (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / IMARC Group (市场数据)\"],\"notes\":\"西班牙作为EU成员国，关税/法规与FR/DE/IT一致，但VAT 21%（与FR相同）。市场规模€2.5B，年增长4.45%，CAC $28（与德国相当）。\"}",
+  "m1_regulatory_agency": "AESAN, Spanish Customs, EU Commission",
+  "m2_certifications_required": "[\"EU Regulation (EC) No 767/2009合规（宠物食品标签和流通）\",\"EU Regulation (EC) No 1831/2003合规（饲料添加剂）\",\"FEDIAF营养指南（欧洲推荐）\",\"西班牙语标签合规\"]",
+  "m2_product_certification_notes": "EU 767/2009要求：成分声明、营养分析、批次追溯、保质期标注。FEDIAF为推荐标准（非强制）。",
+  "m2_trademark_notes": "EU商标（EUTM）€850，覆盖27国。西班牙国家商标€125-200（OEPM）。",
+  "m2_labeling_review_usd": 350,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0.065,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":15800,\"m1_market_entry\":5000,\"m2_technical_compliance\":3500,\"m3_supply_chain\":7300,\"payback_estimate_months\":7},\"unit_economics\":{\"total_opex_per_unit_usd\":17.9,\"m4_goods_tax\":2.4,\"m5_logistics\":9.7,\"m6_marketing\":4.2,\"m7_payment\":0.6,\"m8_operations\":1,\"gross_margin_target\":0.36},\"key_rates\":{\"vat_rate\":0.21,\"tariff_rate\":0.065,\"fba_fee_usd\":5,\"cac_usd\":28,\"platform_commission_rate\":0.15,\"payment_rate\":0.029},\"market_context\":{\"market_size_eur_2025\":\"2.5B\",\"market_size_usd_2025\":\"2.73B\",\"cagr_2025_2030\":\"4.45%\",\"market_size_usd_2030\":\"3.39B\",\"main_ports\":[\"Barcelona\",\"Valencia\"],\"main_cities\":[\"Madrid\",\"Barcelona\",\"Valencia\",\"Seville\"]},\"regulatory_highlights\":{\"primary_regulation\":\"EU Regulation 767/2009\",\"regulatory_agency\":\"AESAN\",\"labeling_language\":\"Spanish (mandatory)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Low (EU unified rules)\"}}"
+}

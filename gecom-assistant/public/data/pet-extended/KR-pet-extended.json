@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "KR-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T01:59:07.550Z"
+  },
+  "m5_return_cost_usd": 3,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.93,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Korea Customs Service (关税官方)\",\"Korea Tax Service (VAT官方)\",\"MAFRA / MFDS (监管官方)\",\"Korea Company Registration Services (公司注册)\",\"Sino Shipping / Basenton (物流)\",\"Coupang / Naver Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。\"}",
+  "m1_regulatory_agency": "MAFRA (Ministry of Agriculture, Food and Rural Affairs), MFDS",
+  "m2_certifications_required": "[\"MFDS Registration - 外国食品设施登记（进口前必需）\",\"MAFRA Import Health Certificate - 2025年1月14日新规（立即生效）\",\"Manufacturing Facility Inspection - 出口国政府检查（符合韩国要求）\",\"Health Certificate Grace Period - 2025年12月31日前可用旧证书（限已进口产品）\",\"New-to-Market Products - 必须立即遵守新IHR规定\"]",
+  "m2_product_certification_notes": "2025年新规：宠物食品设施需出口国政府检查。允许含反刍动物成分（vs 2003-2024禁令）。过渡期至2025年12月31日。",
+  "m2_trademark_notes": "KIPO商标注册KRW 600,000-1,000,000 (~$440-735)，周期12-18个月。",
+  "m2_labeling_review_usd": 300,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":18400,\"m1_market_entry\":8700,\"m2_technical_compliance\":2900,\"m3_supply_chain\":6800,\"payback_estimate_months\":7},\"unit_economics\":{\"total_opex_per_unit_usd\":14,\"m4_goods_tax\":1,\"m5_logistics\":7,\"m6_marketing\":4,\"m7_payment\":0.7,\"m8_operations\":1.3,\"gross_margin_target\":0.35},\"key_rates\":{\"vat_rate\":0.1,\"tariff_rate_korus_fta\":0,\"tariff_rate_mfn\":0.08,\"fba_fee_usd\":0,\"coupang_commission_rate\":-0.07,\"coupang_fashion_commission_rate\":0.105,\"coupang_monthly_fee_krw\":50000,\"coupang_shipping_processing_fee\":0.03,\"naver_commission_rate\":-0.010000000000000002,\"cac_usd\":35,\"payment_rate\":0.034},\"market_context\":{\"market_size_usd_2025\":\"1.71B\",\"market_size_usd_2030\":\"2.58B\",\"cagr_2025_2030\":\"8.6%\",\"population\":\"51M\",\"pet_ownership_rate\":\"25% (1/4 households)\",\"cat_food_cagr\":\"11.1% (to 2030)\",\"vet_diet_cagr\":\"12.4% (to 2030)\",\"gdp_per_capita\":\"$35,000+\",\"main_platforms\":[\"Coupang\",\"Naver Shopping\"],\"main_warehouse_areas\":[\"Seoul\",\"Busan\",\"Incheon\"]},\"regulatory_highlights\":{\"primary_agency\":\"MAFRA (Ministry of Agriculture, Food and Rural Affairs)\",\"secondary_agency\":\"MFDS (Ministry of Food and Drug Safety)\",\"regulation\":\"New Import Health Requirements (Jan 14, 2025)\",\"key_change\":\"Ruminant ingredients now allowed (vs 2003-2024 ban)\",\"facility_inspection\":\"Exporting country government inspection required\",\"grace_period\":\"Old certificates valid until Dec 31, 2025 (existing imports only)\",\"new_products\":\"Must comply with new IHRs immediately\",\"labeling_language\":\"Korean (mandatory)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (MAFRA + MFDS registration + facility inspection)\"}}"
+}

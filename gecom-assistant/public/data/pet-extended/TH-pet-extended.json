@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "TH-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T01:59:07.561Z"
+  },
+  "m5_return_cost_usd": 2,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":21,\"tier3_count\":5,\"tier1_percentage\":0.71,\"tier2_percentage\":0.23,\"tier3_percentage\":0.06},\"confidence_score\":0.89,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Thai Customs (关税)\",\"Revenue Department (VAT官方)\",\"DBD (公司注册官方)\",\"DLD (监管 - Animal Feed Quality Control)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee / TikTok Shop (平台)\",\"Stripe (支付)\",\"Mordor Intelligence (市场数据)\"],\"notes\":\"泰国VAT 7%东南亚最低。DLD Animal Feed Quality Control Act B.E. 2558监管。Laem Chabang港东南亚第二大港。\"}",
+  "m1_regulatory_agency": "DLD (Department of Livestock Development), Thai Customs",
+  "m2_certifications_required": "[\"DLD Animal Feed Registration（宠物食品属于\\\"specifically controlled animal feed\\\"）\",\"Production Facility Approval（有效期5年）\",\"Import Procedures for Animal Feed（DLD 2019年规定）\",\"Product Labeling Compliance（泰语+英语）\"]",
+  "m2_product_certification_notes": "DLD注册流程：Application → Document Verification → Subcommittee Review → Approval & Certificate（5年有效期）。",
+  "m2_trademark_notes": "DIP商标THB 8,000-12,000 (~$230-350)，注册周期12-18个月。",
+  "m2_labeling_review_usd": 250,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0.05,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":11400,\"m1_market_entry\":3500,\"m2_technical_compliance\":2500,\"m3_supply_chain\":5400,\"payback_estimate_months\":5},\"unit_economics\":{\"total_opex_per_unit_usd\":10.5,\"m4_goods_tax\":1.2,\"m5_logistics\":5.5,\"m6_marketing\":2.2,\"m7_payment\":0.7,\"m8_operations\":0.9,\"gross_margin_target\":0.45},\"key_rates\":{\"vat_rate\":0.07,\"tariff_rate\":0.05,\"fba_fee_usd\":0,\"lazada_marketplace_commission_rate\":-0.03,\"lazada_lazmall_commission_rate\":-0.04000000000000001,\"shopee_mall_commission_rate\":-0.020000000000000004,\"shopee_nonmall_commission_rate\":-0.020000000000000004,\"cac_usd\":25,\"payment_rate\":0.034},\"market_context\":{\"market_size_usd_2025\":\"2.22B\",\"market_size_usd_2030\":\"3.72B\",\"cagr_2025_2030\":\"10.85%\",\"population\":\"71M\",\"ecommerce_market_rank\":\"2nd in Southeast Asia (after Indonesia)\",\"ecommerce_market_size_thb_2024\":\"1.1T (~$32B)\",\"online_sales_percentage\":\"18%\",\"main_platforms\":[\"Lazada\",\"Shopee\",\"TikTok Shop\"],\"main_warehouse_areas\":[\"Bangkok\",\"Chonburi\",\"Laem Chabang\"]},\"regulatory_highlights\":{\"primary_agency\":\"DLD (Department of Livestock Development)\",\"regulation\":\"Animal Feed Quality Control Act B.E. 2558 (2015)\",\"registration_category\":\"Specifically Controlled Animal Feed\",\"facility_approval_validity\":\"5 years\",\"labeling_language\":\"Thai + English (mandatory)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (DLD standardized process)\"}}"
+}
