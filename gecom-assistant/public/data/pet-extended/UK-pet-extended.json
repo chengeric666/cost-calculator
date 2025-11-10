@@ -4,7 +4,7 @@
     "total_fields": 146,
     "core_fields": 73,
     "extended_fields": 73,
-    "exported_at": "2025-11-10T01:59:07.532Z"
+    "exported_at": "2025-11-10T05:57:21.999Z"
   },
   "m1_base_data_source": "UK Companies House官网 + 会计师事务所报价 - https://www.gov.uk/government/organisations/companies-house",
   "m1_base_tier": "tier2_authoritative",

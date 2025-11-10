@@ -16,10 +16,10 @@
 import fs from 'fs';
 import path from 'path';
 
-// 19个国家（所有pet_food数据）
+// 19个国家（所有pet_food数据）+ MX/BR（2025-11-10新增）
 const PET_COUNTRIES = [
-  'US', 'CA', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP', 'KR',
-  'AU', 'SG', 'MY', 'TH', 'ID', 'PH', 'VN', 'IN', 'AE', 'SA'
+  'US', 'CA', 'MX', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP', 'KR',
+  'AU', 'SG', 'MY', 'TH', 'ID', 'PH', 'VN', 'IN', 'AE', 'SA', 'BR'
 ];
 
 // Appwrite数据库schema中实际存在的88个字段（从analyze-pet-completeness.ts查询得到）

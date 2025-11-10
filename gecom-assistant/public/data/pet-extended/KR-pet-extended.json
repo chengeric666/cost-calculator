@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.550Z"
+    "exported_at": "2025-11-10T05:57:22.009Z"
   },
   "m5_return_cost_usd": 3,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.93,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Korea Customs Service (关税官方)\",\"Korea Tax Service (VAT官方)\",\"MAFRA / MFDS (监管官方)\",\"Korea Company Registration Services (公司注册)\",\"Sino Shipping / Basenton (物流)\",\"Coupang / Naver Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"韩国KORUS FTA零关税优势。Coupang/Naver双雄主导。MAFRA 2025新规允许反刍动物成分。\"}",

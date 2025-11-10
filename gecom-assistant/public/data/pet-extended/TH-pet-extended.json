@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.561Z"
+    "exported_at": "2025-11-10T05:57:22.016Z"
   },
   "m5_return_cost_usd": 2,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":64,\"tier2_count\":21,\"tier3_count\":5,\"tier1_percentage\":0.71,\"tier2_percentage\":0.23,\"tier3_percentage\":0.06},\"confidence_score\":0.89,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Thai Customs (关税)\",\"Revenue Department (VAT官方)\",\"DBD (公司注册官方)\",\"DLD (监管 - Animal Feed Quality Control)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee / TikTok Shop (平台)\",\"Stripe (支付)\",\"Mordor Intelligence (市场数据)\"],\"notes\":\"泰国VAT 7%东南亚最低。DLD Animal Feed Quality Control Act B.E. 2558监管。Laem Chabang港东南亚第二大港。\"}",

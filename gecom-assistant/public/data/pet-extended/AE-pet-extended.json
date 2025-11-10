@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.572Z"
+    "exported_at": "2025-11-10T05:57:22.023Z"
   },
   "m5_return_cost_usd": 4.5,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":67,\"tier2_count\":18,\"tier3_count\":5,\"tier1_percentage\":0.74,\"tier2_percentage\":0.2,\"tier3_percentage\":0.06},\"confidence_score\":0.92,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"FTA (Federal Tax Authority) - 关税+VAT官方\",\"MOCCAE (Ministry of Climate Change & Environment) - 宠物食品监管\",\"Dubai Municipality - 食品安全+标签\",\"Dubai Economy / Free Zone Authorities - 公司注册\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.ae Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Statista / Grand View Research (市场数据)\"],\"notes\":\"阿联酋VAT 5%（GCC最低），关税5%。MOCCAE 5年注册有效期。Noon起源地。Free Zone 100%外资所有权。Jebel Ali中东最大港。\"}",

@@ -4,7 +4,7 @@
     "total_fields": 144,
     "core_fields": 73,
     "extended_fields": 71,
-    "exported_at": "2025-11-10T01:59:07.535Z"
+    "exported_at": "2025-11-10T05:57:22.000Z"
   },
   "m1_base_data_source": "IHK官网（德国工商会） + Notary报价 - https://www.ihk.de",
   "m1_base_tier": "tier2_authoritative",

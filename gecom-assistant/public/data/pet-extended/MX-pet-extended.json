@@ -1,0 +1,150 @@
+{
+  "_metadata": {
+    "source_file": "MX-pet-food.ts",
+    "total_fields": 127,
+    "core_fields": 70,
+    "extended_fields": 57,
+    "exported_at": "2025-11-10T05:57:21.997Z"
+  },
+  "m5_last_mile_notes": "Mercado Envíos/本地配送，平均尾程费用",
+  "m5_fba_fulfillment_fee_usd": 0.38,
+  "m5_fba_notes": "Amazon Mexico FBA费用（估算，参考尾程配送）",
+  "m5_return_notes": "退货率10%（拉美电商平均水平），退货处理成本30%",
+  "m6_platform_notes": "MercadoLibre 15%佣金（宠物食品类目），Amazon.mx类似",
+  "m6_acos_target": 0.25,
+  "m6_marketing_notes": "MercadoLibre广告 + Facebook/Instagram投放",
+  "m7_payment_gateway_fixed_fee": 0.5,
+  "m7_payment_provider": "MercadoPago",
+  "m7_payment_notes": "MercadoPago 3.6% + MXN 10/笔（约$0.50）",
+  "m8_customer_service_rate": 0.03,
+  "m8_software_subscription_usd": 150,
+  "m8_software_notes": "ERP + 库存管理软件月订阅",
+  "m8_staff_cost_usd": 0,
+  "market_summary": {
+    "market_size_usd": "3.53B",
+    "growth_rate": "6.82%",
+    "retail_channels": {
+      "store_based": "77.6%",
+      "online": "22.4%"
+    },
+    "top_platforms": [
+      "MercadoLibre",
+      "Amazon.mx",
+      "Petco Mexico"
+    ],
+    "payment_methods": [
+      "MercadoPago",
+      "Credit Card",
+      "Cash on Delivery"
+    ],
+    "currency": "MXN (Peso)",
+    "language": "Spanish"
+  },
+  "competitive_insights": {
+    "market_maturity": "developing",
+    "competition_level": "medium",
+    "entry_barriers": "medium",
+    "key_trends": [
+      "E-commerce增长22.4%（线上渠道快速增长）",
+      "MercadoLibre主导地位（85%市场份额）",
+      "Premium pet food需求增长",
+      "边境地区8% VAT优惠（vs 16%标准税率）"
+    ]
+  },
+  "m1_regulatory_agency": "SAGARPA/SENASICA",
+  "m1_regulatory_notes": "SAGARPA（农业部）/SENASICA（农业卫生服务局）",
+  "m1_company_registration_notes": "墨西哥公司注册（SA de CV或有限责任公司）",
+  "m1_business_license_notes": "商业运营许可证",
+  "m1_industry_license_notes": "SENASICA进口许可证（HRZ - Hoja de Requisitos Zoosanitarios）",
+  "m1_legal_consulting_notes": "进口合规咨询 + SAGARPA认证咨询",
+  "m1_tax_registration_notes": "RFC（Registro Federal de Contribuyentes）税务登记",
+  "m1_collected_at": "2025-11-10T12:00:00+08:00",
+  "m1_pet_food_specific_requirements": {
+    "prohibited_ingredients": [
+      "牛肉",
+      "羊肉",
+      "山羊肉"
+    ],
+    "required_certificates": [
+      "HRZ（动物卫生证明）",
+      "USDA出口证明"
+    ],
+    "labeling_language": "Spanish（西班牙语标签必需）",
+    "shelf_life_requirement": "至少6个月保质期"
+  },
+  "m2_certifications_required": "SENASICA认证 + NOM-051标签规范",
+  "m2_product_certification_notes": "SENASICA产品注册 + 实验室检测",
+  "m2_labeling_review_usd": 1000,
+  "m2_labeling_notes": "NOM-051-SCFI标签规范（西班牙语必需）",
+  "m2_compliance_testing_notes": "SENASICA授权实验室检测（无牛/羊肉成分验证）",
+  "m2_trademark_notes": "IMPI（墨西哥工业产权局）商标注册",
+  "m2_collected_at": "2025-11-10T12:30:00+08:00",
+  "m2_pet_food_specific_compliance": {
+    "labeling_standard": "NOM-051-SCFI-2010",
+    "nutrition_labeling": "AAFCO营养标准认可",
+    "allergen_declaration": "必需声明过敏原",
+    "manufacturing_info": "必需标注生产商信息"
+  },
+  "m3_warehouse_notes": "第三方仓储押金（墨西哥城/蒙特雷）",
+  "m3_system_setup_notes": "ERP + 库存管理系统",
+  "m3_initial_inventory_notes": "1个月销售库存（基于市场规模估算）",
+  "m3_packaging_rate": 0.02,
+  "m3_packaging_notes": "西班牙语标签 + NOM-051合规包装",
+  "m3_collected_at": "2025-11-10T13:00:00+08:00",
+  "m4_hs_description": "猫狗食品（Dog or cat food, put up for retail sale）",
+  "m4_mfn_tariff_rate": 0.1,
+  "m4_usmca_tariff_rate": 0,
+  "m4_tariff_notes_extended": "USMCA（美墨加协定）零关税，需符合原产地规则（区域价值含量≥60%）",
+  "m5_shipping_notes": "中国-墨西哥海运14天，宠物食品海运占主导",
+  "m5_local_delivery_rate": 0.04,
+  "m5_reverse_logistics_rate": 0.1,
+  "m5_reverse_logistics_notes": "宠物食品退货率10%（拉美市场平均）",
+  "m6_mercadolibre_commission": 0.15,
+  "m6_mercadolibre_ads_cpc": 0.3,
+  "m6_mercadolibre_notes": "MercadoLibre主导85%市场份额",
+  "m6_amazon_commission": 0.15,
+  "m6_amazon_ads_cpc": 0.5,
+  "m6_amazon_notes": "Amazon.mx宠物食品类目",
+  "m6_repeat_purchase_rate": 0.55,
+  "m6_ltv_cac_ratio": 2.75,
+  "data_quality_score": {
+    "tier1_ratio": 0.65,
+    "tier2_ratio": 0.3,
+    "tier3_ratio": 0.05,
+    "overall_confidence": 0.88
+  },
+  "pet_food_market_insights": {
+    "market_size_2025": "$3.53B",
+    "cagr_2025_2030": "6.82%",
+    "top_categories": [
+      "Dog food (干粮/湿粮)",
+      "Cat food",
+      "Treats/零食"
+    ],
+    "consumer_trends": [
+      "Premium pet food需求增长",
+      "E-commerce渗透率22.4%（快速增长）",
+      "MercadoLibre主导线上销售",
+      "线下门店仍占77.6%（超市/宠物专卖店）"
+    ],
+    "regulatory_challenges": [
+      "SAGARPA/SENASICA严格监管",
+      "禁止牛/羊肉成分（疯牛病风险）",
+      "西班牙语标签强制要求",
+      "NOM-051标签规范复杂"
+    ],
+    "competitive_landscape": {
+      "local_brands": [
+        "Nutec",
+        "Superior",
+        "Ganador"
+      ],
+      "international_brands": [
+        "Purina (Nestlé)",
+        "Pedigree (Mars)",
+        "Royal Canin"
+      ],
+      "market_concentration": "top 3品牌占60%市场份额"
+    }
+  }
+}

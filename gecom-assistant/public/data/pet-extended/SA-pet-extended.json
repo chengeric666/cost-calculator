@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.574Z"
+    "exported_at": "2025-11-10T05:57:22.024Z"
   },
   "m5_return_cost_usd": 4,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":21,\"tier3_count\":4,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.04},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方\",\"SFDA Feed Department - 宠物食品监管官方\",\"MISA (Ministry of Investment) - 公司注册官方\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.sa Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Grand View Research / TechSci Research (市场数据)\"],\"notes\":\"沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。\"}",

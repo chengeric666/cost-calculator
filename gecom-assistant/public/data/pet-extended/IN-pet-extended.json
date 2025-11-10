@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.570Z"
+    "exported_at": "2025-11-10T05:57:22.022Z"
   },
   "m5_return_cost_usd": 2,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":68,\"tier2_count\":17,\"tier3_count\":5,\"tier1_percentage\":0.76,\"tier2_percentage\":0.19,\"tier3_percentage\":0.05},\"confidence_score\":0.92,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"CBIC (关税官方)\",\"GST Council (GST官方)\",\"MCA (公司注册官方)\",\"FSSAI + AQCS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Amazon India / Flipkart Seller Center (平台)\",\"Razorpay / Stripe (支付)\",\"Mordor Intelligence / Grand View Research (市场数据)\"],\"notes\":\"印度关税20%+GST 18%总税负~41.6%（南亚较高）。Amazon ₹300以下免佣金优势。FSSAI+SIP+AQCS三重审批。\"}",

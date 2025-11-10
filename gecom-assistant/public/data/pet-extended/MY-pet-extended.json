@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.559Z"
+    "exported_at": "2025-11-10T05:57:22.014Z"
   },
   "m5_return_cost_usd": 2,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Royal Malaysian Customs (关税/SST官方)\",\"SSM (公司注册官方)\",\"DVS / MAQIS (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"马来西亚双零税率优势（关税0% + SST 0%），ASEAN区域内零关税。DVS+MAQIS双审批流程。Halal认证有市场优势。\"}",

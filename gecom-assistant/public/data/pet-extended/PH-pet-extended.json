@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.565Z"
+    "exported_at": "2025-11-10T05:57:22.019Z"
   },
   "m5_return_cost_usd": 2.5,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.22,\"tier3_percentage\":0.06},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Bureau of Customs PH (关税官方)\",\"BIR (VAT官方)\",\"SEC (公司注册官方)\",\"BAI / FDA Philippines (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"菲律宾ASEAN AFTA零关税优势。Shopee第二大市场（仅次于印尼）。BAI多层审批但流程标准化。\"}",

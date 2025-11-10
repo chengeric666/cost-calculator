@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.563Z"
+    "exported_at": "2025-11-10T05:57:22.017Z"
   },
   "m5_return_cost_usd": 2.5,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":66,\"tier2_count\":19,\"tier3_count\":5,\"tier1_percentage\":0.73,\"tier2_percentage\":0.21,\"tier3_percentage\":0.06},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"DJBC (关税官方)\",\"DJP (VAT官方)\",\"BKPM (公司注册官方)\",\"Ministry of Agriculture / Kementan (监管)\",\"Sino Shipping / Basenton (物流)\",\"Shopee / Tokopedia / Lazada Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"印尼ASEAN AFTA零关税优势。Shopee最大市场（2.7亿人口）。Kementan FBU注册1-3年流程复杂。Halal认证必需。\"}",

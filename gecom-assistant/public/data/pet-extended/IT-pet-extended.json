@@ -4,7 +4,7 @@
     "total_fields": 93,
     "core_fields": 83,
     "extended_fields": 10,
-    "exported_at": "2025-11-10T01:59:07.541Z"
+    "exported_at": "2025-11-10T05:57:22.004Z"
   },
   "m5_return_cost_usd": 3.5,
   "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":63,\"tier2_count\":22,\"tier3_count\":5,\"tier1_percentage\":0.7,\"tier2_percentage\":0.25,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agenzia delle Entrate (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Italian Company Formations (公司注册)\",\"Ministry of Health Italy (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Freightos / Welltrans (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / Ken Research (市场数据)\"],\"notes\":\"意大利作为EU成员国，关税/法规与FR/DE一致，但VAT更高（22% vs 20%/19%）。监管相对简化，不需向MOH单独通知。市场规模€3.1B，年增长4.42%。\"}",
