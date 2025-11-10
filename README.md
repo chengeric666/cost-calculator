@@ -434,8 +434,9 @@ npm start
 - [x] **Step 0**: 项目基本信息（Liquid Glass设计+历史项目加载）⭐ Day 16完成
 - [x] **Step 1**: 19国动态选择+业务场景定义（完整产品参数+行业模板）⭐ Day 17完成
 - [x] **Step 2**: M1-M8完整展示+用户覆盖机制（快速/专家模式+实时预览）⭐ Day 18完成
+- [x] **Step 2实时计算**: GECOM引擎v2.0 + 300ms节流实时计算 ⭐ Day 19完成
 - [x] **Step 3-5**: 成本建模+场景对比+AI助手（已有POC基础，待数据集成）
-- [ ] 成本计算引擎v2.0（连接Appwrite数据库）- 待数据库搭建完成
+- [x] 成本计算引擎v2.0（GECOMEngine类，支持用户覆盖值）⭐ Day 19完成
 - [ ] 历史项目保存/加载功能 - 待Appwrite Auth完成
 
 **Week 5+：AI深度集成**
@@ -445,11 +446,13 @@ npm start
 - [ ] 报告生成系统（docx.js + html2canvas）
 
 **Week 4：UI重构完成** ✅
-- [x] Step 0-5 完整UI实现（含Day 16-18核心重构）
+- [x] Step 0-5 完整UI实现（含Day 16-19核心重构）
 - [x] Liquid Glass设计系统应用
 - [x] 完整M1-M8模块展示（1030行Step2组件）
 - [x] 用户覆盖值追踪系统
-- [x] 实时成本预览面板
+- [x] 实时成本预览面板（300ms节流）
+- [x] GECOM计算引擎v2.0（GECOMEngine类，810+行）⭐ Day 19
+- [x] Step2实时计算集成（监听userOverrides变化）⭐ Day 19
 - [ ] 用户认证系统（Appwrite Auth）- 后续Week 5+
 - [ ] 完整E2E测试
 - [ ] 部署到Appwrite Sites
