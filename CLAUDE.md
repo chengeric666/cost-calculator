@@ -364,6 +364,328 @@ cost-calculator/
 
 ---
 
+## 🎨 MVP 2.0基础组件库（Liquid Glass Design System）
+
+### 组件库概述
+
+**创建时间**: Day 16（MVP 2.0 UI改进阶段）
+**设计语言**: Liquid Glass（毛玻璃效果 + 多层阴影 + 渐变背景）
+**总代码量**: 2148行高质量TypeScript代码
+**组件数量**: 6个可复用组件
+
+### 核心组件列表
+
+#### 1. TierBadge（Tier质量徽章）
+
+**文件**: `gecom-assistant/components/ui/TierBadge.tsx`（241行）
+**用途**: 展示数据质量分级（Tier 1/2/3），体现GECOM方法论的数据溯源体系
+
+**特性**:
+- 智能Tier识别：自动从数据源字符串推断Tier等级
+- 3种预设样式：Tier 1绿色 / Tier 2黄色 / Tier 3灰色
+- 便捷导出：`TierBadge.Tier1` / `TierBadge.Tier2` / `TierBadge.Tier3`
+- Hover效果：scale-105过渡动画
+- 完整TypeScript类型定义
+
+**使用示例**:
+```tsx
+// 自动推断Tier
+<TierBadge tier="official" />  // 显示Tier 1
+
+// 便捷导出
+<TierBadge.Tier1 />
+<TierBadge.Tier2 />
+<TierBadge.Tier3 />
+```
+
+**适用场景**:
+- Step 1数据可用性面板（M1-M8模块Tier标识）
+- Step 2成本参数配置（每个参数旁的数据质量标识）
+- 最终报告数据源清单
+
+---
+
+#### 2. DataSourceTooltip（数据来源悬浮提示）
+
+**文件**: `gecom-assistant/components/ui/DataSourceTooltip.tsx`（383行）
+**用途**: Hover显示完整数据来源、更新时间、数据质量信息
+
+**特性**:
+- 4方向动态定位：top / bottom / left / right
+- 智能Tier推断：从dataSource字符串自动判断质量等级
+- 便捷导出：`DataSourceTooltip.Official` / `DataSourceTooltip.Authoritative` / `DataSourceTooltip.Estimated`
+- Liquid Glass样式：backdrop-blur + shadow-glass-md
+- 完整可访问性支持：ARIA标签
+
+**使用示例**:
+```tsx
+// 完整信息
+<DataSourceTooltip
+  dataSource="美国ITC官网"
+  updatedAt="2025-01-15"
+  tier="official"
+  direction="top"
+>
+  <Info className="h-4 w-4 text-gray-400" />
+</DataSourceTooltip>
+
+// 便捷导出
+<DataSourceTooltip.Official dataSource="中国海关总署" updatedAt="2025-Q1">
+  {children}
+</DataSourceTooltip.Official>
+```
+
+**适用场景**:
+- Step 2每个参数的Info图标
+- 数据可用性面板的模块说明
+- 最终报告的数据脚注
+
+---
+
+#### 3. GlassCard（毛玻璃卡片）
+
+**文件**: `gecom-assistant/components/ui/GlassCard.tsx`（311行）
+**用途**: 统一的卡片容器，应用Liquid Glass设计语言
+
+**特性**:
+- 4种变体：default / bordered / gradient / elevated
+- 5级阴影：none / sm / md / lg / xl
+- 4种内边距：none / sm / md / lg
+- 子组件系列：GlassCard.Header / GlassCard.Body / GlassCard.Footer
+- Hover交互：可选的hover效果
+
+**使用示例**:
+```tsx
+// 基础用法
+<GlassCard variant="bordered" shadow="md" padding="lg">
+  <p>卡片内容</p>
+</GlassCard>
+
+// 子组件组合
+<GlassCard variant="gradient" shadow="lg">
+  <GlassCard.Header>
+    <h3>标题</h3>
+  </GlassCard.Header>
+  <GlassCard.Body>
+    <p>正文内容</p>
+  </GlassCard.Body>
+  <GlassCard.Footer>
+    <Button>操作按钮</Button>
+  </GlassCard.Footer>
+</GlassCard>
+```
+
+**适用场景**:
+- Step 0-5所有步骤的主容器
+- 数据可用性面板
+- 成本预览面板
+- KPI结果卡片
+
+---
+
+#### 4. StatCard（统计数据卡片）
+
+**文件**: `gecom-assistant/components/ui/StatCard.tsx`（359行）
+**用途**: 展示关键统计数据（KPI、成本金额、覆盖率等）
+
+**特性**:
+- 3种数值格式：USD金额 / 百分比 / 纯数字
+- 趋势箭头+颜色：上升绿色 / 下降红色 / 持平灰色
+- 便捷导出：`StatCard.USD` / `StatCard.Percentage` / `StatCard.Number`
+- 可选描述文字：副标题说明
+- 完整Liquid Glass样式
+
+**使用示例**:
+```tsx
+// 金额格式
+<StatCard.USD
+  label="单位毛利"
+  value={15.5}
+  trend="up"
+  description="较上月增长12%"
+/>
+
+// 百分比格式
+<StatCard.Percentage
+  label="毛利率"
+  value={35}
+  trend="down"
+  description="目标: 40%"
+/>
+
+// 纯数字格式
+<StatCard.Number
+  label="已覆盖国家"
+  value={19}
+  description="总计29国"
+/>
+```
+
+**适用场景**:
+- 数据可用性面板统计（总国家数、完整数据、部分数据）
+- Step 3成本建模结果（单位成本、毛利率、ROI）
+- Step 4场景对比（各国关键指标）
+
+---
+
+#### 5. DataAvailabilityPanel（数据可用性面板）⭐ 核心组件
+
+**文件**: `gecom-assistant/components/wizard/DataAvailabilityPanel.tsx`（542行）
+**用途**: 展示19国×2行业数据库全景，体现MVP 2.0数据飞轮核心价值
+
+**特性**:
+- 19国数据覆盖Mock（基于Week 1实际进度：29/38条记录，76.3%）
+- 完整/部分/无数据分类统计
+- Tier 1/2/3徽章标识
+- 可折叠交互（默认折叠）
+- 国家选择回调：点击国家触发父组件状态更新
+- 平均覆盖率计算
+- 行业切换支持（pet_food / vape）
+
+**数据结构**:
+```typescript
+interface CountryDataCoverage {
+  country: TargetCountry;
+  country_name_cn: string;
+  tier: 1 | 2 | 3;
+  pet_food: {
+    availability: 'full' | 'partial' | 'none';
+    completeness: number;  // 0-100
+    missing_modules?: string[];
+    tier_quality?: string;
+    market_status?: 'open' | 'restricted' | 'banned';
+  };
+  vape: { /* 同上 */ };
+}
+```
+
+**使用示例**:
+```tsx
+<DataAvailabilityPanel
+  industry="pet"
+  defaultExpanded={false}
+  onCountrySelect={(country) => {
+    setFormState({ ...formState, targetCountry: country });
+  }}
+/>
+```
+
+**集成位置**: Step1Scope.tsx（S1.5A区域）
+
+---
+
+#### 6. useCountryData Hook（国家数据加载Hook）
+
+**文件**: `gecom-assistant/hooks/useCountryData.ts`（213行）
+**用途**: 动态加载指定国家和行业的成本因子数据
+
+**特性**:
+- 动态导入：`import(\`@/data/cost-factors/${country}-${industry}\`)`
+- 多种导出格式支持：`{COUNTRY}_{INDUSTRY}` / `{country}_{industry}` / `default`
+- 完整加载状态管理：data / loading / error / reload
+- 批量加载Hook：`useCountryDataBatch(countries[], industry)`
+- 错误处理与控制台日志
+
+**使用示例**:
+```tsx
+// 单国加载
+const { data, loading, error, reload } = useCountryData('US', 'pet_food');
+
+if (loading) return <div>加载中...</div>;
+if (error) return <div>加载失败: {error.message}</div>;
+if (data) {
+  return (
+    <div>
+      <h3>{data.country_name_cn}</h3>
+      <p>关税税率: {data.m4_effective_tariff_rate * 100}%</p>
+    </div>
+  );
+}
+
+// 批量加载
+const { data, loading, errors } = useCountryDataBatch(
+  ['US', 'DE', 'GB', 'JP'],
+  'pet_food'
+);
+console.log(`成功加载: ${data.length}/4`);
+```
+
+**替代场景**: 替换所有手动useEffect数据加载逻辑
+
+---
+
+### lib/utils.ts工具函数库
+
+**文件**: `gecom-assistant/lib/utils.ts`（150行）
+**用途**: 通用工具函数集合
+
+**核心函数**:
+```typescript
+// Tailwind className合并（使用clsx + tailwind-merge）
+export function cn(...inputs: ClassValue[]): string;
+
+// Tier等级推断（从数据源字符串）
+export function inferTierFromDataSource(dataSource?: string): TierLevel;
+
+// 数值格式化
+export function formatCurrency(value: number, currency?: string): string;
+export function formatPercentage(value: number, decimals?: number): string;
+
+// 日期格式化
+export function formatDate(date: string | Date, format?: string): string;
+```
+
+---
+
+### 设计规范总结
+
+#### 色彩系统
+- Tier 1: `bg-green-100 text-green-700 border-green-300`
+- Tier 2: `bg-yellow-100 text-yellow-700 border-yellow-300`
+- Tier 3: `bg-gray-100 text-gray-700 border-gray-300`
+- 主色调: `bg-blue-50 to bg-indigo-50` 渐变
+- 强调色: `text-blue-600` / `border-blue-500`
+
+#### 阴影系统
+```css
+shadow-glass-sm: 0 1px 2px rgba(0,0,0,0.05)
+shadow-glass-md: 0 4px 6px rgba(0,0,0,0.07)
+shadow-glass-lg: 0 10px 15px rgba(0,0,0,0.1)
+shadow-glass-xl: 0 20px 25px rgba(0,0,0,0.15)
+```
+
+#### 交互效果
+- Hover: `hover:scale-105 transition-transform duration-200`
+- Focus: `focus-visible:ring-2 focus-visible:ring-blue-500`
+- Disabled: `opacity-50 cursor-not-allowed`
+
+#### 间距系统
+- 4/8/12/16/24/32px栅格
+- 容器内边距: sm=3 / md=4 / lg=6
+- 组件间距: gap-3 / gap-4 / gap-6
+
+---
+
+### Day 16实际产出统计
+
+| 维度 | 指标 | 备注 |
+|------|------|------|
+| **代码量** | 2148行 | TypeScript严格模式 |
+| **组件数** | 6个 | 计划4个，实际超标完成 |
+| **测试用例** | 9个 | Playwright E2E测试 |
+| **Git提交** | 4次 | 全部push到远程分支 |
+| **文档** | 完整JSDoc | 每个组件含使用示例 |
+
+**Git提交记录**:
+```bash
+commit 56c8db9: TierBadge + DataSourceTooltip + lib/utils.ts
+commit b9ae4f4: GlassCard + StatCard
+commit 1bd8ff5: DataAvailabilityPanel
+commit 1c4a685: S1.5完整集成（Hook + Step1 + 测试脚本）
+```
+
+---
+
 ## 📊 GECOM 方法论详解
 
 ### 双阶段八模块模型
