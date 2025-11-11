@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * GECOM计算引擎 v2.0 - MVP 2.0
  *

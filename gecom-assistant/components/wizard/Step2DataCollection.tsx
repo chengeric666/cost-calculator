@@ -926,7 +926,7 @@ function CostItemRow({
 }
 
 /**
- * 实时成本预览面板
+ * 实时成本预览面板（MVP 2.0增强版）
  */
 function CostPreviewPanel({ project, costResult, state }: any) {
   const sellingPrice = project.scope?.productInfo?.targetPrice || 0;
@@ -937,106 +937,314 @@ function CostPreviewPanel({ project, costResult, state }: any) {
   const isProfitable = grossProfit > 0;
   const isWarning = grossMargin < 20;
 
-  return (
-    <div className="sticky top-6 bg-white rounded-xl border border-gray-200 shadow-lg p-6 space-y-6">
-      <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-        <Calculator className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-semibold text-gray-900">成本预览</h3>
-        <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full ml-auto">实时计算</span>
-      </div>
+  // OPEX模块分布 - 从细分字段重新计算（⚠️ 修复：opex.modules不存在）
+  const opexBreakdown = costResult?.opex ? {
+    m4: (costResult.opex.m4_cogs || 0) +
+        (costResult.opex.m4_tariff || 0) +
+        (costResult.opex.m4_logistics || 0) +
+        (costResult.opex.m4_vat || 0),
+    m5: (costResult.opex.m5_last_mile || 0) +
+        (costResult.opex.m5_return || 0),
+    m6: costResult.opex.m6_marketing || 0,
+    m7: (costResult.opex.m7_payment || 0) +
+        (costResult.opex.m7_platform_commission || 0),
+    m8: costResult.opex.m8_ga || 0,
+  } : {
+    m4: 0,
+    m5: 0,
+    m6: 0,
+    m7: 0,
+    m8: 0,
+  };
 
-      {/* 单位经济模型 */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">单位收入</span>
-          <span className="text-lg font-semibold text-gray-900">${sellingPrice.toFixed(2)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">单位成本</span>
-          <span className="text-lg font-semibold text-gray-900">${unitCost.toFixed(2)}</span>
-        </div>
-        <div className="h-px bg-gray-200" />
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-900">单位毛利</span>
-          <div className="flex items-center gap-2">
-            {isProfitable ? (
-              <TrendingUp className="h-4 w-4 text-green-600" />
-            ) : (
-              <TrendingDown className="h-4 w-4 text-red-600" />
-            )}
-            <span className={`text-xl font-bold ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
-              ${grossProfit.toFixed(2)}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-900">毛利率</span>
-          <span className={`text-xl font-bold ${isProfitable ? (isWarning ? 'text-yellow-600' : 'text-green-600') : 'text-red-600'}`}>
-            {grossMargin.toFixed(1)}%
+  // CAPEX + 回本周期
+  const capexTotal = costResult?.capex?.total || 0;
+  const monthlyVolume = (project.scope as any)?.productInfo?.monthlyVolume || 0;
+  const monthlyProfit = grossProfit * monthlyVolume;
+  const paybackPeriod = monthlyProfit > 0 ? capexTotal / monthlyProfit : 0;
+
+  return (
+    <div className="sticky top-6 space-y-4">
+      {/* 主卡片 - Liquid Glass设计 */}
+      <div className="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 rounded-2xl border-2 border-blue-200/60 shadow-2xl backdrop-blur-sm p-6 space-y-6">
+        <div className="flex items-center gap-2 pb-4 border-b-2 border-gradient-to-r from-blue-200 to-indigo-200">
+          <Calculator className="h-5 w-5 text-blue-600" />
+          <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">
+            实时成本预览
+          </h3>
+          <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full ml-auto font-semibold">
+            ⚡ 实时计算
           </span>
         </div>
+
+        {/* 单位经济模型 */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-gray-200">
+            <span className="text-sm font-medium text-gray-700">单位收入</span>
+            <span className="text-xl font-bold text-gray-900">${sellingPrice.toFixed(2)}</span>
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-gray-200">
+            <span className="text-sm font-medium text-gray-700">单位成本</span>
+            <span className="text-xl font-bold text-gray-900">${unitCost.toFixed(2)}</span>
+          </div>
+
+          {/* 毛利进度条 */}
+          <div className="p-4 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-900">单位毛利</span>
+              <div className="flex items-center gap-2">
+                {isProfitable ? (
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-600" />
+                )}
+                <span className={`text-2xl font-black ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
+                  ${Math.abs(grossProfit).toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* 成本占比进度条 */}
+            <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`absolute left-0 top-0 h-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                  isProfitable
+                    ? 'bg-gradient-to-r from-green-400 to-green-600 text-white'
+                    : 'bg-gradient-to-r from-red-400 to-red-600 text-white'
+                }`}
+                style={{ width: `${Math.min((unitCost / sellingPrice) * 100, 100)}%` }}
+              >
+                成本 {((unitCost / sellingPrice) * 100).toFixed(0)}%
+              </div>
+              {isProfitable && (
+                <div
+                  className="absolute right-0 top-0 h-full bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center text-xs font-bold text-blue-900"
+                  style={{ width: `${Math.max(grossMargin, 0)}%` }}
+                >
+                  利润 {grossMargin.toFixed(0)}%
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 毛利率大卡片 */}
+          <div className={`p-4 rounded-xl text-center ${
+            isProfitable
+              ? isWarning
+                ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300'
+                : 'bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300'
+              : 'bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300'
+          }`}>
+            <div className="text-xs font-semibold text-gray-600 mb-1">毛利率</div>
+            <div className={`text-5xl font-black ${
+              isProfitable ? (isWarning ? 'text-yellow-600' : 'text-green-600') : 'text-red-600'
+            }`}>
+              {grossMargin.toFixed(1)}%
+            </div>
+          </div>
+        </div>
+
+        {/* 状态提示 */}
+        {!isProfitable && (
+          <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-xl p-4 shadow-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-bold text-red-900 mb-1">❌ 严重亏损</h4>
+                <p className="text-xs text-red-800">当前定价下该市场不可行，单位亏损 ${Math.abs(grossProfit).toFixed(2)}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isProfitable && isWarning && (
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl p-4 shadow-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-bold text-yellow-900 mb-1">⚠️ 利润偏低</h4>
+                <p className="text-xs text-yellow-800">毛利率低于20%，建议优化成本结构</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isProfitable && !isWarning && (
+          <div className="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-4 shadow-lg">
+            <div className="flex items-start gap-3">
+              <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-bold text-green-900 mb-1">✅ 健康盈利</h4>
+                <p className="text-xs text-green-800">成本结构合理，毛利率达标</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* 状态提示 */}
-      {!isProfitable && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-semibold text-red-900 mb-1">❌ 严重亏损</h4>
-              <p className="text-xs text-red-800">当前定价下该市场不可行</p>
+      {/* OPEX模块分布卡片 */}
+      <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-5 space-y-4">
+        <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+          <span className="text-lg">📊</span>
+          OPEX成本分布
+        </h4>
+
+        <div className="space-y-2">
+          {/* M4 */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-600">M4 货物税费</span>
+              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m4 || 0).toFixed(2)}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
+                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m4 || 0) / unitCost) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+
+          {/* M5 */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-600">M5 物流配送</span>
+              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m5 || 0).toFixed(2)}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-green-400 to-green-600"
+                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m5 || 0) / unitCost) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+
+          {/* M6 */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-600">M6 营销获客</span>
+              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m6 || 0).toFixed(2)}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-purple-400 to-purple-600"
+                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m6 || 0) / unitCost) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+
+          {/* M7 */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-600">M7 支付手续费</span>
+              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m7 || 0).toFixed(2)}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600"
+                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m7 || 0) / unitCost) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+
+          {/* M8 */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-600">M8 运营管理</span>
+              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m8 || 0).toFixed(2)}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-red-400 to-red-600"
+                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m8 || 0) / unitCost) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CAPEX回本周期卡片 */}
+      {capexTotal > 0 && (
+        <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-5 space-y-3">
+          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <span className="text-lg">⏱️</span>
+            CAPEX回本预测
+          </h4>
+
+          <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-200">
+            <span className="text-xs text-gray-600">初始投资</span>
+            <span className="text-lg font-bold text-blue-700">${capexTotal.toLocaleString()}</span>
+          </div>
+
+          <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
+            <span className="text-xs text-gray-600">月净利润</span>
+            <span className="text-lg font-bold text-green-700">${monthlyProfit.toFixed(0)}</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 text-center">
+            <div className="text-xs font-semibold text-gray-600 mb-1">预计回本周期</div>
+            <div className="text-4xl font-black text-purple-700">
+              {paybackPeriod > 0 ? paybackPeriod.toFixed(1) : '∞'}
+              <span className="text-lg ml-1">月</span>
+            </div>
+            <div className="text-xs text-purple-600 mt-1">
+              {paybackPeriod > 12 ? '⚠️ 回本周期较长' : paybackPeriod > 0 ? '✅ 回本速度良好' : '❌ 无法回本'}
             </div>
           </div>
         </div>
       )}
 
-      {isProfitable && isWarning && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-semibold text-yellow-900 mb-1">⚠️ 利润偏低</h4>
-              <p className="text-xs text-yellow-800">毛利率低于20%，建议优化</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isProfitable && !isWarning && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-semibold text-green-900 mb-1">✅ 健康盈利</h4>
-              <p className="text-xs text-green-800">成本结构合理，可继续优化</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 建议 */}
-      <div className="bg-blue-50 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">💡 优化建议</h4>
-        <ul className="text-xs text-blue-800 space-y-1">
+      {/* 优化建议 */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 p-5">
+        <h4 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+          💡 优化建议
+        </h4>
+        <ul className="text-xs text-blue-800 space-y-2">
           {!isProfitable && (
             <>
-              <li>• 提高零售价至 ${(unitCost / 0.7).toFixed(2)}+ 实现30%毛利率</li>
-              <li>• 选择低成本市场（如越南/泰国）</li>
-              <li>• 优化物流方式（空运改海运）</li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>提高零售价至 <span className="font-bold">${(unitCost / 0.7).toFixed(2)}+</span> 实现30%毛利率</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>选择低成本市场（越南/印尼/泰国）</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>优化物流方式（空运改海运节省70%+）</span>
+              </li>
             </>
           )}
           {isProfitable && isWarning && (
             <>
-              <li>• 优化供应链降低COGS</li>
-              <li>• 提高零售价提升利润空间</li>
-              <li>• 控制营销费用率</li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>优化供应链降低COGS（目标节省10-15%）</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>控制营销费用率（ACOS优化至15%以下）</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>提高零售价提升利润空间</span>
+              </li>
             </>
           )}
           {isProfitable && !isWarning && (
             <>
-              <li>• 当前成本结构健康</li>
-              <li>• 可考虑规模化降低单位成本</li>
-              <li>• 多市场对比寻找最优</li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>当前成本结构健康，毛利率 {grossMargin.toFixed(1)}%</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>可考虑规模化降低单位成本</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600">•</span>
+                <span>使用Step 4多市场对比寻找最优市场</span>
+              </li>
             </>
           )}
         </ul>

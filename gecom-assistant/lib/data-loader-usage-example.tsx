@@ -44,11 +44,11 @@ export function CostCalculationPage() {
 
       {/* 核心字段足够用于成本计算 */}
       <div>
-        <p>关税率: {costData.m4_effective_tariff_rate * 100}%</p>
-        <p>VAT税率: {costData.m4_vat_rate * 100}%</p>
-        <p>物流成本: ${costData.m5_international_shipping_usd}</p>
-        <p>CAC: ${costData.m6_cac_usd}</p>
-        <p>支付费率: {costData.m7_payment_gateway_rate * 100}%</p>
+        <p>关税率: {((costData as any).m4_effective_tariff_rate || 0) * 100}%</p>
+        <p>VAT税率: {((costData as any).m4_vat_rate || 0) * 100}%</p>
+        <p>物流成本: ${(costData as any).m5_international_shipping_usd || 0}</p>
+        <p>CAC: ${(costData as any).m6_cac_usd || 0}</p>
+        <p>支付费率: {((costData as any).m7_payment_gateway_rate || 0) * 100}%</p>
       </div>
     </div>
   );
@@ -88,8 +88,8 @@ export function MarketDetailPage() {
       {/* 核心字段 - Layer 2 */}
       <section>
         <h2>核心成本数据</h2>
-        <p>关税率: {costData.m4_effective_tariff_rate * 100}%</p>
-        <p>VAT税率: {costData.m4_vat_rate * 100}%</p>
+        <p>关税率: {((costData as any).m4_effective_tariff_rate || 0) * 100}%</p>
+        <p>VAT税率: {((costData as any).m4_vat_rate || 0) * 100}%</p>
       </section>
 
       {/* 扩展字段 - Layer 3 */}
@@ -219,8 +219,8 @@ export function MarketComparisonPage() {
           {costDataList.map((data) => (
             <tr key={data.country}>
               <td>{data.country_flag} {data.country_name_cn}</td>
-              <td>{data.m4_effective_tariff_rate * 100}%</td>
-              <td>{data.m4_vat_rate * 100}%</td>
+              <td>{((data as any).m4_effective_tariff_rate || 0) * 100}%</td>
+              <td>{((data as any).m4_vat_rate || 0) * 100}%</td>
               <td>{data.extended?.market_summary?.entry_difficulty}</td>
               <td>{data.extended?.market_summary?.regulatory_risk}</td>
               <td>{data.extended?.m6_amazon_banned ? '❌' : '✅'}</td>

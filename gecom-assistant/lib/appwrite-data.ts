@@ -122,8 +122,14 @@ export async function getProjects(
       salesChannel: doc.salesChannel,
       createdAt: doc.$createdAt,
       updatedAt: doc.$updatedAt,
-    }));
-  } catch (error) {
+    })) as Project[];
+  } catch (error: any) {
+    // 静默处理认证错误（用户未登录时正常情况）
+    if (error?.code === 401 || error?.type === 'general_unauthorized_scope') {
+      console.log('ℹ️ 用户未登录，跳过加载历史项目');
+      return [];
+    }
+    // 其他错误才显示
     console.error('获取项目列表失败:', error);
     return [];
   }
@@ -153,7 +159,7 @@ export async function getProjectById(projectId: string): Promise<Project | null>
       salesChannel: doc.salesChannel,
       createdAt: doc.$createdAt,
       updatedAt: doc.$updatedAt,
-    };
+    } as Project;
   } catch (error) {
     console.error(`获取项目失败 (ID: ${projectId}):`, error);
     return null;
@@ -191,7 +197,7 @@ export async function createProject(project: Partial<Project>): Promise<Project 
       salesChannel: doc.salesChannel,
       createdAt: doc.$createdAt,
       updatedAt: doc.$updatedAt,
-    };
+    } as Project;
   } catch (error) {
     console.error('创建项目失败:', error);
     return null;
@@ -232,7 +238,7 @@ export async function updateProject(
       salesChannel: doc.salesChannel,
       createdAt: doc.$createdAt,
       updatedAt: doc.$updatedAt,
-    };
+    } as Project;
   } catch (error) {
     console.error(`更新项目失败 (ID: ${projectId}):`, error);
     return null;
