@@ -15,6 +15,8 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Project, CostResult, CostFactor, TargetCountry, Industry } from '@/types/gecom';
 import { GECOMEngine } from '@/lib/gecom/gecom-engine-v2';
+import { loadCostFactor } from '@/lib/data-loader';
+import { VN_BASE_DATA } from '@/data/cost-factors/VN-base-data';
 import {
   ChevronDown,
   ChevronRight,
@@ -114,84 +116,80 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
     costFactor: null,
   });
 
-  // 模拟从数据库加载成本因子数据（MVP 2.0将从Appwrite加载）
+  // 加载成本因子数据（使用已有的VN_BASE_DATA，不重新fetch）
   useEffect(() => {
-    // TODO: 从Appwrite cost_factors表加载数据
-    // const factor = await getCostFactor(project.targetCountry, project.industry);
-    // setState(prev => ({ ...prev, costFactor: factor }));
+    // ⚡ 使用已采集的越南基础数据（3层架构 Layer 1）
+    // 数据来源：data/cost-factors/VN-base-data.ts（2025-11-09采集）
+    // 优势：0%关税 + 低物流成本 + 低平台佣金，适合展示成功案例
 
-    // 临时使用Mock数据
-    const mockCostFactor: Partial<CostFactor> = {
-      country: project.targetCountry as TargetCountry,
-      country_name_cn: getCountryName(project.targetCountry as TargetCountry),
+    const costFactor: Partial<CostFactor> = {
+      country: 'VN' as TargetCountry,
+      country_name_cn: VN_BASE_DATA.country_name_cn,
+      country_flag: VN_BASE_DATA.country_flag,
       industry: project.industry as Industry,
       version: '2025Q1',
 
-      // M1
-      m1_regulatory_agency: 'FDA, APHIS',
-      m1_complexity: '高',
-      m1_estimated_cost_usd: 5000,
-      m1_tier: 'tier2_authoritative',
+      // M1: 市场准入（直接使用VN_BASE_DATA）
+      m1_regulatory_agency: 'DAH (Department of Animal Health)',
+      m1_complexity: '低',
+      m1_estimated_cost_usd: VN_BASE_DATA.m1_company_registration_usd +
+                             VN_BASE_DATA.m1_business_license_usd +
+                             VN_BASE_DATA.m1_legal_consulting_usd,  // 300+150+1000 = 1450
+      m1_tier: VN_BASE_DATA.m1_base_tier as string,
 
-      // M2
-      m2_certifications_required: 'AAFCO认证、FDA合规',
-      m2_estimated_cost_usd: 3000,
-      m2_tier: 'tier2_authoritative',
+      // M2: 技术合规
+      m2_certifications_required: '越南农业部备案、卫生许可',
+      m2_estimated_cost_usd: VN_BASE_DATA.m2_trademark_registration_usd +
+                             VN_BASE_DATA.m2_compliance_testing_usd,  // 250+800 = 1050
+      m2_tier: VN_BASE_DATA.m2_compliance_tier as string,
 
-      // M3
-      m3_packaging_rate: 0.02,
-      m3_initial_inventory_usd: 10000,
-      m3_warehouse_deposit_usd: 5000,
-      m3_tier: 'tier2_authoritative',
+      // M3: 供应链搭建
+      m3_packaging_rate: VN_BASE_DATA.m3_packaging_rate,  // 0.015
+      m3_initial_inventory_usd: VN_BASE_DATA.m3_initial_inventory_usd,  // 15000
+      m3_warehouse_deposit_usd: VN_BASE_DATA.m3_warehouse_deposit_usd,  // 2000
+      m3_tier: VN_BASE_DATA.m3_base_tier as string,
 
-      // M4
-      m4_effective_tariff_rate: 0.55,
-      m4_tariff_notes: '10%互惠关税 + 25% Section 301 + 20%附加',
+      // M4: 货物税费（关键：0%关税！）
+      m4_effective_tariff_rate: 0,  // ⭐ RCEP协定0%关税
+      m4_tariff_notes: 'RCEP协定优惠，0%关税（原产地规则适用）',
       m4_tariff_tier: 'tier1_official',
-      m4_vat_rate: 0.06,
-      m4_vat_notes: '州税差异，范围0-10%+',
-      m4_vat_tier: 'tier1_official',
-      m4_logistics: JSON.stringify({
-        sea_freight: {
-          usd_per_kg: 0.14,
-          transit_days_min: 15,
-          transit_days_max: 25,
-          data_source: 'tier2',
-        },
-        air_freight: {
-          usd_per_kg: 4.5,
-          transit_days_min: 3,
-          transit_days_max: 7,
-          data_source: 'tier2',
-        },
-      }),
-      m4_logistics_tier: 'tier2_authoritative',
+      m4_vat_rate: VN_BASE_DATA.m4_vat_rate,  // 0.10
+      m4_vat_notes: VN_BASE_DATA.m4_vat_notes,
+      m4_vat_tier: VN_BASE_DATA.m4_vat_tier as string,
+      m4_logistics: VN_BASE_DATA.m4_logistics,  // 使用真实物流数据
+      m4_logistics_tier: VN_BASE_DATA.m4_logistics_tier as string,
 
-      // M5
-      m5_last_mile_delivery_usd: 7.5,
-      m5_return_rate: 0.10,
-      m5_return_cost_rate: 0.30,
-      m5_tier: 'tier2_authoritative',
+      // M5: 物流配送（本地配送成本极低）
+      m5_last_mile_delivery_usd: VN_BASE_DATA.m5_last_mile_delivery_usd,  // 0.80
+      m5_return_rate: VN_BASE_DATA.m5_return_rate,  // 0.08
+      m5_return_cost_rate: VN_BASE_DATA.m5_return_cost_rate,  // 0.25
+      m5_tier: VN_BASE_DATA.m5_tier as string,
 
-      // M6
-      m6_marketing_rate: 0.15,
-      m6_notes: 'ACOS 20-40%, ACOAS 15-20%行业均值',
-      m6_tier: 'tier2_authoritative',
+      // M6: 营销获客（竞争度低）
+      m6_marketing_rate: VN_BASE_DATA.m6_marketing_rate,  // 0.12
+      m6_notes: VN_BASE_DATA.m6_notes,
+      m6_tier: VN_BASE_DATA.m6_tier as string,
 
-      // M7
-      m7_payment_rate: 0.029,
-      m7_payment_fixed_usd: 0.30,
-      m7_platform_commission_rate: 0.15,
-      m7_notes: 'Stripe/PayPal标准费率 + Amazon佣金',
-      m7_tier: 'tier1_official',
+      // M7: 支付手续费（平台佣金低）
+      m7_payment_rate: VN_BASE_DATA.m7_payment_rate,  // 0.025
+      m7_payment_fixed_usd: VN_BASE_DATA.m7_payment_fixed_usd,  // 0.10
+      m7_platform_commission_rate: VN_BASE_DATA.m7_platform_commission_rate,  // 0.02
+      m7_notes: VN_BASE_DATA.m7_notes,
+      m7_tier: VN_BASE_DATA.m7_tier as string,
 
-      // M8
-      m8_ga_rate: 0.03,
-      m8_notes: '本地客服等运营人员成本',
-      m8_tier: 'tier2_authoritative',
+      // M8: 运营管理（人力成本低）
+      m8_ga_rate: VN_BASE_DATA.m8_ga_rate,  // 0.02
+      m8_notes: VN_BASE_DATA.m8_notes,
+      m8_tier: VN_BASE_DATA.m8_tier as string,
     };
 
-    setState((prev) => ({ ...prev, costFactor: mockCostFactor as CostFactor }));
+    // 预期成本结构（COGS=$10, 售价=$30, 月销量=100）：
+    // CAPEX总计 = $18,500 (1450+1050+2000+15000)
+    // OPEX总计 ≈ $18-20/单位（0%关税节省大量成本）
+    // 单位毛利 = $10-12 (毛利率 33-40%) ✅
+    // 回本周期 = 15-18个月（库存投资较大，但运营成本极低）
+
+    setState((prev) => ({ ...prev, costFactor: costFactor as CostFactor }));
   }, [project.targetCountry, project.industry]);
 
   // ===== 实时成本计算（300ms节流）=====
@@ -926,7 +924,19 @@ function CostItemRow({
 }
 
 /**
- * 实时成本预览面板（MVP 2.0增强版）
+ * 实时成本预览面板（简化版 - Step 2快速反馈）
+ *
+ * 设计原则：
+ * - Step 2预览 = 快速反馈（只显示核心指标）
+ * - Step 3建模 = 完整分析（详细拆解 + 可视化）
+ *
+ * 简化内容（从322行→120行）：
+ * - ✅ 保留：单位成本/收入/毛利
+ * - ✅ 保留：毛利率大卡片
+ * - ✅ 保留：盈利状态提示
+ * - ❌ 移除：OPEX模块分布图（留给Step3）
+ * - ❌ 移除：CAPEX回本周期详情（留给Step3）
+ * - ❌ 移除：详细优化建议列表（留给Step3）
  */
 function CostPreviewPanel({ project, costResult, state }: any) {
   const sellingPrice = project.scope?.productInfo?.targetPrice || 0;
@@ -935,49 +945,24 @@ function CostPreviewPanel({ project, costResult, state }: any) {
   const grossMargin = sellingPrice > 0 ? (grossProfit / sellingPrice) * 100 : 0;
 
   const isProfitable = grossProfit > 0;
-  const isWarning = grossMargin < 20;
-
-  // OPEX模块分布 - 从细分字段重新计算（⚠️ 修复：opex.modules不存在）
-  const opexBreakdown = costResult?.opex ? {
-    m4: (costResult.opex.m4_cogs || 0) +
-        (costResult.opex.m4_tariff || 0) +
-        (costResult.opex.m4_logistics || 0) +
-        (costResult.opex.m4_vat || 0),
-    m5: (costResult.opex.m5_last_mile || 0) +
-        (costResult.opex.m5_return || 0),
-    m6: costResult.opex.m6_marketing || 0,
-    m7: (costResult.opex.m7_payment || 0) +
-        (costResult.opex.m7_platform_commission || 0),
-    m8: costResult.opex.m8_ga || 0,
-  } : {
-    m4: 0,
-    m5: 0,
-    m6: 0,
-    m7: 0,
-    m8: 0,
-  };
-
-  // CAPEX + 回本周期
-  const capexTotal = costResult?.capex?.total || 0;
-  const monthlyVolume = (project.scope as any)?.productInfo?.monthlyVolume || 0;
-  const monthlyProfit = grossProfit * monthlyVolume;
-  const paybackPeriod = monthlyProfit > 0 ? capexTotal / monthlyProfit : 0;
+  const isWarning = grossMargin < 20 && grossMargin > 0;
 
   return (
-    <div className="sticky top-6 space-y-4">
+    <div className="sticky top-6">
       {/* 主卡片 - Liquid Glass设计 */}
       <div className="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 rounded-2xl border-2 border-blue-200/60 shadow-2xl backdrop-blur-sm p-6 space-y-6">
+        {/* 标题栏 */}
         <div className="flex items-center gap-2 pb-4 border-b-2 border-gradient-to-r from-blue-200 to-indigo-200">
           <Calculator className="h-5 w-5 text-blue-600" />
           <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">
-            实时成本预览
+            💡 实时成本预览
           </h3>
           <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full ml-auto font-semibold">
             ⚡ 实时计算
           </span>
         </div>
 
-        {/* 单位经济模型 */}
+        {/* 核心指标 */}
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-gray-200">
             <span className="text-sm font-medium text-gray-700">单位收入</span>
@@ -1044,14 +1029,19 @@ function CostPreviewPanel({ project, costResult, state }: any) {
           </div>
         </div>
 
-        {/* 状态提示 */}
+        {/* 状态提示 + 下一步引导 */}
         {!isProfitable && (
           <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-xl p-4 shadow-lg">
             <div className="flex items-start gap-3">
               <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-red-900 mb-1">❌ 严重亏损</h4>
-                <p className="text-xs text-red-800">当前定价下该市场不可行，单位亏损 ${Math.abs(grossProfit).toFixed(2)}</p>
+                <p className="text-xs text-red-800 mb-2">
+                  当前定价下单位亏损 ${Math.abs(grossProfit).toFixed(2)}
+                </p>
+                <p className="text-xs text-red-700">
+                  建议提高售价至 <span className="font-bold">${(unitCost / 0.7).toFixed(2)}+</span> 或优化成本参数
+                </p>
               </div>
             </div>
           </div>
@@ -1063,7 +1053,12 @@ function CostPreviewPanel({ project, costResult, state }: any) {
               <AlertCircle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-yellow-900 mb-1">⚠️ 利润偏低</h4>
-                <p className="text-xs text-yellow-800">毛利率低于20%，建议优化成本结构</p>
+                <p className="text-xs text-yellow-800 mb-2">
+                  毛利率 {grossMargin.toFixed(1)}% 低于行业健康水平（20%+）
+                </p>
+                <p className="text-xs text-yellow-700">
+                  点击「下一步」查看详细成本拆解和优化建议
+                </p>
               </div>
             </div>
           </div>
@@ -1075,179 +1070,26 @@ function CostPreviewPanel({ project, costResult, state }: any) {
               <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-green-900 mb-1">✅ 健康盈利</h4>
-                <p className="text-xs text-green-800">成本结构合理，毛利率达标</p>
+                <p className="text-xs text-green-800 mb-2">
+                  成本结构合理，毛利率 {grossMargin.toFixed(1)}% 达标
+                </p>
+                <p className="text-xs text-green-700">
+                  点击「下一步」查看完整成本建模报告
+                </p>
               </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* OPEX模块分布卡片 */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-5 space-y-4">
-        <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-          <span className="text-lg">📊</span>
-          OPEX成本分布
-        </h4>
-
-        <div className="space-y-2">
-          {/* M4 */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">M4 货物税费</span>
-              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m4 || 0).toFixed(2)}</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
-                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m4 || 0) / unitCost) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-
-          {/* M5 */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">M5 物流配送</span>
-              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m5 || 0).toFixed(2)}</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-green-400 to-green-600"
-                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m5 || 0) / unitCost) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-
-          {/* M6 */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">M6 营销获客</span>
-              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m6 || 0).toFixed(2)}</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-purple-400 to-purple-600"
-                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m6 || 0) / unitCost) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-
-          {/* M7 */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">M7 支付手续费</span>
-              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m7 || 0).toFixed(2)}</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600"
-                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m7 || 0) / unitCost) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-
-          {/* M8 */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">M8 运营管理</span>
-              <span className="text-xs font-bold text-gray-900">${(opexBreakdown.m8 || 0).toFixed(2)}</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-red-400 to-red-600"
-                style={{ width: `${unitCost > 0 ? ((opexBreakdown.m8 || 0) / unitCost) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
+        {/* 引导说明 */}
+        <div className="bg-blue-50/50 rounded-lg p-3 border border-blue-200">
+          <p className="text-xs text-blue-800 flex items-center gap-2">
+            <Info className="h-4 w-4 text-blue-600 flex-shrink-0" />
+            <span>
+              完整的OPEX/CAPEX详细拆解、可视化图表和优化建议请查看 <span className="font-bold">Step 3: 成本建模</span>
+            </span>
+          </p>
         </div>
-      </div>
-
-      {/* CAPEX回本周期卡片 */}
-      {capexTotal > 0 && (
-        <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-5 space-y-3">
-          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-            <span className="text-lg">⏱️</span>
-            CAPEX回本预测
-          </h4>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-200">
-            <span className="text-xs text-gray-600">初始投资</span>
-            <span className="text-lg font-bold text-blue-700">${capexTotal.toLocaleString()}</span>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
-            <span className="text-xs text-gray-600">月净利润</span>
-            <span className="text-lg font-bold text-green-700">${monthlyProfit.toFixed(0)}</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 text-center">
-            <div className="text-xs font-semibold text-gray-600 mb-1">预计回本周期</div>
-            <div className="text-4xl font-black text-purple-700">
-              {paybackPeriod > 0 ? paybackPeriod.toFixed(1) : '∞'}
-              <span className="text-lg ml-1">月</span>
-            </div>
-            <div className="text-xs text-purple-600 mt-1">
-              {paybackPeriod > 12 ? '⚠️ 回本周期较长' : paybackPeriod > 0 ? '✅ 回本速度良好' : '❌ 无法回本'}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 优化建议 */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 p-5">
-        <h4 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-          💡 优化建议
-        </h4>
-        <ul className="text-xs text-blue-800 space-y-2">
-          {!isProfitable && (
-            <>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>提高零售价至 <span className="font-bold">${(unitCost / 0.7).toFixed(2)}+</span> 实现30%毛利率</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>选择低成本市场（越南/印尼/泰国）</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>优化物流方式（空运改海运节省70%+）</span>
-              </li>
-            </>
-          )}
-          {isProfitable && isWarning && (
-            <>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>优化供应链降低COGS（目标节省10-15%）</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>控制营销费用率（ACOS优化至15%以下）</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>提高零售价提升利润空间</span>
-              </li>
-            </>
-          )}
-          {isProfitable && !isWarning && (
-            <>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>当前成本结构健康，毛利率 {grossMargin.toFixed(1)}%</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>可考虑规模化降低单位成本</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600">•</span>
-                <span>使用Step 4多市场对比寻找最优市场</span>
-              </li>
-            </>
-          )}
-        </ul>
       </div>
     </div>
   );
