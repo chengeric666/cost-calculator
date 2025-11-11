@@ -146,6 +146,42 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
             />
           </div>
         </div>
+
+        {/* CAPEX回本详情 */}
+        <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+          <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-blue-600" />
+            💡 CAPEX回本预测
+          </h4>
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <div className="text-gray-600 mb-1">初始投资</div>
+              <div className="text-xl font-bold text-blue-900">
+                ${costResult.capex.total.toFixed(0)}
+              </div>
+            </div>
+            <div>
+              <div className="text-gray-600 mb-1">每月毛利</div>
+              <div className="text-xl font-bold text-green-600">
+                ${(getGrossProfit() * (project?.scope?.assumptions?.monthlySales ?? 0)).toFixed(0)}
+              </div>
+              <div className="text-xs text-gray-500">
+                ${getGrossProfit().toFixed(2)} × {project?.scope?.assumptions?.monthlySales ?? 0}单位
+              </div>
+            </div>
+            <div>
+              <div className="text-gray-600 mb-1">预计回本</div>
+              <div className={`text-xl font-bold ${getPaybackPeriod() <= 12 ? 'text-green-600' : getPaybackPeriod() <= 24 ? 'text-yellow-600' : 'text-red-600'}`}>
+                {getPaybackPeriod() === Infinity || getPaybackPeriod() > 1000
+                  ? '∞'
+                  : `${getPaybackPeriod().toFixed(1)}月`}
+              </div>
+              <div className="text-xs text-gray-500">
+                {getPaybackPeriod() <= 12 ? '✅ 快速回本' : getPaybackPeriod() <= 24 ? '⚠️ 中等周期' : '❌ 周期过长'}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* OPEX breakdown */}
