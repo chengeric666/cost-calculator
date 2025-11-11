@@ -15,6 +15,8 @@ import { useState, useEffect } from 'react';
 import { Project, Industry, TargetCountry, SalesChannel, CostFactor } from '@/types/gecom';
 import { Package, Globe, ShoppingCart, AlertCircle, CheckCircle, Truck, Info, Warehouse, Plane, Ship } from 'lucide-react';
 import CountrySelector from './components/CountrySelector';
+import DataAvailabilityPanel from './DataAvailabilityPanel';
+import { useCountryData } from '@/hooks/useCountryData';
 
 interface Step1ScopeProps {
   project: Partial<Project>;
@@ -94,7 +96,12 @@ export default function Step1Scope({ project, onUpdate }: Step1ScopeProps) {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [useTemplate, setUseTemplate] = useState(true);
-  const [selectedCountryData, setSelectedCountryData] = useState<CostFactor | null>(null);
+
+  // 使用useCountryData Hook加载选中国家的成本因子数据
+  const { data: selectedCountryData, loading: countryDataLoading, error: countryDataError } = useCountryData(
+    formState.targetCountry,
+    project.industry as Industry
+  );
 
   // 自动加载行业模板
   useEffect(() => {
@@ -108,36 +115,6 @@ export default function Step1Scope({ project, onUpdate }: Step1ScopeProps) {
       }
     }
   }, [useTemplate, project.industry]);
-
-  // 加载选中国家的成本因子数据（Mock数据）
-  useEffect(() => {
-    const loadCountryData = async () => {
-      if (!formState.targetCountry || !project.industry) {
-        setSelectedCountryData(null);
-        return;
-      }
-
-      try {
-        // MVP 2.0: 使用动态导入加载Mock数据
-        const countryCode = formState.targetCountry;
-        const industry = project.industry;
-        const fileName = `${countryCode}-${industry}.ts`;
-
-        // 动态导入 data/cost-factors 文件
-        const module = await import(`@/data/cost-factors/${countryCode}-${industry}`);
-        const dataKey = `${countryCode}_${industry.toUpperCase().replace('_', '_')}`;
-        const data = module[dataKey] || module.default;
-
-        setSelectedCountryData(data);
-        console.log(`✅ 加载成本数据: ${countryCode} ${industry}`, data);
-      } catch (error) {
-        console.warn(`⚠️ 未找到成本数据: ${formState.targetCountry} ${project.industry}`, error);
-        setSelectedCountryData(null);
-      }
-    };
-
-    loadCountryData();
-  }, [formState.targetCountry, project.industry]);
 
   // 表单验证
   const validateForm = (): boolean => {
@@ -365,7 +342,16 @@ export default function Step1Scope({ project, onUpdate }: Step1ScopeProps) {
           onSelect={(country) => setFormState({ ...formState, targetCountry: country })}
         />
 
-        {/* S1.5 数据可用性面板 ⭐ MVP 2.0新增 - 优化版 */}
+        {/* S1.5A 19国数据库全景面板 ⭐ MVP 2.0新增 - 数据可用性总览 */}
+        <div className="mt-4">
+          <DataAvailabilityPanel
+            industry={project.industry as Industry}
+            defaultExpanded={false}
+            onCountrySelect={(country) => setFormState({ ...formState, targetCountry: country })}
+          />
+        </div>
+
+        {/* S1.5B 选中国家数据详情 ⭐ MVP 2.0新增 - 优化版 */}
         {selectedCountryData && (
           <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-300 rounded-lg p-4">
             <div className="flex items-start gap-2">
