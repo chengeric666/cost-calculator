@@ -21,7 +21,7 @@ import { test, expect } from '@playwright/test';
 
 // 测试配置
 const BASE_URL = 'http://localhost:3000';
-const SCREENSHOT_DIR = 'tests/screenshots/step1-data-availability';
+const SCREENSHOT_DIR = 'tests/e2e/screenshots/step1-data-availability';
 
 test.describe('Step 1: 数据可用性面板集成测试', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,8 +31,32 @@ test.describe('Step 1: 数据可用性面板集成测试', () => {
     // 等待页面加载完成
     await page.waitForLoadState('networkidle');
 
-    // 等待Step 1加载（查找标题"业务场景定义"）
-    await expect(page.getByRole('heading', { name: '业务场景定义' })).toBeVisible();
+    // 点击"开始成本计算"按钮进入向导
+    const startButton = page.getByRole('button', { name: /开始成本计算|Start Calculation/i });
+    await startButton.click();
+
+    // 等待向导加载（可能显示Step 0或Step 1）
+    await page.waitForTimeout(1000);
+
+    // 如果是Step 0，点击"下一步"进入Step 1
+    const step0Heading = page.getByRole('heading', { name: /项目基本信息|Project Info/i });
+    const isStep0 = await step0Heading.isVisible().catch(() => false);
+
+    if (isStep0) {
+      // 填写必要的Step 0信息（行业选择）
+      const petButton = page.getByRole('button', { name: /宠物|Pet/i }).first();
+      if (await petButton.isVisible().catch(() => false)) {
+        await petButton.click();
+      }
+
+      // 点击下一步进入Step 1
+      const nextButton = page.getByRole('button', { name: /下一步|Next/i });
+      await nextButton.click();
+      await page.waitForTimeout(500);
+    }
+
+    // 验证已进入Step 1
+    await expect(page.getByRole('heading', { name: /业务场景定义|Scope/i })).toBeVisible({ timeout: 10000 });
 
     console.log('✅ 页面加载完成，Step 1已渲染');
   });
@@ -233,8 +257,27 @@ test.describe('Step 1: 数据可用性面板集成测试', () => {
 
 test.describe('Step 1: useCountryData Hook功能测试', () => {
   test('8. 验证Hook数据加载成功（美国宠物食品）', async ({ page }) => {
+    // 访问首页并进入向导
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
+
+    // 点击开始按钮
+    const startButton = page.getByRole('button', { name: /开始成本计算/i });
+    await startButton.click();
+    await page.waitForTimeout(1000);
+
+    // 如果在Step 0，进入Step 1
+    const step0Heading = page.getByRole('heading', { name: /项目基本信息/i });
+    const isStep0 = await step0Heading.isVisible().catch(() => false);
+    if (isStep0) {
+      const petButton = page.getByRole('button', { name: /宠物/i }).first();
+      if (await petButton.isVisible().catch(() => false)) {
+        await petButton.click();
+      }
+      const nextButton = page.getByRole('button', { name: /下一步/i });
+      await nextButton.click();
+      await page.waitForTimeout(500);
+    }
 
     // 查找CountrySelector，选择美国（默认应该已选中）
     const usOption = page.getByText('United States').first();
