@@ -349,3 +349,156 @@ export const deepseekConfig = {
     toolCall: MODEL_TOOLCALL,
   },
 };
+
+// ============================================
+// 工具调用（Tool Calling）- MVP 2.0 S5.1
+// ============================================
+
+/**
+ * 消息类型定义
+ */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string;
+  tool_call_id?: string;
+  tool_calls?: Array<{
+    id: string;
+    type: 'function';
+    function: {
+      name: string;
+      arguments: string;
+    };
+  }>;
+}
+
+/**
+ * 工具调用响应类型
+ */
+export interface ToolCallResponse {
+  role: 'assistant';
+  content: string | null;
+  tool_calls?: Array<{
+    id: string;
+    type: 'function';
+    function: {
+      name: string;
+      arguments: string;
+    };
+  }>;
+}
+
+/**
+ * 使用DeepSeek V3进行工具调用
+ *
+ * @param messages 消息历史（包括system、user、assistant、tool消息）
+ * @param tools 可用的工具定义列表
+ * @param options 额外选项
+ * @returns AI响应（可能包含tool_calls）
+ */
+export async function callDeepSeekWithTools(
+  messages: ChatMessage[],
+  tools: any[],
+  options: {
+    temperature?: number;
+    maxTokens?: number;
+  } = {}
+): Promise<ToolCallResponse> {
+  ensureConfigured();
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: MODEL_TOOLCALL, // 使用DeepSeek V3进行工具调用
+      messages: messages as any,
+      tools: tools.length > 0 ? tools : undefined,
+      tool_choice: tools.length > 0 ? 'auto' : undefined,
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.maxTokens ?? 3000,
+    });
+
+    const choice = (response as any).choices[0];
+    const message = choice?.message;
+
+    return {
+      role: 'assistant',
+      content: message?.content || null,
+      tool_calls: message?.tool_calls || undefined,
+    };
+  } catch (error) {
+    console.error('DeepSeek工具调用失败:', error);
+    throw new Error('AI助手暂时无法响应，请稍后重试');
+  }
+}
+
+/**
+ * 简化的工具调用助手 - 自动处理多轮对话
+ *
+ * @param userMessage 用户消息
+ * @param tools 可用的工具定义
+ * @param toolExecutor 工具执行函数
+ * @param systemPrompt 系统提示词（可选）
+ * @param conversationHistory 对话历史（可选）
+ * @returns 最终的AI回复
+ */
+export async function chatWithTools(
+  userMessage: string,
+  tools: any[],
+  toolExecutor: (toolCall: any) => Promise<any>,
+  systemPrompt?: string,
+  conversationHistory: ChatMessage[] = []
+): Promise<{
+  response: string;
+  messages: ChatMessage[];
+}> {
+  ensureConfigured();
+
+  // 构建消息列表
+  const messages: ChatMessage[] = [
+    ...(systemPrompt ? [{ role: 'system' as const, content: systemPrompt }] : []),
+    ...conversationHistory,
+    { role: 'user' as const, content: userMessage }
+  ];
+
+  // 第一次调用AI
+  let aiResponse = await callDeepSeekWithTools(messages, tools);
+  messages.push({
+    role: 'assistant',
+    content: aiResponse.content || '',
+    tool_calls: aiResponse.tool_calls
+  });
+
+  // 如果AI需要调用工具
+  if (aiResponse.tool_calls && aiResponse.tool_calls.length > 0) {
+    // 执行所有工具调用
+    for (const toolCall of aiResponse.tool_calls) {
+      try {
+        const toolResult = await toolExecutor(toolCall);
+
+        // 将工具结果添加到消息历史
+        messages.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content: JSON.stringify(toolResult)
+        });
+      } catch (error) {
+        console.error(`工具调用失败 (${toolCall.function.name}):`, error);
+        messages.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content: JSON.stringify({ error: '工具调用失败，请稍后重试' })
+        });
+      }
+    }
+
+    // 再次调用AI生成最终回复
+    aiResponse = await callDeepSeekWithTools(messages, []);
+    messages.push({
+      role: 'assistant',
+      content: aiResponse.content || '抱歉，我无法生成回复。'
+    });
+  }
+
+  return {
+    response: aiResponse.content || '抱歉，我无法生成回复。',
+    messages
+  };
+}

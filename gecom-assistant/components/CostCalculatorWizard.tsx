@@ -9,7 +9,7 @@ import Step1Scope from './wizard/Step1Scope';
 import Step2DataCollection from './wizard/Step2DataCollection';
 import Step3CostModeling from './wizard/Step3CostModeling';
 import Step4ScenarioAnalysis from './wizard/Step4ScenarioAnalysis';
-import Step5Insights from './wizard/Step5Insights';
+import Step5AIAssistant from './wizard/Step5AIAssistant';
 
 interface CostCalculatorWizardProps {
   onBack: () => void;
@@ -46,7 +46,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
     { number: 2, title: '数据采集', component: Step2DataCollection },
     { number: 3, title: '成本建模', component: Step3CostModeling },
     { number: 4, title: '场景分析', component: Step4ScenarioAnalysis },
-    { number: 5, title: '洞察与路线图', component: Step5Insights },
+    { number: 5, title: 'AI智能助手', component: Step5AIAssistant },
   ];
 
   const handleNext = () => {
