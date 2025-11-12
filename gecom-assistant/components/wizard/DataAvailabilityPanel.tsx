@@ -21,7 +21,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { ChevronDown, ChevronUp, Info, Check, AlertTriangle, X, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GlassCard from '@/components/ui/GlassCard';
@@ -316,15 +316,29 @@ export default function DataAvailabilityPanel({
   }, [industryKey]);
 
   // 切换国家展开状态
-  const toggleCountry = (country: TargetCountry) => {
-    const newSet = new Set(expandedCountries);
-    if (newSet.has(country)) {
-      newSet.delete(country);
-    } else {
-      newSet.add(country);
-    }
-    setExpandedCountries(newSet);
-  };
+  const toggleCountry = useCallback((country: TargetCountry) => {
+    setExpandedCountries((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(country)) {
+        newSet.delete(country);
+      } else {
+        newSet.add(country);
+      }
+      return newSet;
+    });
+  }, []);
+
+  // 处理国家行点击（展开 + 选择）
+  const handleCountryClick = useCallback((country: TargetCountry) => {
+    // 1. 先切换展开状态（本地state更新）
+    toggleCountry(country);
+
+    // 2. 延迟触发父组件选择，确保本地state更新完成
+    // 使用setTimeout(0)将onCountrySelect放入下一个事件循环
+    setTimeout(() => {
+      onCountrySelect?.(country);
+    }, 0);
+  }, [toggleCountry, onCountrySelect]);
 
   return (
     <GlassCard
@@ -399,10 +413,7 @@ export default function DataAvailabilityPanel({
                       'flex items-center justify-between p-3 transition-colors',
                       'hover:bg-gray-50 cursor-pointer'
                     )}
-                    onClick={() => {
-                      toggleCountry(country.country);
-                      onCountrySelect?.(country.country);
-                    }}
+                    onClick={() => handleCountryClick(country.country)}
                   >
                     {/* 左侧：国家信息 */}
                     <div className="flex items-center gap-3 flex-1">
