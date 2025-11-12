@@ -79,7 +79,9 @@ export function useCountryData(
       try {
         // 动态导入成本因子文件
         // 文件路径：data/cost-factors/{COUNTRY_CODE}-{industry}.ts
-        const module = await import(`@/data/cost-factors/${country}-${industry}`);
+        // 注意：文件名中的industry使用连字符（pet-food）而非下划线（pet_food）
+        const industryFileName = industry.replace('_', '-');
+        const module = await import(`@/data/cost-factors/${country}-${industryFileName}`);
 
         // 尝试多种导出格式
         // 1. 标准格式：{COUNTRY_CODE}_{INDUSTRY} (如 US_PET_FOOD)
@@ -188,7 +190,8 @@ export function useCountryDataBatch(
       // 并行加载所有国家数据
       const promises = countries.map(async (country) => {
         try {
-          const module = await import(`@/data/cost-factors/${country}-${industry}`);
+          const industryFileName = industry.replace('_', '-');
+          const module = await import(`@/data/cost-factors/${country}-${industryFileName}`);
           const industryUpper = industry.toUpperCase().replace('_', '_');
           const dataKey = `${country}_${industryUpper}`;
           const costFactorData = module[dataKey] || module.default;
