@@ -355,6 +355,20 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
     return field in state.userOverrides;
   };
 
+  /**
+   * 重置字段到系统预设（移除用户覆盖）
+   * S2.7: 参数锁定交互实现
+   */
+  const handleResetField = (field: string) => {
+    setState((prev) => {
+      const { [field]: _, ...remainingOverrides } = prev.userOverrides;
+      return {
+        ...prev,
+        userOverrides: remainingOverrides,
+      };
+    });
+  };
+
   if (!state.costFactor) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -1870,6 +1884,7 @@ function CostItemRow({
   readOnly,
   isOverridden,
   onEdit,
+  onReset,
   mode,
   description,
   warning,
@@ -1883,6 +1898,7 @@ function CostItemRow({
   readOnly?: boolean;
   isOverridden?: boolean;
   onEdit?: (value: any) => void;
+  onReset?: () => void;
   mode?: 'quick' | 'expert';
   description?: string;
   warning?: boolean;
@@ -1895,6 +1911,12 @@ function CostItemRow({
       onEdit(parseFloat(tempValue) || 0);
     }
     setEditing(false);
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+    }
   };
 
   const canEdit = mode === 'expert' && !readOnly && onEdit;
@@ -1937,17 +1959,41 @@ function CostItemRow({
               {typeof value === 'number' ? value.toLocaleString() : value}
             </span>
             {unit && <span className="text-sm text-gray-600">{unit}</span>}
-            {canEdit && (
+            {canEdit && !isOverridden && (
               <button
                 onClick={() => {
                   setTempValue(value);
                   setEditing(true);
                 }}
-                className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 flex items-center gap-1"
+                className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 flex items-center gap-1 transition-all"
+                title="解锁以自定义此参数"
               >
-                <Edit2 className="h-3 w-3" />
-                自定义
+                <Lock className="h-3 w-3" />
+                <span className="hidden sm:inline">锁定</span>
               </button>
+            )}
+            {canEdit && isOverridden && onReset && (
+              <>
+                <button
+                  onClick={() => {
+                    setTempValue(value);
+                    setEditing(true);
+                  }}
+                  className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 flex items-center gap-1 transition-all"
+                  title="重新编辑此参数"
+                >
+                  <Edit2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">编辑</span>
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded hover:bg-orange-200 flex items-center gap-1 transition-all"
+                  title="重置为系统预设值"
+                >
+                  <Unlock className="h-3 w-3" />
+                  <span className="hidden sm:inline">重置</span>
+                </button>
+              </>
             )}
           </div>
         )}
