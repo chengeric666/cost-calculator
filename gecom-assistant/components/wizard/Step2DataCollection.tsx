@@ -1849,7 +1849,7 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
 }
 
 /**
- * 模块卡片组件（可折叠）
+ * 模块卡片组件（可折叠） - A2优化：平滑折叠动画
  */
 function ModuleCard({ moduleId, title, expanded, onToggle, total, children }: any) {
   return (
@@ -1859,14 +1859,24 @@ function ModuleCard({ moduleId, title, expanded, onToggle, total, children }: an
         className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
       >
         <div className="flex items-center gap-2">
-          {expanded ? <ChevronDown className="h-4 w-4 text-gray-600" /> : <ChevronRight className="h-4 w-4 text-gray-600" />}
+          <ChevronDown
+            className={`h-4 w-4 text-gray-600 transition-transform duration-300 ${expanded ? '' : '-rotate-90'}`}
+          />
           <span className="font-semibold text-gray-900">{title}</span>
         </div>
         <span className="text-sm font-semibold text-gray-700">
           {moduleId.startsWith('m') && moduleId <= 'm3' ? `$${total.toLocaleString()} USD` : `$${total.toFixed(2)}/单位`}
         </span>
       </button>
-      {expanded && <div className="p-4 space-y-3 bg-white">{children}</div>}
+
+      {/* A2动画：平滑高度过渡 */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="p-4 space-y-3 bg-white">{children}</div>
+      </div>
     </div>
   );
 }
