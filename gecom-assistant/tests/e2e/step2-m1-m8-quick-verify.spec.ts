@@ -52,12 +52,18 @@ test.describe('Day 18阶段2: M1-M8快速验证', () => {
   });
 
   test('验证：M1模块11字段完整展示', async ({ page }) => {
-    // 滚动确保M1可见
+    // 滚动确保CAPEX区块可见
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(500);
 
-    // 找到M1模块
-    const m1Module = page.locator('text=M1: 市场准入').first();
+    // 先展开CAPEX区块
+    const capexButton = page.locator('text=阶段 0-1: CAPEX').first();
+    await expect(capexButton).toBeVisible();
+    await capexButton.click();
+    await page.waitForTimeout(800);
+
+    // 找到M1模块（完整标题含英文）
+    const m1Module = page.locator('text=M1: 市场准入（Market Entry）').first();
     await expect(m1Module).toBeVisible();
 
     // 展开M1
@@ -84,18 +90,18 @@ test.describe('Day 18阶段2: M1-M8快速验证', () => {
     await page.evaluate(() => window.scrollTo(0, 800));
     await page.waitForTimeout(500);
 
-    // 找到M5模块
-    const m5Module = page.locator('text=M5: 物流配送').first();
+    // 找到M5模块（完整标题含英文）
+    const m5Module = page.locator('text=M5: 物流配送（Logistics & Delivery）').first();
     await expect(m5Module).toBeVisible();
 
     // 展开M5
     await m5Module.click();
     await page.waitForTimeout(800);
 
-    // 验证关键字段
-    await expect(page.locator('text=尾程配送费')).toBeVisible();
-    await expect(page.locator('text=退货率')).toBeVisible();
-    await expect(page.locator('text=M5总计')).toBeVisible();
+    // 验证关键字段（退货率有多个匹配，使用.first()）
+    await expect(page.locator('text=尾程配送费').first()).toBeVisible();
+    await expect(page.locator('text=退货率').first()).toBeVisible();
+    await expect(page.locator('text=M5总计').first()).toBeVisible();
 
     // 截图
     await page.screenshot({
