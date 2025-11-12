@@ -45,9 +45,22 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     await step0NextButton.click();
     await page.waitForTimeout(1500);
 
-    // 4. Step 1: 业务场景定义 - 跳过所有必填项
-    // Step 1应该有一些预填值，直接点击下一步
+    // 4. Step 1: 业务场景定义 - 等待模板自动填充
     await page.waitForSelector('text=/业务场景/i', { timeout: 5000 });
+
+    // ⭐ 关键修复：等待行业模板加载提示出现（说明模板已自动填充）
+    await page.waitForSelector('text=/已加载.*宠物食品.*行业模板/i', { timeout: 10000 });
+    console.log('✓ Step 1: 宠物食品行业模板已自动填充');
+
+    // 等待产品名称输入框被填充（验证模板数据已生效）
+    await page.waitForFunction(() => {
+      const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+      return input && input.value.includes('狗粮');
+    }, { timeout: 5000 });
+    console.log('✓ Step 1: 产品数据已填充（含"狗粮"）');
+
+    // 额外等待确保scope被创建并传递给父组件
+    await page.waitForTimeout(1000);
 
     // 点击"下一步"进入Step 2
     let nextButton = page.locator('button:has-text("下一步")');
@@ -101,12 +114,8 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
   });
 
   test('S4.3-02: 最优市场推荐卡片完整展示', async ({ page }) => {
-    // 等待最优市场卡片加载
-    const bestMarketCard = page.locator('div:has-text("最优市场")').first();
-    await expect(bestMarketCard).toBeVisible();
-
-    // 验证绿色渐变背景
-    const gradientCard = page.locator('.bg-gradient-to-r.from-green-50').first();
+    // 等待最优市场卡片加载 - 使用精确的class选择器
+    const gradientCard = page.locator('.bg-gradient-to-r.from-green-50.to-emerald-50.border-2.border-green-300').first();
     await expect(gradientCard).toBeVisible();
 
     // 验证Award图标
@@ -119,10 +128,10 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     const countryText = await countryName.textContent();
     expect(countryText).toMatch(/[\u4e00-\u9fa5]{2,4}/); // 中文国家名
 
-    // 验证"最优市场"标签
-    const bestBadge = gradientCard.locator('span:has-text("最优市场")');
+    // 验证"最优市场"标签 - 使用更精确的选择器
+    const bestBadge = gradientCard.locator('span.bg-green-600');
     await expect(bestBadge).toBeVisible();
-    await expect(bestBadge).toHaveClass(/bg-green-600/);
+    await expect(bestBadge).toContainText('最优市场');
 
     // 验证综合评分显示
     const scoreDisplay = gradientCard.locator('span:has-text("评分:")');
@@ -138,8 +147,8 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     await expect(metricCards.nth(2).locator('text=回本周期')).toBeVisible();
     await expect(metricCards.nth(3).locator('text=启动成本')).toBeVisible();
 
-    // 验证推荐理由列表
-    const reasonsSection = gradientCard.locator('div:has-text("推荐理由：")');
+    // 验证推荐理由列表 - 使用filter而不是:has-text
+    const reasonsSection = gradientCard.locator('div').filter({hasText: '推荐理由：'}).first();
     await expect(reasonsSection).toBeVisible();
 
     const reasons = reasonsSection.locator('ul li');
@@ -158,12 +167,8 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
   });
 
   test('S4.3-03: 最差市场警告卡片完整展示', async ({ page }) => {
-    // 等待最差市场卡片加载
-    const worstMarketCard = page.locator('div:has-text("风险警告")').first();
-    await expect(worstMarketCard).toBeVisible();
-
-    // 验证红色渐变背景
-    const gradientCard = page.locator('.bg-gradient-to-r.from-red-50').first();
+    // 等待最差市场卡片加载 - 使用精确的class选择器（注意是to-orange-50，不是to-rose-50）
+    const gradientCard = page.locator('.bg-gradient-to-r.from-red-50.to-orange-50.border-2.border-red-300').first();
     await expect(gradientCard).toBeVisible();
 
     // 验证AlertTriangle图标
@@ -174,17 +179,17 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     const countryName = gradientCard.locator('h3').first();
     await expect(countryName).toBeVisible();
 
-    // 验证"风险警告"标签
-    const warningBadge = gradientCard.locator('span:has-text("风险警告")');
+    // 验证"风险警告"标签 - 使用更精确的选择器
+    const warningBadge = gradientCard.locator('span.bg-red-600');
     await expect(warningBadge).toBeVisible();
-    await expect(warningBadge).toHaveClass(/bg-red-600/);
+    await expect(warningBadge).toContainText('风险警告');
 
     // 验证4个关键指标卡片
     const metricCards = gradientCard.locator('.bg-white.rounded-lg.p-3');
     await expect(metricCards).toHaveCount(4);
 
-    // 验证警告理由列表
-    const reasonsSection = gradientCard.locator('div:has-text("警告理由：")');
+    // 验证警告理由列表 - 使用后代选择器而不是:has-text
+    const reasonsSection = gradientCard.locator('div').filter({hasText: '警告理由：'}).first();
     await expect(reasonsSection).toBeVisible();
 
     const reasons = reasonsSection.locator('ul li');
@@ -379,12 +384,12 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
   });
 
   test('S4.3-09: 评分算法说明正确显示', async ({ page }) => {
-    // 等待算法说明区域加载
-    const algorithmSection = page.locator('div:has-text("评分算法说明")').first();
+    // 等待算法说明区域加载 - 使用精确的CSS类选择器
+    const algorithmSection = page.locator('.bg-gradient-to-r.from-gray-50.to-slate-50').first();
     await expect(algorithmSection).toBeVisible();
 
-    // 验证权重配置
-    const weightsSection = algorithmSection.locator('div:has-text("权重配置：")');
+    // 验证权重配置 - 选择grid的直接子div
+    const weightsSection = algorithmSection.locator('.grid > div').filter({hasText: '权重配置：'});
     await expect(weightsSection).toBeVisible();
 
     await expect(weightsSection).toContainText('毛利率: 40%');
@@ -392,14 +397,14 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     await expect(weightsSection).toContainText('回本周期: 20%');
     await expect(weightsSection).toContainText('CAPEX: 10%');
 
-    // 验证推荐等级说明
-    const levelsSection = algorithmSection.locator('div:has-text("推荐等级：")');
+    // 验证推荐等级说明 - 选择grid的直接子div
+    const levelsSection = algorithmSection.locator('.grid > div').filter({hasText: '推荐等级：'});
     await expect(levelsSection).toBeVisible();
 
     await expect(levelsSection).toContainText('🏆 最优：排名第1');
     await expect(levelsSection).toContainText('👍 良好：前30%');
     await expect(levelsSection).toContainText('📊 一般：中间40%');
-    await expect(levelsSection).toContainText('⚡较差：后30%');
+    await expect(levelsSection).toContainText('⚡ 较差：后30%');  // 修复：emoji后有空格
     await expect(levelsSection).toContainText('⚠️ 最差：排名最后');
 
     // 验证模拟数据说明
@@ -429,12 +434,12 @@ test.describe('Step 4: 智能市场推荐算法测试', () => {
     const mainContainer = page.locator('div.space-y-8').first();
     await expect(mainContainer).toBeVisible();
 
-    // 验证所有主要区块都存在
-    await expect(page.locator('div:has-text("最优市场")')).toBeVisible();
-    await expect(page.locator('div:has-text("风险警告")')).toBeVisible();
-    await expect(page.locator('table')).toBeVisible();
-    await expect(page.locator('div:has-text("市场洞察分析")')).toBeVisible();
-    await expect(page.locator('div:has-text("评分算法说明")')).toBeVisible();
+    // 验证所有主要区块都存在 - 使用更精确的选择器
+    await expect(page.locator('.bg-gradient-to-r.from-green-50.to-emerald-50').first()).toBeVisible(); // 最优市场
+    await expect(page.locator('.bg-gradient-to-r.from-red-50.to-orange-50').first()).toBeVisible(); // 最差市场（注意是to-orange-50）
+    await expect(page.locator('table')).toBeVisible(); // 排名表
+    await expect(page.locator('button:has-text("市场洞察分析")')).toBeVisible(); // 洞察折叠按钮
+    await expect(page.locator('.bg-gradient-to-r.from-gray-50').first()).toBeVisible(); // 算法说明
   });
 
   test('S4.3-11: 颜色编码验证', async ({ page }) => {

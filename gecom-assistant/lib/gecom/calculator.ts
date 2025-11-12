@@ -48,7 +48,13 @@ export function calculateCostModel(
   return {
     capex: capex as any,
     opex: opex as any,
-    unitEconomics,
+    unitEconomics,           // POC兼容字段（驼峰命名）
+    unit_economics: {        // MVP 2.0标准字段（下划线命名）- market-recommendation需要
+      revenue: unitEconomics.revenue,
+      cost: unitEconomics.totalCost,
+      gross_profit: unitEconomics.grossProfit,
+      gross_margin: unitEconomics.grossMargin,
+    },
     kpis,
     warnings,
     recommendations,
@@ -263,9 +269,12 @@ function calculateKPIs(
 
   return {
     roi,
-    paybackPeriod,
-    breakEvenPrice,
-    breakEvenVolume,
+    paybackPeriod,            // POC兼容字段（驼峰命名）
+    payback_period_months: paybackPeriod,  // MVP 2.0标准字段 - market-recommendation需要
+    breakEvenPrice,           // POC兼容字段（驼峰命名）
+    breakeven_price: breakEvenPrice,  // MVP 2.0标准字段
+    breakEvenVolume,          // POC兼容字段（驼峰命名）
+    breakeven_volume: breakEvenVolume,  // MVP 2.0标准字段
     ltv,
     ltvCacRatio,
   };
