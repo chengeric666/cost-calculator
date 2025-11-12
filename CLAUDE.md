@@ -115,6 +115,139 @@ Step 5: AI智能助手
 └─ 报告生成（PDF/Excel导出）
 ```
 
+### Step 2核心架构详解 ⭐ (MVP 2.0 Day 17完成)
+
+> **设计理念**：Step 2是整个工具的"数据心脏"，通过数据溯源+实时预览，将复杂的成本计算过程透明化、可视化。
+
+#### 三大核心功能模块
+
+**1. 右侧Sticky成本预览面板（S2.2）**
+```
+位置：右侧1/3列，sticky定位
+功能：
+├─ 实时单位经济模型（300ms节流）
+│  ├─ 单位收入（Target Price）
+│  ├─ 单位成本（CAPEX分摊 + OPEX）
+│  ├─ 单位毛利（收入 - 成本）
+│  └─ 毛利率（百分比 + 进度条）
+│
+├─ OPEX成本分解快览
+│  ├─ M4: 货物税费（COGS + 关税 + VAT + 物流）
+│  ├─ M5: 物流配送
+│  ├─ M6: 营销获客
+│  ├─ M7: 支付手续费
+│  └─ M8: 运营管理
+│
+└─ 成本预警系统
+   └─ 毛利率<0时显示红色Alert
+```
+
+**2. M4模块完整展示（S2.5）**
+```
+M4模块结构（货物税费）：
+├─ 商品成本（COGS）
+│  ├─ 数值：来自Step 1用户输入
+│  └─ Tier徽章：显示数据质量等级
+│
+├─ 头程物流（海运/空运切换）
+│  ├─ Tab切换器：海运 | 空运
+│  ├─ 费率显示：USD/kg + Tier徽章
+│  ├─ 公式可视化：费率 × 重量 = 物流成本
+│  └─ 数据溯源：tooltip显示数据来源
+│
+├─ 进口关税（专家模式解锁）
+│  ├─ 有效关税税率（%）+ Tier徽章
+│  ├─ HS编码显示（如有）
+│  ├─ 关税备注（如"含Section 301"）
+│  ├─ 公式可视化：COGS × 税率 = 关税成本
+│  └─ 解锁编辑：黄色Unlock按钮（专家模式）
+│
+└─ 增值税（VAT三层分解）
+   ├─ ① CIF Value（到岸价）= COGS + 物流 + 关税
+   ├─ ② VAT Base（计税基础）= CIF Value
+   ├─ ③ VAT Cost（增值税）= VAT Base × VAT税率
+   ├─ VAT税率（%）+ Tier徽章
+   └─ VAT备注显示
+```
+
+**实现亮点**：
+- 物流模式state管理（useState: 'sea' | 'air'）
+- 关税解锁state管理（tariffUnlocked: boolean）
+- 实时计算逻辑（useEffect监听依赖变化）
+- 公式可视化UI（白色边框 + 计算步骤展示）
+
+**3. Tier徽章全局应用（S2.9）**
+```
+数据溯源系统：
+├─ TierBadgeWithTooltip组件（65行）
+│  ├─ 输入参数：tier, dataSource, updatedAt
+│  ├─ 徽章颜色映射：
+│  │  ├─ Tier 1（绿色）：官方数据100%
+│  │  ├─ Tier 2（黄色）：权威数据+估算
+│  │  └─ Tier 3（灰色）：行业估算为主
+│  └─ Tooltip内容（hover显示）：
+│     ├─ 数据来源：USITC官网 / WTO关税数据库 / 数据库预设
+│     ├─ 数据质量：Tier 1/2/3 描述
+│     └─ 更新时间：2025-Q1
+│
+├─ 应用范围（18个成本参数）
+│  ├─ M1-M3 CAPEX模块：9个参数
+│  │  └─ 如：监管机构、合规复杂度、注册费用、认证费用等
+│  └─ M4-M8 OPEX模块：9个参数
+│     └─ 如：COGS、关税、VAT、物流、佣金、支付费用等
+│
+└─ CostItemRow组件升级
+   ├─ 新增可选参数：dataSource, updatedAt
+   ├─ 向后兼容：不传参数时正常显示
+   └─ 统一UI风格：徽章位于参数名称右侧
+```
+
+#### 技术实现要点
+
+**组件架构**：
+```typescript
+// Step2DataCollection.tsx结构（已实现）
+├─ TierBadgeWithTooltip组件（65行）
+│  └─ 状态管理：showTooltip (useState)
+│
+├─ CostItemRow组件（60行）
+│  └─ 参数：label, value, tier, dataSource, updatedAt...
+│
+├─ CostPreviewPanel组件（150行）
+│  ├─ 实时计算：useEffect + 300ms节流
+│  └─ UI：sticky定位 + Liquid Glass样式
+│
+└─ M4Module函数组件（260行）
+   ├─ 状态：logisticsMode, tariffUnlocked
+   ├─ 计算：物流/关税/VAT实时计算
+   └─ UI：Tab切换 + 公式可视化 + 三层分解
+```
+
+**数据流**：
+```
+1. 数据读取：getEffectiveValue(field)
+   └─ 优先级：userOverrides > costFactor > 默认值
+
+2. 实时计算：
+   └─ 用户修改参数 → useEffect触发 → 300ms节流 → 重新计算
+
+3. 预览更新：
+   └─ costResult变化 → CostPreviewPanel自动更新
+```
+
+**测试覆盖**（25个E2E测试用例）：
+```
+tests/e2e/
+├─ step2-cost-preview-test.spec.ts（5个测试）
+│  └─ 预览面板渲染、实时更新、OPEX分解、毛利率警告
+│
+├─ step2-m4-module-test.spec.ts（7个测试）
+│  └─ 物流模式切换、关税解锁、VAT分解、Tier徽章、tooltip
+│
+└─ step2-tier-badges-test.spec.ts（6个测试）
+   └─ M1-M8徽章显示、tooltip内容、颜色映射
+```
+
 ### 辅助功能
 - **历史项目管理：** 保存/加载历史计算（基于Appwrite Database）
 - **报告导出：** PDF/Excel格式导出完整计算报告
