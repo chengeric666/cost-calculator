@@ -1029,6 +1029,70 @@ function CostPreviewPanel({ project, costResult, state }: any) {
           </div>
         </div>
 
+        {/* OPEX构成快览（M4-M8简化金额）*/}
+        {costResult?.opex && (
+          <div className="bg-white/70 backdrop-blur-sm rounded-xl border-2 border-gray-200 p-4 space-y-2">
+            <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              OPEX构成（单位成本）
+            </h4>
+            <div className="space-y-1.5">
+              {/* M4 货物税费（使用汇总字段或兼容字段） */}
+              {(costResult.opex.m4_goodsTax !== undefined || (costResult.opex.m4_cogs !== undefined)) && (
+                <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">M4 货物税费</span>
+                  <span className="font-bold text-gray-900">
+                    ${(costResult.opex.m4_goodsTax ??
+                       ((costResult.opex.m4_cogs || 0) + (costResult.opex.m4_tariff || 0) + (costResult.opex.m4_logistics || 0) + (costResult.opex.m4_vat || 0))).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {/* M5 物流配送（使用兼容字段或子项相加） */}
+              {(costResult.opex.m5_logistics !== undefined || costResult.opex.m5_last_mile !== undefined) && (
+                <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">M5 物流配送</span>
+                  <span className="font-bold text-gray-900">
+                    ${(typeof costResult.opex.m5_logistics === 'number'
+                       ? costResult.opex.m5_logistics
+                       : ((costResult.opex.m5_last_mile || 0) + (costResult.opex.m5_return || 0))).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {/* M6 营销获客 */}
+              {costResult.opex.m6_marketing !== undefined && (
+                <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">M6 营销获客</span>
+                  <span className="font-bold text-gray-900">${costResult.opex.m6_marketing.toFixed(2)}</span>
+                </div>
+              )}
+              {/* M7 支付手续费（payment + commission） */}
+              {costResult.opex.m7_payment !== undefined && (
+                <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">M7 支付手续费</span>
+                  <span className="font-bold text-gray-900">
+                    ${(costResult.opex.m7_payment + (costResult.opex.m7_platform_commission || 0)).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {/* M8 运营管理（使用兼容字段或m8_ga） */}
+              {(costResult.opex.m8_operations !== undefined || costResult.opex.m8_ga !== undefined) && (
+                <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">M8 运营管理</span>
+                  <span className="font-bold text-gray-900">
+                    ${(typeof costResult.opex.m8_operations === 'number'
+                       ? costResult.opex.m8_operations
+                       : costResult.opex.m8_ga).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-xs py-2 px-2 rounded-lg bg-gray-100 border-t-2 border-gray-300 mt-2">
+                <span className="text-gray-800 font-bold">OPEX总计</span>
+                <span className="font-black text-gray-900">${costResult.opex.total.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 状态提示 + 下一步引导 */}
         {!isProfitable && (
           <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-xl p-4 shadow-lg">
