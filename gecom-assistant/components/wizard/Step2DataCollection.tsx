@@ -1933,8 +1933,21 @@ function CostItemRow({
               updatedAt={updatedAt}
             />
           )}
+          {/* S2.8: 三种数据状态可视化 */}
           {isOverridden && (
-            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">已自定义</span>
+            <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 border border-purple-300 rounded-full font-medium">
+              🔓 用户自定义
+            </span>
+          )}
+          {!isOverridden && !readOnly && onEdit && mode === 'expert' && (
+            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 border border-blue-300 rounded-full font-medium">
+              🔒 系统预设
+            </span>
+          )}
+          {readOnly && !isOverridden && (
+            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 border border-green-300 rounded-full font-medium">
+              ✅ 参考数据
+            </span>
           )}
           {warning && <AlertCircle className="h-4 w-4 text-red-500" />}
         </div>
