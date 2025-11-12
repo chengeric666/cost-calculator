@@ -532,12 +532,16 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               label="监管机构"
               value={getEffectiveValue('m1_regulatory_agency')}
               tier={getEffectiveValue('m1_tier')}
+              dataSource={getEffectiveValue('m1_data_source')}
+              updatedAt={getEffectiveValue('m1_updated_at')}
               readOnly
             />
             <CostItemRow
               label="合规复杂度"
               value={getEffectiveValue('m1_complexity')}
               tier={getEffectiveValue('m1_tier')}
+              dataSource={getEffectiveValue('m1_data_source')}
+              updatedAt={getEffectiveValue('m1_updated_at')}
               readOnly
             />
             <CostItemRow
@@ -545,6 +549,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               value={getEffectiveValue('m1_estimated_cost_usd')}
               unit="USD"
               tier={getEffectiveValue('m1_tier')}
+              dataSource={getEffectiveValue('m1_data_source')}
+              updatedAt={getEffectiveValue('m1_updated_at')}
               isOverridden={isOverridden('m1_estimated_cost_usd')}
               onEdit={(val) => setUserOverride('m1_estimated_cost_usd', val)}
               mode={state.mode}
@@ -564,6 +570,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               label="认证要求"
               value={getEffectiveValue('m2_certifications_required')}
               tier={getEffectiveValue('m2_tier')}
+              dataSource={getEffectiveValue('m2_data_source')}
+              updatedAt={getEffectiveValue('m2_updated_at')}
               readOnly
             />
             <CostItemRow
@@ -571,6 +579,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               value={getEffectiveValue('m2_estimated_cost_usd')}
               unit="USD"
               tier={getEffectiveValue('m2_tier')}
+              dataSource={getEffectiveValue('m2_data_source')}
+              updatedAt={getEffectiveValue('m2_updated_at')}
               isOverridden={isOverridden('m2_estimated_cost_usd')}
               onEdit={(val) => setUserOverride('m2_estimated_cost_usd', val)}
               mode={state.mode}
@@ -590,6 +600,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               label="包装本地化费率"
               value={`${((getEffectiveValue('m3_packaging_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m3_tier')}
+              dataSource={getEffectiveValue('m3_data_source')}
+              updatedAt={getEffectiveValue('m3_updated_at')}
               readOnly
               description={`计算: $${project.scope?.productInfo?.targetPrice || 0} × ${((getEffectiveValue('m3_packaging_rate') || 0) * 100).toFixed(1)}% = $${((project.scope?.productInfo?.targetPrice || 0) * (getEffectiveValue('m3_packaging_rate') || 0)).toFixed(2)}/单位`}
             />
@@ -598,6 +610,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               value={getEffectiveValue('m3_initial_inventory_usd')}
               unit="USD"
               tier={getEffectiveValue('m3_tier')}
+              dataSource={getEffectiveValue('m3_data_source')}
+              updatedAt={getEffectiveValue('m3_updated_at')}
               isOverridden={isOverridden('m3_initial_inventory_usd')}
               onEdit={(val) => setUserOverride('m3_initial_inventory_usd', val)}
               mode={state.mode}
@@ -607,6 +621,8 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
               value={getEffectiveValue('m3_warehouse_deposit_usd')}
               unit="USD"
               tier={getEffectiveValue('m3_tier')}
+              dataSource={getEffectiveValue('m3_data_source')}
+              updatedAt={getEffectiveValue('m3_updated_at')}
               isOverridden={isOverridden('m3_warehouse_deposit_usd')}
               onEdit={(val) => setUserOverride('m3_warehouse_deposit_usd', val)}
               mode={state.mode}
@@ -696,6 +712,8 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               value={getEffectiveValue('m5_last_mile_delivery_usd')}
               unit="USD/单位"
               tier={getEffectiveValue('m5_tier')}
+              dataSource={getEffectiveValue('m5_data_source')}
+              updatedAt={getEffectiveValue('m5_updated_at')}
               isOverridden={isOverridden('m5_last_mile_delivery_usd')}
               onEdit={(val) => setUserOverride('m5_last_mile_delivery_usd', val)}
               mode={state.mode}
@@ -704,12 +722,16 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               label="退货率"
               value={`${((getEffectiveValue('m5_return_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m5_tier')}
+              dataSource={getEffectiveValue('m5_data_source')}
+              updatedAt={getEffectiveValue('m5_updated_at')}
               readOnly
             />
             <CostItemRow
               label="退货处理成本率"
               value={`${((getEffectiveValue('m5_return_cost_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m5_tier')}
+              dataSource={getEffectiveValue('m5_data_source')}
+              updatedAt={getEffectiveValue('m5_updated_at')}
               readOnly
               description={`计算: $${sellingPrice.toFixed(2)} × ${((getEffectiveValue('m5_return_cost_rate') || 0) * 100).toFixed(1)}% × ${((getEffectiveValue('m5_return_rate') || 0) * 100).toFixed(1)}% = $${(sellingPrice * (getEffectiveValue('m5_return_cost_rate') || 0) * (getEffectiveValue('m5_return_rate') || 0)).toFixed(2)}/单位`}
             />
@@ -726,6 +748,8 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               label="营销费率"
               value={`${((getEffectiveValue('m6_marketing_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m6_tier')}
+              dataSource={getEffectiveValue('m6_data_source')}
+              updatedAt={getEffectiveValue('m6_updated_at')}
               isOverridden={isOverridden('m6_marketing_rate')}
               onEdit={(val) => setUserOverride('m6_marketing_rate', val / 100)}
               mode={state.mode}
@@ -744,6 +768,8 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               label="支付网关费用"
               value={`${((getEffectiveValue('m7_payment_rate') || 0) * 100).toFixed(1)}% + $${getEffectiveValue('m7_payment_fixed_usd')}`}
               tier={getEffectiveValue('m7_tier')}
+              dataSource={getEffectiveValue('m7_data_source')}
+              updatedAt={getEffectiveValue('m7_updated_at')}
               readOnly
               description="Stripe/PayPal标准费率"
             />
@@ -751,6 +777,8 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               label="平台佣金"
               value={`${((getEffectiveValue('m7_platform_commission_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m7_tier')}
+              dataSource={getEffectiveValue('m7_data_source')}
+              updatedAt={getEffectiveValue('m7_updated_at')}
               readOnly
             />
           </ModuleCard>
@@ -766,6 +794,8 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
               label="本地人力与行政 (G&A)"
               value={`${((getEffectiveValue('m8_ga_rate') || 0) * 100).toFixed(1)}%`}
               tier={getEffectiveValue('m8_tier')}
+              dataSource={getEffectiveValue('m8_data_source')}
+              updatedAt={getEffectiveValue('m8_updated_at')}
               isOverridden={isOverridden('m8_ga_rate')}
               onEdit={(val) => setUserOverride('m8_ga_rate', val / 100)}
               mode={state.mode}
@@ -1064,13 +1094,15 @@ function ModuleCard({ moduleId, title, expanded, onToggle, total, children }: an
 }
 
 /**
- * 成本项行组件
+ * 成本项行组件 - Day 17 Part 3增强版（全局Tier徽章）
  */
 function CostItemRow({
   label,
   value,
   unit,
   tier,
+  dataSource,
+  updatedAt,
   readOnly,
   isOverridden,
   onEdit,
@@ -1082,6 +1114,8 @@ function CostItemRow({
   value: any;
   unit?: string;
   tier?: string;
+  dataSource?: string;
+  updatedAt?: string;
   readOnly?: boolean;
   isOverridden?: boolean;
   onEdit?: (value: any) => void;
@@ -1106,7 +1140,13 @@ function CostItemRow({
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-medium text-gray-900">{label}</span>
-          {tier && <TierBadge tier={tier} />}
+          {tier && (
+            <TierBadgeWithTooltip
+              tier={tier}
+              dataSource={dataSource}
+              updatedAt={updatedAt}
+            />
+          )}
           {isOverridden && (
             <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">已自定义</span>
           )}
