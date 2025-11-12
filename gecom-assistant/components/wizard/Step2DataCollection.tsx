@@ -2076,8 +2076,9 @@ function CostPreviewPanel({ project, costResult, state }: any) {
                 <div className="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <span className="text-gray-600 font-medium">M4 货物税费</span>
                   <span className="font-bold text-gray-900">
-                    ${(costResult.opex.m4_goodsTax ??
-                       ((costResult.opex.m4_cogs || 0) + (costResult.opex.m4_tariff || 0) + (costResult.opex.m4_logistics || 0) + (costResult.opex.m4_vat || 0))).toFixed(2)}
+                    ${(typeof costResult.opex.m4_goodsTax === 'number'
+                       ? costResult.opex.m4_goodsTax
+                       : ((costResult.opex.m4_cogs || 0) + (costResult.opex.m4_tariff || 0) + (costResult.opex.m4_logistics || 0) + (costResult.opex.m4_vat || 0))).toFixed(2)}
                   </span>
                 </div>
               )}
