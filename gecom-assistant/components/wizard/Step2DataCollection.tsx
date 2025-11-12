@@ -97,6 +97,74 @@ function TierBadge({ tier }: { tier?: string }) {
   );
 }
 
+/**
+ * Tier徽章（带数据溯源tooltip）- Day 17 Part 2增强版
+ */
+function TierBadgeWithTooltip({
+  tier,
+  dataSource,
+  updatedAt,
+}: {
+  tier?: string;
+  dataSource?: string;
+  updatedAt?: string;
+}) {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  if (!tier) return null;
+
+  const displayText = tier.includes('1')
+    ? 'Tier 1'
+    : tier.includes('2')
+    ? 'Tier 2'
+    : 'Tier 3';
+
+  const tierDescription = tier.includes('1')
+    ? '官方数据100%'
+    : tier.includes('2')
+    ? '权威数据+估算'
+    : '行业估算为主';
+
+  return (
+    <div className="relative inline-block">
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border cursor-help ${getTierBadgeColor(tier)}`}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        {displayText}
+        <Info className="h-3 w-3" />
+      </span>
+
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="absolute z-50 left-0 top-full mt-1 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl">
+          <div className="space-y-2">
+            <div>
+              <div className="text-gray-400 mb-0.5">数据来源</div>
+              <div className="font-medium">{dataSource || '数据库预设'}</div>
+            </div>
+            <div>
+              <div className="text-gray-400 mb-0.5">数据质量</div>
+              <div className="font-medium">
+                {displayText} ({tierDescription})
+              </div>
+            </div>
+            {updatedAt && (
+              <div>
+                <div className="text-gray-400 mb-0.5">更新时间</div>
+                <div className="font-medium">{updatedAt}</div>
+              </div>
+            )}
+          </div>
+          {/* Arrow */}
+          <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 rotate-45"></div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Step2DataCollection({ project, onUpdate, costResult }: Step2Props) {
   const [state, setState] = useState<CostParamsState>({
     mode: 'quick',
@@ -712,13 +780,39 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
 
 /**
  * M4模块（货物税费）- 最复杂的模块
+ * Day 17 Part 2 增强版：物流模式切换 + 关税解锁 + VAT分解 + 数据溯源
  */
 function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUserOverride, project, logistics, total }: any) {
+  const [logisticsMode, setLogisticsMode] = useState<'sea' | 'air'>('air');
+  const [tariffUnlocked, setTariffUnlocked] = useState(false);
+
   const cogsUsd = project.scope?.productInfo?.cogs || 0;
   const productWeight = project.scope?.productInfo?.weight || 0;
-  const logisticsCost = logistics ? logistics.air_freight.usd_per_kg * productWeight : 0;
-  const tariffCost = cogsUsd * (getEffectiveValue('m4_effective_tariff_rate') || 0);
-  const vatCost = (cogsUsd + logisticsCost + tariffCost) * (getEffectiveValue('m4_vat_rate') || 0);
+
+  // 物流成本：根据选择的模式计算
+  const seaFreightRate = logistics?.sea_freight?.usd_per_kg || 0;
+  const airFreightRate = logistics?.air_freight?.usd_per_kg || 0;
+  const selectedFreightRate = logisticsMode === 'sea' ? seaFreightRate : airFreightRate;
+  const logisticsCost = selectedFreightRate * productWeight;
+
+  // 关税成本
+  const tariffRate = getEffectiveValue('m4_effective_tariff_rate') || 0;
+  const tariffCost = cogsUsd * tariffRate;
+
+  // VAT成本：CIF Value = COGS + Logistics + Tariff
+  const cifValue = cogsUsd + logisticsCost + tariffCost;
+  const vatRate = getEffectiveValue('m4_vat_rate') || 0;
+  const vatBase = cifValue; // VAT Base = CIF Value
+  const vatCost = vatBase * vatRate;
+
+  // 数据溯源信息
+  const tariffDataSource = getEffectiveValue('m4_tariff_data_source') || '数据库预设';
+  const tariffUpdatedAt = getEffectiveValue('m4_tariff_updated_at') || '2025-Q1';
+  const vatDataSource = getEffectiveValue('m4_vat_data_source') || '数据库预设';
+  const logisticsDataSource = getEffectiveValue('m4_logistics_data_source') || '数据库预设';
+
+  // HS编码（如有）
+  const hsCode = getEffectiveValue('m4_hs_code') || null;
 
   return (
     <ModuleCard
@@ -736,74 +830,210 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
         </div>
         <div className="flex items-center gap-3">
           <span className="text-2xl font-bold text-gray-900">${cogsUsd.toFixed(2)}</span>
-          <span className="text-sm text-gray-600">USD/单位（用户输入）</span>
+          <span className="text-sm text-gray-600">USD/单位（来自Step 1）</span>
         </div>
       </div>
 
-      {/* 头程物流 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🚢</span>
-          <h4 className="font-semibold text-gray-900">头程物流</h4>
+      {/* 头程物流 - 增强版（海运/空运切换）*/}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🚢</span>
+            <h4 className="font-semibold text-gray-900">头程物流</h4>
+            <TierBadgeWithTooltip
+              tier={getEffectiveValue('m4_logistics_tier')}
+              dataSource={logisticsDataSource}
+              updatedAt={tariffUpdatedAt}
+            />
+          </div>
         </div>
-        <CostItemRow
-          label="运输方式"
-          value="空运"
-          tier={getEffectiveValue('m4_logistics_tier')}
-          readOnly
-        />
-        <CostItemRow
-          label="空运费率"
-          value={`$${logistics?.air_freight.usd_per_kg}/kg`}
-          tier={getEffectiveValue('m4_logistics_tier')}
-          readOnly
-        />
-        <CostItemRow
-          label="产品重量"
-          value={`${productWeight} kg`}
-          readOnly
-        />
-        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
-          计算: ${logistics?.air_freight.usd_per_kg} × {productWeight} kg = <span className="font-bold">${logisticsCost.toFixed(2)}/单位</span>
+
+        {/* 物流模式切换器 */}
+        <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+          <button
+            onClick={() => setLogisticsMode('sea')}
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              logisticsMode === 'sea'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            🚢 海运 (${seaFreightRate.toFixed(2)}/kg)
+          </button>
+          <button
+            onClick={() => setLogisticsMode('air')}
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              logisticsMode === 'air'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            ✈️ 空运 (${airFreightRate.toFixed(2)}/kg)
+          </button>
+        </div>
+
+        {/* 物流计算公式可视化 */}
+        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600">运费计算</span>
+            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+              {logisticsMode === 'sea' ? '海运模式' : '空运模式'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-lg">
+            <span className="font-bold text-blue-600">${selectedFreightRate.toFixed(2)}</span>
+            <span className="text-gray-400">×</span>
+            <span className="font-bold text-gray-900">{productWeight} kg</span>
+            <span className="text-gray-400">=</span>
+            <span className="font-bold text-green-600 text-xl">${logisticsCost.toFixed(2)}</span>
+            <span className="text-sm text-gray-500">/单位</span>
+          </div>
         </div>
       </div>
 
-      {/* 进口关税 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">💰</span>
-          <h4 className="font-semibold text-gray-900">进口关税</h4>
+      {/* 进口关税 - 增强版（解锁功能）*/}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">💰</span>
+            <h4 className="font-semibold text-gray-900">进口关税</h4>
+            <TierBadgeWithTooltip
+              tier={getEffectiveValue('m4_tariff_tier')}
+              dataSource={tariffDataSource}
+              updatedAt={tariffUpdatedAt}
+            />
+          </div>
+          {/* 解锁按钮（专家模式）*/}
+          {state.mode === 'expert' && !tariffUnlocked && (
+            <button
+              onClick={() => setTariffUnlocked(true)}
+              className="flex items-center gap-1 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors text-sm font-medium"
+            >
+              <Lock className="h-3 w-3" />
+              解锁编辑
+            </button>
+          )}
+          {tariffUnlocked && (
+            <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full font-medium">
+              🔓 已解锁
+            </span>
+          )}
         </div>
+
+        {/* HS编码（如有）*/}
+        {hsCode && (
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">HS编码</span>
+              <span className="font-mono text-sm font-bold text-gray-900">{hsCode}</span>
+            </div>
+          </div>
+        )}
+
+        {/* 关税税率（可解锁编辑）*/}
         <CostItemRow
-          label="关税税率"
-          value={`${((getEffectiveValue('m4_effective_tariff_rate') || 0) * 100).toFixed(1)}%`}
+          label="有效关税税率"
+          value={`${(tariffRate * 100).toFixed(1)}%`}
           tier={getEffectiveValue('m4_tariff_tier')}
           isOverridden={isOverridden('m4_effective_tariff_rate')}
-          onEdit={(val) => setUserOverride('m4_effective_tariff_rate', val / 100)}
-          mode={state.mode}
+          onEdit={tariffUnlocked ? (val) => setUserOverride('m4_effective_tariff_rate', val / 100) : undefined}
+          mode={tariffUnlocked ? 'expert' : 'quick'}
           description={getEffectiveValue('m4_tariff_notes')}
-          warning={(getEffectiveValue('m4_effective_tariff_rate') || 0) > 0.3}
+          warning={tariffRate > 0.3}
         />
-        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
-          计算: ${cogsUsd.toFixed(2)} × {((getEffectiveValue('m4_effective_tariff_rate') || 0) * 100).toFixed(1)}% = <span className="font-bold">${tariffCost.toFixed(2)}/单位</span>
+
+        {/* 关税计算公式可视化 */}
+        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600">关税计算</span>
+            {isOverridden('m4_effective_tariff_rate') && (
+              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                用户自定义
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-lg">
+            <span className="font-bold text-gray-900">${cogsUsd.toFixed(2)}</span>
+            <span className="text-gray-400">×</span>
+            <span className="font-bold text-blue-600">{(tariffRate * 100).toFixed(1)}%</span>
+            <span className="text-gray-400">=</span>
+            <span className="font-bold text-green-600 text-xl">${tariffCost.toFixed(2)}</span>
+            <span className="text-sm text-gray-500">/单位</span>
+          </div>
         </div>
       </div>
 
-      {/* 增值税 */}
-      <div className="space-y-2">
+      {/* 增值税 - 增强版（三层分解）*/}
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <span className="text-xl">📊</span>
           <h4 className="font-semibold text-gray-900">增值税 (VAT)</h4>
+          <TierBadgeWithTooltip
+            tier={getEffectiveValue('m4_vat_tier')}
+            dataSource={vatDataSource}
+            updatedAt={tariffUpdatedAt}
+          />
         </div>
-        <CostItemRow
-          label="VAT税率"
-          value={`${((getEffectiveValue('m4_vat_rate') || 0) * 100).toFixed(1)}%`}
-          tier={getEffectiveValue('m4_vat_tier')}
-          readOnly
-          description={getEffectiveValue('m4_vat_notes')}
-        />
-        <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
-          计算: (${cogsUsd.toFixed(2)} + ${logisticsCost.toFixed(2)} + ${tariffCost.toFixed(2)}) × {((getEffectiveValue('m4_vat_rate') || 0) * 100).toFixed(1)}% = <span className="font-bold">${vatCost.toFixed(2)}/单位</span>
+
+        {/* VAT三层明细 */}
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200 space-y-3">
+          {/* 第一层：CIF Value */}
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-3 border border-blue-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">① CIF Value（到岸价）</span>
+              <span className="text-sm font-bold text-gray-900">${cifValue.toFixed(2)}</span>
+            </div>
+            <div className="text-xs text-gray-500 space-y-1">
+              <div className="flex justify-between">
+                <span>COGS</span>
+                <span>${cogsUsd.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>+ 头程物流</span>
+                <span>${logisticsCost.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>+ 进口关税</span>
+                <span>${tariffCost.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 第二层：VAT Base */}
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-3 border border-purple-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">② VAT Base（计税基础）</span>
+              <span className="text-sm font-bold text-gray-900">${vatBase.toFixed(2)}</span>
+            </div>
+            <div className="text-xs text-gray-500">
+              = CIF Value = ${cifValue.toFixed(2)}
+            </div>
+          </div>
+
+          {/* 第三层：VAT Cost */}
+          <div className="bg-white border-2 border-purple-300 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">③ VAT Cost（增值税）</span>
+              <span className="text-sm px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                {(vatRate * 100).toFixed(1)}% 税率
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-lg">
+              <span className="font-bold text-gray-900">${vatBase.toFixed(2)}</span>
+              <span className="text-gray-400">×</span>
+              <span className="font-bold text-purple-600">{(vatRate * 100).toFixed(1)}%</span>
+              <span className="text-gray-400">=</span>
+              <span className="font-bold text-green-600 text-xl">${vatCost.toFixed(2)}</span>
+              <span className="text-sm text-gray-500">/单位</span>
+            </div>
+          </div>
+
+          {/* VAT备注 */}
+          {getEffectiveValue('m4_vat_notes') && (
+            <div className="text-xs text-gray-600 bg-white/50 rounded p-2">
+              💡 {getEffectiveValue('m4_vat_notes')}
+            </div>
+          )}
         </div>
       </div>
     </ModuleCard>
