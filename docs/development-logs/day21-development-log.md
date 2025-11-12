@@ -280,12 +280,89 @@ export interface MarketRecommendation {
 - [x] 算法验证测试通过 ✅
 
 **下一步**:
-- [ ] Step 3: 集成到Step4ScenarioAnalysis.tsx
-- [ ] 添加推荐展示UI
-- [ ] 最优/最差市场高亮
-- [ ] Playwright E2E测试
+- [x] Step 3: 集成到Step4ScenarioAnalysis.tsx ✅
+- [x] 添加推荐展示UI ✅
+- [x] 最优/最差市场高亮 ✅
+- [ ] Playwright E2E测试 (待Task 1.4完成)
 
 ---
 
-**当前状态**: ✅ 核心算法实现完成，验证通过
-**下一步**: 集成到Step4组件 + UI展示
+### [11:00-12:30] - Task 1.3: Step4组件集成 ✅
+
+**实现内容**:
+
+#### 增强`Step4ScenarioAnalysis.tsx` (558行 → 全新实现)
+
+**核心功能**:
+
+1. **智能推荐算法集成**
+   - 导入`generateMarketRecommendation`函数
+   - 使用`useMemo`优化性能，避免重复计算
+   - 基于当前costResult模拟5个市场数据（当前市场+VN/DE/JP/GB）
+
+2. **最优市场推荐卡片** (192-248行)
+   - 🏆 绿色渐变背景 + 边框高亮
+   - Award图标 + 国旗emoji + 市场名称
+   - 4个关键指标卡片：毛利率/ROI/回本周期/启动成本
+   - 推荐理由列表（自动生成的中文理由）
+   - 综合评分显示
+
+3. **最差市场警告卡片** (250-306行)
+   - ⚠️ 红色渐变背景 + 边框警告
+   - AlertTriangle图标 + 国旗emoji + 市场名称
+   - 4个关键指标卡片（红色主题）
+   - 警告理由列表（自动生成的中文警告）
+   - 综合评分显示
+
+4. **市场综合评分排名表** (308-441行)
+   - 完整排名表格（7列：排名/市场/推荐等级/评分/毛利率/ROI/回本）
+   - 可展开/收起功能（默认显示前3个，可展开全部5个）
+   - 推荐等级Badge（🏆最优/👍良好/📊一般/⚡较差/⚠️最差）
+   - 颜色编码：最优绿色背景，最差红色背景，当前市场蓝色背景
+   - 国旗emoji + 中文名称 + 英文代码
+
+5. **市场洞察分析** (443-472行)
+   - 可折叠的洞察面板
+   - 显示4条自动生成的市场洞察
+   - 📊💰⏱️🏗️ emoji增强可读性
+
+6. **评分算法说明** (474-503行)
+   - 权重配置说明（毛利率40% + ROI30% + 回本20% + CAPEX10%）
+   - 推荐等级定义（5个等级的判定规则）
+   - 黄色提示框：说明当前使用模拟数据，未来将接入真实19国数据
+
+**技术亮点**:
+
+1. **模拟多市场数据生成**
+   - `mockMultiMarketData`: 基于当前costResult创建5个市场的模拟数据
+   - `createMockCostResult`: 使用multiplier创建不同市场的cost数据
+   - 越南：毛利率+15%, ROI+20%, CAPEX-40%（最优）
+   - 德国：毛利率-15%, ROI-25%, CAPEX+50%（最差）
+   - 日本/英国：中等水平
+
+2. **useMemo性能优化**
+   - mockMultiMarketData使用useMemo缓存
+   - recommendation使用useMemo避免每次渲染重新计算
+
+3. **交互式UI**
+   - showAllMarkets状态控制表格展开/收起
+   - showRecommendationDetails控制洞察面板折叠
+   - ChevronUp/ChevronDown图标动态切换
+
+4. **Helper函数**
+   - `getCountryName()`: 19国代码→中文名称映射
+   - `getCountryFlag()`: 19国代码→emoji国旗映射
+   - `getRecommendationBadge()`: 推荐等级→Badge样式映射
+
+**UI设计**:
+- 渐变背景：绿色(最优)/红色(最差)/蓝色(当前)
+- 国旗emoji增强视觉识别
+- 颜色语义化：绿色=优秀，黄色=一般，红色=警告
+- 响应式布局：grid布局适配不同屏幕
+
+**构建验证**: ✅ TypeScript编译通过，Next.js构建成功
+
+---
+
+**当前状态**: ✅ S4.3智能推荐算法100%完成（算法+UI+集成）
+**下一步**: (可选) Playwright E2E测试 或 继续Task 2 S5.1 AI工具调用
