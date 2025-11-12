@@ -120,11 +120,13 @@ test.describe('Step 2: M4模块增强功能测试', () => {
     // 等待页面加载
     await page.waitForTimeout(1000);
 
-    // 滚动到M4模块位置
+    // 滚动到M4模块位置（使用正确的DOM选择器）
     await page.evaluate(() => {
-      const m4Header = document.querySelector('text=头程物流');
-      if (m4Header) {
-        m4Header.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const logisticsHeader = Array.from(document.querySelectorAll('*')).find(
+        (el) => el.textContent && el.textContent.includes('头程物流')
+      );
+      if (logisticsHeader) {
+        logisticsHeader.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
     await page.waitForTimeout(500);
@@ -315,8 +317,9 @@ test.describe('Step 2: M4模块增强功能测试', () => {
     });
     await page.waitForTimeout(500);
 
-    // 查找Tier徽章（头程物流section）
-    const tierBadge = page.locator('span').filter({ hasText: /Tier \d/ }).first();
+    // 查找Tier徽章（更精确的选择器：找到头程物流标题后的Tier徽章）
+    // 使用cursor-help类来精确定位实际的Tier徽章组件（而不是普通的Tier文本）
+    const tierBadge = page.locator('.cursor-help').filter({ hasText: /Tier \d/ }).first();
 
     // 验证Tier徽章存在
     await expect(tierBadge).toBeVisible();
@@ -327,9 +330,15 @@ test.describe('Step 2: M4模块增强功能测试', () => {
       fullPage: true,
     });
 
-    // Hover到Tier徽章
-    await tierBadge.hover();
-    await page.waitForTimeout(1000); // 等待tooltip显示
+    // Hover到Tier徽章（使用force确保hover生效）
+    await tierBadge.hover({ force: true });
+    await page.waitForTimeout(500);
+
+    // 等待tooltip出现（使用更可靠的等待方式）
+    const tooltipAppeared = await page.waitForSelector('text=数据来源', {
+      state: 'visible',
+      timeout: 3000,
+    }).catch(() => null);
 
     // 截图：hover后tooltip显示
     await page.screenshot({
@@ -337,9 +346,8 @@ test.describe('Step 2: M4模块增强功能测试', () => {
       fullPage: true,
     });
 
-    // 验证tooltip内容存在（通过检查tooltip关键字）
-    const tooltipVisible = await page.getByText('数据来源').isVisible().catch(() => false);
-    expect(tooltipVisible).toBeTruthy();
+    // 验证tooltip已显示
+    expect(tooltipAppeared).not.toBeNull();
 
     console.log('✅ 测试5通过：Tier徽章tooltip正确显示');
   });
