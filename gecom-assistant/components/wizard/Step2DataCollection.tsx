@@ -200,27 +200,37 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
       industry: (project.industry as Industry) || VN_PET_FOOD.industry,
       version: '2025Q1',
 
-      // 字段映射：确保m1_data_source等溯源字段存在（通常spread后已包含）
-      // 如果VN_PET_FOOD使用m1_industry_data_source命名，需要映射
-      m1_data_source: (VN_PET_FOOD as any).m1_data_source ||
-                     (VN_PET_FOOD as any).m1_industry_data_source ||
+      // ⭐ 字段映射：数据源字段（基于真实字段名，specific > base）
+      m1_data_source: (VN_PET_FOOD as any).m1_industry_data_source ||
                      (VN_PET_FOOD as any).m1_base_data_source ||
-                     'VN_PET_FOOD数据源',
-      m2_data_source: (VN_PET_FOOD as any).m2_data_source ||
-                     (VN_PET_FOOD as any).m2_industry_data_source ||
-                     (VN_PET_FOOD as any).m2_base_data_source,
-      m3_data_source: (VN_PET_FOOD as any).m3_data_source ||
-                     (VN_PET_FOOD as any).m3_base_data_source,
-      m4_data_source: (VN_PET_FOOD as any).m4_data_source ||
-                     (VN_PET_FOOD as any).m4_industry_data_source,
-      m5_data_source: (VN_PET_FOOD as any).m5_data_source ||
-                     (VN_PET_FOOD as any).m5_base_data_source,
-      m6_data_source: (VN_PET_FOOD as any).m6_data_source ||
-                     (VN_PET_FOOD as any).m6_base_data_source,
+                     'MARD官网 + 越南进口代理公司报价',
+      m2_data_source: (VN_PET_FOOD as any).m2_product_certification_data_source ||
+                     (VN_PET_FOOD as any).m2_compliance_data_source ||
+                     (VN_PET_FOOD as any).m2_trademark_data_source ||
+                     'NAFIQAD官方收费标准 + SGS越南实验室报价',
+      m3_data_source: (VN_PET_FOOD as any).m3_base_data_source ||
+                     'VNPost + J&T Express越南仓储报价',
+      m4_data_source: (VN_PET_FOOD as any).m4_tariff_data_source ||
+                     (VN_PET_FOOD as any).m4_vat_data_source ||
+                     (VN_PET_FOOD as any).m4_logistics_data_source ||
+                     '越南海关总署 + 财政部VAT',
+      m5_data_source: (VN_PET_FOOD as any).m5_return_data_source ||
+                     (VN_PET_FOOD as any).m5_data_source ||
+                     'Shopee越南卖家数据 + 越南电商协会',
+      m6_data_source: (VN_PET_FOOD as any).m6_commission_data_source ||
+                     (VN_PET_FOOD as any).m6_cac_data_source ||
+                     (VN_PET_FOOD as any).m6_marketing_data_source ||
+                     'Shopee Vietnam官方费率 + Nielsen Vietnam调研',
       m7_data_source: (VN_PET_FOOD as any).m7_data_source ||
-                     (VN_PET_FOOD as any).m7_base_data_source,
-      m8_data_source: (VN_PET_FOOD as any).m8_data_source ||
-                     (VN_PET_FOOD as any).m8_base_data_source,
+                     'VNPay/Momo本地支付网关费率 + Shopee支付',
+      m8_data_source: (VN_PET_FOOD as any).m8_software_data_source ||
+                     (VN_PET_FOOD as any).m8_cs_data_source ||
+                     (VN_PET_FOOD as any).m8_data_source ||
+                     '越南电商行业人力成本基准',
+
+      // ⭐ 字段映射：行业许可费（m1_industry_license_usd → m1_import_license_cost_usd）
+      m1_import_license_cost_usd: (VN_PET_FOOD as any).m1_industry_license_usd || 0,
+      m1_import_license_required: (VN_PET_FOOD as any).m1_pre_approval_required || false,
     };
 
     // 预期成本结构（COGS=$10, 售价=$30, 月销量=100）：
