@@ -413,6 +413,13 @@ Git提交：10个commits全部推送成功
 > - 完整127字段Schema定义
 > - 单一真相来源（SSOT）：TypeScript文件，Git版本控制
 
+> **📖 数据使用规范**：详见 [DATA-USAGE-SPECIFICATION.md](./docs/DATA-USAGE-SPECIFICATION.md) ⭐新增
+> - **4个核心导入规范**：完整导入merged文件、字段映射优先级链、行业许可费映射、避免手动选择字段
+> - **3个反模式案例**：错误vs正确对比，防止M1显示0、Tier徽章显示"数据库预设"等常见错误
+> - **3个完整代码示例**：静态导入、动态加载Hook、批量对比加载
+> - **M1-M8字段命名约定表**：base/industry/UI字段映射关系
+> - **验收清单**：6项必检标准，确保数据导入质量
+
 ### 三层数据架构总览 ⭐
 
 ```
@@ -1593,6 +1600,11 @@ m6_platform_commission_rate  // 平台佣金（Pet 15% vs Electronics 8%）
 - [.env.example](./.env.example) - 环境变量配置
 - [gecom-engine.ts](./gecom-assistant/lib/gecom-engine.ts) - 计算引擎核心代码（v1.0 POC）
 - [gecom-engine-v2.ts](./gecom-assistant/lib/gecom-engine-v2.ts) - 计算引擎v2.0（待实现）
+- [DATA-USAGE-SPECIFICATION.md](./docs/DATA-USAGE-SPECIFICATION.md) - **数据使用规范** ⭐新增（2025-11-13）
+  - 3层数据架构使用指南
+  - 4个核心导入规范 + 3个反模式案例
+  - 完整代码示例（静态/动态/批量加载）
+  - M1-M8字段命名约定表
 
 ### 参考文档
 - [env_sample.md](./docs/reference/env_sample.md) - 环境变量参考
@@ -1625,5 +1637,5 @@ GECOM方法论源自创始团队多年跨境电商实战经验，结合了：
 ---
 
 **文档维护者**: GECOM Team
-**最后更新**: 2025-11-08
+**最后更新**: 2025-11-13
 **版本**: v2.0 (MVP 2.0 - 实施阶段)
