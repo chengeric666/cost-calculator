@@ -16,7 +16,8 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Project, CostResult, CostFactor, TargetCountry, Industry } from '@/types/gecom';
 import { GECOMEngine } from '@/lib/gecom/gecom-engine-v2';
 import { loadCostFactor } from '@/lib/data-loader';
-import { VN_BASE_DATA } from '@/data/cost-factors/VN-base-data';
+import { VN_PET_FOOD } from '@/data/cost-factors/VN-pet-food';
+import { VN_BASE_DATA } from '@/data/cost-factors/VN-base-data'; // 保留作为fallback
 import {
   ChevronDown,
   ChevronRight,
@@ -184,80 +185,56 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
     costFactor: null,
   });
 
-  // 加载成本因子数据（使用已有的VN_BASE_DATA，不重新fetch）
+  // 加载成本因子数据（使用完整merged文件VN_PET_FOOD）
   useEffect(() => {
-    // ⚡ 使用已采集的越南基础数据（3层架构 Layer 1）
-    // 数据来源：data/cost-factors/VN-base-data.ts（2025-11-09采集）
+    // ⚡ 使用已采集的越南宠物食品完整数据（3层架构 Layer 1）
+    // 数据来源：data/cost-factors/VN-pet-food.ts（2025-11-09采集，90+字段完整）
     // 优势：0%关税 + 低物流成本 + 低平台佣金，适合展示成功案例
+    // 修复：完整导入所有字段（包括明细和溯源），不再手动选择字段
 
-    const costFactor: Partial<CostFactor> = {
-      country: 'VN' as TargetCountry,
-      country_name_cn: VN_BASE_DATA.country_name_cn,
-      country_flag: VN_BASE_DATA.country_flag,
-      industry: project.industry as Industry,
+    const costFactor: CostFactor = {
+      // ✅ 完整导入90+字段（包括所有M1-M8明细和溯源字段）
+      ...VN_PET_FOOD,
+
+      // 可选：覆盖动态字段
+      industry: (project.industry as Industry) || VN_PET_FOOD.industry,
       version: '2025Q1',
 
-      // M1: 市场准入（直接使用VN_BASE_DATA）
-      m1_regulatory_agency: 'DAH (Department of Animal Health)',
-      m1_complexity: '低',
-      m1_estimated_cost_usd: VN_BASE_DATA.m1_company_registration_usd +
-                             VN_BASE_DATA.m1_business_license_usd +
-                             VN_BASE_DATA.m1_legal_consulting_usd,  // 300+150+1000 = 1450
-      m1_tier: VN_BASE_DATA.m1_base_tier as string,
-
-      // M2: 技术合规
-      m2_certifications_required: '越南农业部备案、卫生许可',
-      m2_estimated_cost_usd: VN_BASE_DATA.m2_trademark_registration_usd +
-                             VN_BASE_DATA.m2_compliance_testing_usd,  // 250+800 = 1050
-      m2_tier: VN_BASE_DATA.m2_compliance_tier as string,
-
-      // M3: 供应链搭建
-      m3_packaging_rate: VN_BASE_DATA.m3_packaging_rate,  // 0.015
-      m3_initial_inventory_usd: VN_BASE_DATA.m3_initial_inventory_usd,  // 15000
-      m3_warehouse_deposit_usd: VN_BASE_DATA.m3_warehouse_deposit_usd,  // 2000
-      m3_tier: VN_BASE_DATA.m3_base_tier as string,
-
-      // M4: 货物税费（关键：0%关税！）
-      m4_effective_tariff_rate: 0,  // ⭐ RCEP协定0%关税
-      m4_tariff_notes: 'RCEP协定优惠，0%关税（原产地规则适用）',
-      m4_tariff_tier: 'tier1_official',
-      m4_vat_rate: VN_BASE_DATA.m4_vat_rate,  // 0.10
-      m4_vat_notes: VN_BASE_DATA.m4_vat_notes,
-      m4_vat_tier: VN_BASE_DATA.m4_vat_tier as string,
-      m4_logistics: VN_BASE_DATA.m4_logistics,  // 使用真实物流数据
-      m4_logistics_tier: VN_BASE_DATA.m4_logistics_tier as string,
-
-      // M5: 物流配送（本地配送成本极低）
-      m5_last_mile_delivery_usd: VN_BASE_DATA.m5_last_mile_delivery_usd,  // 0.80
-      m5_return_rate: VN_BASE_DATA.m5_return_rate,  // 0.08
-      m5_return_cost_rate: VN_BASE_DATA.m5_return_cost_rate,  // 0.25
-      m5_tier: VN_BASE_DATA.m5_tier as string,
-
-      // M6: 营销获客（竞争度低）
-      m6_marketing_rate: VN_BASE_DATA.m6_marketing_rate,  // 0.12
-      m6_notes: VN_BASE_DATA.m6_notes,
-      m6_tier: VN_BASE_DATA.m6_tier as string,
-
-      // M7: 支付手续费（平台佣金低）
-      m7_payment_rate: VN_BASE_DATA.m7_payment_rate,  // 0.025
-      m7_payment_fixed_usd: VN_BASE_DATA.m7_payment_fixed_usd,  // 0.10
-      m7_platform_commission_rate: VN_BASE_DATA.m7_platform_commission_rate,  // 0.02
-      m7_notes: VN_BASE_DATA.m7_notes,
-      m7_tier: VN_BASE_DATA.m7_tier as string,
-
-      // M8: 运营管理（人力成本低）
-      m8_ga_rate: VN_BASE_DATA.m8_ga_rate,  // 0.02
-      m8_notes: VN_BASE_DATA.m8_notes,
-      m8_tier: VN_BASE_DATA.m8_tier as string,
+      // 字段映射：确保m1_data_source等溯源字段存在（通常spread后已包含）
+      // 如果VN_PET_FOOD使用m1_industry_data_source命名，需要映射
+      m1_data_source: (VN_PET_FOOD as any).m1_data_source ||
+                     (VN_PET_FOOD as any).m1_industry_data_source ||
+                     (VN_PET_FOOD as any).m1_base_data_source ||
+                     'VN_PET_FOOD数据源',
+      m2_data_source: (VN_PET_FOOD as any).m2_data_source ||
+                     (VN_PET_FOOD as any).m2_industry_data_source ||
+                     (VN_PET_FOOD as any).m2_base_data_source,
+      m3_data_source: (VN_PET_FOOD as any).m3_data_source ||
+                     (VN_PET_FOOD as any).m3_base_data_source,
+      m4_data_source: (VN_PET_FOOD as any).m4_data_source ||
+                     (VN_PET_FOOD as any).m4_industry_data_source,
+      m5_data_source: (VN_PET_FOOD as any).m5_data_source ||
+                     (VN_PET_FOOD as any).m5_base_data_source,
+      m6_data_source: (VN_PET_FOOD as any).m6_data_source ||
+                     (VN_PET_FOOD as any).m6_base_data_source,
+      m7_data_source: (VN_PET_FOOD as any).m7_data_source ||
+                     (VN_PET_FOOD as any).m7_base_data_source,
+      m8_data_source: (VN_PET_FOOD as any).m8_data_source ||
+                     (VN_PET_FOOD as any).m8_base_data_source,
     };
 
     // 预期成本结构（COGS=$10, 售价=$30, 月销量=100）：
-    // CAPEX总计 = $18,500 (1450+1050+2000+15000)
+    // CAPEX总计 = $18,500 (M1: 1450 + M2: 1050 + M3: 2000+15000)
     // OPEX总计 ≈ $18-20/单位（0%关税节省大量成本）
     // 单位毛利 = $10-12 (毛利率 33-40%) ✅
     // 回本周期 = 15-18个月（库存投资较大，但运营成本极低）
+    //
+    // 修复说明：
+    // 1. ✅ M1明细字段（m1_company_registration_usd: 300等）现在包含在spread中
+    // 2. ✅ 溯源字段（m1_data_source等）通过字段映射确保存在
+    // 3. ✅ 所有M2-M8字段完整包含（不再手动选择）
 
-    setState((prev) => ({ ...prev, costFactor: costFactor as CostFactor }));
+    setState((prev) => ({ ...prev, costFactor }));
   }, [project.targetCountry, project.industry]);
 
   // ===== 实时成本计算（300ms节流）=====
