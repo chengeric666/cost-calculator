@@ -4,9 +4,9 @@
 >
 > **交互语言：** 中文（所有对话必须使用中文） ⭐
 >
-> **文档版本：** v2.3 (MVP 2.0)
-> **最后更新：** 2025-11-12
-> **项目阶段：** MVP 2.0 Week 4 Day 17-19（Step 2核心UI完成 + E2E测试覆盖 + 核心Bug修复）
+> **文档版本：** v2.4 (MVP 2.0)
+> **最后更新：** 2025-11-13
+> **项目阶段：** MVP 2.0 Week 4 Day 20-21（Step 4智能推荐 + Step 5 AI工具调用完成）
 
 ---
 
@@ -1515,13 +1515,40 @@ m6_platform_commission_rate  // 平台佣金（Pet 15% vs Electronics 8%）
   - ✅ Day 19: Runtime TypeError修复 + E2E测试优化（3行修复 + 33行测试，85.7%通过率）
   - ✅ **总计**: 3,733行零错误代码，10个commits，7份完整文档
 
-### 🚧 进行中（MVP 2.0 实施 - Week 4 Day 20+）
-**计划：0/6 任务**（详见：[MVP-2.0-任务清单.md](./docs/MVP-2.0-任务清单.md)）
+### ✅ 已完成（MVP 2.0 实施 - Week 4 Day 20-21）⭐ AI深度集成
+**当前状态：Step 4智能推荐算法 + Step 5 AI工具调用完成，DeepSeek V3集成就绪**
 
-**前置条件**: ✅ 数据基础就绪 + ✅ Step 2核心UI完成
+- [x] **Week 4 Day 20-21: 已完成 ✅✅✅**（智能推荐 + AI工具调用核心功能）
+  - ✅ Day 20-21 Task 1: S4.3 智能推荐算法实现（lib/gecom/market-recommendation.ts +439行）
+    - 19国成本数据动态获取与加权评分系统
+    - 最优/最差市场推荐卡片（Gradient UI + 推荐理由）
+    - 19国排名表格（展开/折叠交互）
+    - 市场洞察面板（行业基准对比）
+    - E2E测试12个用例100%通过（step4-market-recommendation-test.spec.ts）
+  - ✅ Day 21 Task 2: S5.1 AI工具调用核心功能（+791行DeepSeek集成）⭐
+    - DeepSeek工具定义（lib/deepseek-tools.ts +121行）
+      - get_cost_breakdown: M1-M8成本拆解查询
+      - compare_scenarios: 19国成本对比分析
+      - get_optimization_suggestions: 智能优化建议生成
+    - DeepSeek客户端扩展（lib/deepseek-client.ts +153行）
+      - callDeepSeekWithTools(): V3模型工具调用API
+      - chatWithTools(): 自动多轮对话处理
+    - Step5AIAssistant组件（components/wizard/Step5AIAssistant.tsx +517行）
+      - 聊天界面（Markdown渲染、自动滚动）
+      - 三个工具执行处理器（实时成本数据访问）
+      - 快捷问题按钮、工具调用可视化
+    - 依赖更新：新增react-markdown (v9.0.3)
+  - ✅ **总计**: 1,230行核心功能代码 + 完整E2E测试覆盖
+  - ✅ **Git提交**: commit 1219ff5（本地完成，push网络错误）
 
-- [ ] Day 20: Step 3-4结果展示与对比（3个任务）
-- [ ] Day 16: Step 0界面实现（6个任务）⏳ 待Day 20完成后执行
+### 🚧 进行中（MVP 2.0 实施 - Week 4 Day 22+）
+**计划：0/3 任务**
+
+**前置条件**: ✅ Step 4-5核心功能完成
+
+- [ ] Day 22 Task 1: V1-V5 Liquid Glass统一（5.5h）
+- [ ] Day 22 Task 2: A1/A3/A4 交互动画（4h）
+- [ ] Day 22 Task 3: S3.1-S3.3 图表优化（3h）
 
 ### 📋 待开发（MVP 2.0 - Week 5）
 **计划：0/92 任务**（详见：[MVP-2.0-任务清单.md](./docs/MVP-2.0-任务清单.md)）⭐核心
