@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Project, CostResult } from '@/types/gecom';
-import { DollarSign, TrendingDown, TrendingUp, AlertCircle } from 'lucide-react';
+import { DollarSign, TrendingDown, TrendingUp, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Step3CostModelingProps {
@@ -11,6 +12,11 @@ interface Step3CostModelingProps {
 }
 
 export default function Step3CostModeling({ project, costResult }: Step3CostModelingProps) {
+  // State for expandable CAPEX modules
+  const [m1Expanded, setM1Expanded] = useState(false);
+  const [m2Expanded, setM2Expanded] = useState(false);
+  const [m3Expanded, setM3Expanded] = useState(false);
+
   if (!costResult) {
     return (
       <div className="text-center py-12">
@@ -122,21 +128,295 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">阶段0-1: CAPEX（一次性启动成本）</h3>
         <div className="space-y-3">
-          <CostRow
-            label="M1: 市场准入"
-            amount={costResult.capex.m1_marketEntry.total}
-            details={`公司注册、许可证、法务: $${costResult.capex.m1_marketEntry.companyRegistration + costResult.capex.m1_marketEntry.businessLicense + costResult.capex.m1_marketEntry.legalConsulting + costResult.capex.m1_marketEntry.taxRegistration}`}
-          />
-          <CostRow
-            label="M2: 技术合规"
-            amount={costResult.capex.m2_techCompliance.total}
-            details={`产品认证、商标注册、检测: $${costResult.capex.m2_techCompliance.productCertification + costResult.capex.m2_techCompliance.trademarkRegistration + costResult.capex.m2_techCompliance.complianceTesting}`}
-          />
-          <CostRow
-            label="M3: 供应链搭建"
-            amount={costResult.capex.m3_supplyChain.total}
-            details={`仓储、库存、系统: $${costResult.capex.m3_supplyChain.warehouseDeposit + costResult.capex.m3_supplyChain.equipmentPurchase + costResult.capex.m3_supplyChain.initialInventory + costResult.capex.m3_supplyChain.systemSetup}`}
-          />
+          {/* M1: Market Entry - Expandable详细表格 */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            {/* M1 Header */}
+            <button
+              onClick={() => setM1Expanded(!m1Expanded)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex-1 text-left">
+                <div className="font-semibold text-gray-900">M1: 市场准入 (Market Entry)</div>
+                <div className="text-sm text-gray-500 mt-1">
+                  公司注册、许可证、法务咨询等一次性成本
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xl font-bold text-gray-900">
+                    ${costResult.capex.m1_marketEntry.total.toFixed(2)}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {m1Expanded ? '点击收起' : '点击展开详情'}
+                  </div>
+                </div>
+                {m1Expanded ? (
+                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                )}
+              </div>
+            </button>
+
+            {/* M1 Detailed Cost Table */}
+            {m1Expanded && (
+              <div className="border-t border-gray-200 bg-gray-50">
+                <table className="w-full">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        成本项目
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        金额 (USD)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">公司注册费</div>
+                        <div className="text-xs text-gray-500">Company Registration</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m1_marketEntry.companyRegistration.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">商业许可证费</div>
+                        <div className="text-xs text-gray-500">Business License</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m1_marketEntry.businessLicense.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">税务登记费</div>
+                        <div className="text-xs text-gray-500">Tax Registration</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m1_marketEntry.taxRegistration.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">法务咨询费</div>
+                        <div className="text-xs text-gray-500">Legal Consulting</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m1_marketEntry.legalConsulting.toFixed(2)}
+                      </td>
+                    </tr>
+                    {/* M1 Total Row */}
+                    <tr className="bg-blue-50 border-t-2 border-blue-200">
+                      <td className="px-4 py-3 text-sm font-bold text-gray-900">
+                        M1 小计
+                      </td>
+                      <td className="px-4 py-3 text-right text-lg font-bold text-blue-900">
+                        ${costResult.capex.m1_marketEntry.total.toFixed(2)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* M2: Tech Compliance - Expandable详细表格 */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            {/* M2 Header */}
+            <button
+              onClick={() => setM2Expanded(!m2Expanded)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex-1 text-left">
+                <div className="font-semibold text-gray-900">M2: 技术合规 (Technical Compliance)</div>
+                <div className="text-sm text-gray-500 mt-1">
+                  产品认证、商标注册、合规检测等技术性投入
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xl font-bold text-gray-900">
+                    ${costResult.capex.m2_techCompliance.total.toFixed(2)}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {m2Expanded ? '点击收起' : '点击展开详情'}
+                  </div>
+                </div>
+                {m2Expanded ? (
+                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                )}
+              </div>
+            </button>
+
+            {/* M2 Detailed Cost Table */}
+            {m2Expanded && (
+              <div className="border-t border-gray-200 bg-gray-50">
+                <table className="w-full">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        成本项目
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        金额 (USD)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">产品认证费</div>
+                        <div className="text-xs text-gray-500">Product Certification (FDA, CE, FCC, etc.)</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m2_techCompliance.productCertification.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">商标注册费</div>
+                        <div className="text-xs text-gray-500">Trademark Registration</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m2_techCompliance.trademarkRegistration.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">合规检测费</div>
+                        <div className="text-xs text-gray-500">Compliance Testing</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m2_techCompliance.complianceTesting.toFixed(2)}
+                      </td>
+                    </tr>
+                    {costResult.capex.m2_techCompliance.patentFiling && costResult.capex.m2_techCompliance.patentFiling > 0 && (
+                      <tr className="hover:bg-gray-100 transition-colors">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div className="font-medium">专利申请费（可选）</div>
+                          <div className="text-xs text-gray-500">Patent Filing (Optional)</div>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                          ${costResult.capex.m2_techCompliance.patentFiling.toFixed(2)}
+                        </td>
+                      </tr>
+                    )}
+                    {/* M2 Total Row */}
+                    <tr className="bg-blue-50 border-t-2 border-blue-200">
+                      <td className="px-4 py-3 text-sm font-bold text-gray-900">
+                        M2 小计
+                      </td>
+                      <td className="px-4 py-3 text-right text-lg font-bold text-blue-900">
+                        ${costResult.capex.m2_techCompliance.total.toFixed(2)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* M3: Supply Chain Setup - Expandable详细表格 */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            {/* M3 Header */}
+            <button
+              onClick={() => setM3Expanded(!m3Expanded)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex-1 text-left">
+                <div className="font-semibold text-gray-900">M3: 供应链搭建 (Supply Chain Setup)</div>
+                <div className="text-sm text-gray-500 mt-1">
+                  仓储押金、设备采购、初始库存、系统搭建等供应链投入
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xl font-bold text-gray-900">
+                    ${costResult.capex.m3_supplyChain.total.toFixed(2)}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {m3Expanded ? '点击收起' : '点击展开详情'}
+                  </div>
+                </div>
+                {m3Expanded ? (
+                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                )}
+              </div>
+            </button>
+
+            {/* M3 Detailed Cost Table */}
+            {m3Expanded && (
+              <div className="border-t border-gray-200 bg-gray-50">
+                <table className="w-full">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        成本项目
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        金额 (USD)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">仓储押金</div>
+                        <div className="text-xs text-gray-500">Warehouse Deposit (3-month security deposit)</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m3_supplyChain.warehouseDeposit.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">设备采购费</div>
+                        <div className="text-xs text-gray-500">Equipment Purchase (shelving, forklifts, etc.)</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m3_supplyChain.equipmentPurchase.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">初始库存成本</div>
+                        <div className="text-xs text-gray-500">Initial Inventory (2-month buffer stock)</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m3_supplyChain.initialInventory.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-100 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="font-medium">系统搭建费</div>
+                        <div className="text-xs text-gray-500">System Setup (ERP, WMS, inventory management)</div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                        ${costResult.capex.m3_supplyChain.systemSetup.toFixed(2)}
+                      </td>
+                    </tr>
+                    {/* M3 Total Row */}
+                    <tr className="bg-blue-50 border-t-2 border-blue-200">
+                      <td className="px-4 py-3 text-sm font-bold text-gray-900">
+                        M3 小计
+                      </td>
+                      <td className="px-4 py-3 text-right text-lg font-bold text-blue-900">
+                        ${costResult.capex.m3_supplyChain.total.toFixed(2)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
           <div className="pt-3 border-t border-gray-200">
             <CostRow
               label="CAPEX总计"
