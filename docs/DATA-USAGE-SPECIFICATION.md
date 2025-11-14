@@ -1,11 +1,11 @@
 # GECOM数据使用规范文档
 
-**文档版本**: v1.0
-**创建日期**: 2025-11-13
+**文档版本**: v2.0（新增代码编写规范+文档管理规则）
+**创建日期**: 2025-11-13（v1.0）| 2025-11-14（v2.0更新）
 **文档类型**: 技术规范（长期维护）
-**对应任务**: GECOM-W4-D20P-T2.1
+**对应任务**: GECOM-W4-D20P-T2.1 + Day 21 Phase 2-3
 **SSOT链接**: [MVP-2.0-任务清单.md Day 20+ Phase 2](./MVP-2.0-任务清单.md#phase-2-创建数据使用规范文档30min)
-**状态**: ✅ 已完成
+**状态**: ✅ 已完成（v2.0新增：条件渲染规范+文档管理3层规则）
 
 ---
 
@@ -1055,5 +1055,416 @@ export default function Step4Comparison({ project }: Props) {
 ---
 
 **文档维护者**: GECOM Team
-**审核状态**: ✅ 已审核
+**审核状态**: ✅ 已审核（v2.0基于2025-11-14实际bug修复经验）
 **下次更新**: 根据实际使用反馈优化（预计2025-Q2）
+
+---
+
+## 🔧 第7章：代码编写规范（v2.0新增 - 基于2025-11-14修复经验）
+
+> **新增背景**：2025-11-14发现并修复了两大系统性问题：
+> 1. **34个字段映射缺失**导致数据显示为0
+> 2. **28个条件渲染bug**导致spurious "0"字符显示
+>
+> 本章总结了这次修复的核心经验，形成强制性代码编写规范。
+> 详见：[SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md](./SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md)
+
+### 规范C1: 条件渲染必须类型安全 🔴 强制
+
+**问题根因**：React的 `{value && <Component />}` 在value为0时渲染"0"字符串（2025-11-14发现28个此类bug）
+
+**强制规则**：
+- ✅ **数值字段**必须使用：`{(value ?? 0) > 0 && <Component />}`
+- ✅ **布尔字段**必须使用：`{!!value && <Component />}`
+- ✅ **字符串字段**必须使用：`{!!value && <Component />}` 或 `{value?.length > 0 && <Component />}`
+- ❌ **禁止**：数值字段直接使用 `{value && <Component />}`
+
+**正确示例**：
+```typescript
+// ✅ 正确：数值字段（FBA费用）
+{(getEffectiveValue('m5_fba_fee_small_usd') ?? 0) > 0 && (
+  <CostItemRow
+    label="FBA小件费用"
+    value={getEffectiveValue('m5_fba_fee_small_usd')}
+    unit="USD"
+  />
+)}
+// 行为：value = 0 → 不渲染 ✅ | value = 10 → 渲染组件 ✅ | value = undefined → 不渲染 ✅
+
+// ✅ 正确：布尔字段（进口许可）
+{!!getEffectiveValue('m1_import_license_required') && (
+  <div className="bg-yellow-50 p-4">
+    <p>需要进口许可证</p>
+  </div>
+)}
+// 行为：value = false → 不渲染 ✅ | value = true → 渲染组件 ✅
+
+// ✅ 正确：字符串字段（VAT备注）
+{!!getEffectiveValue('m4_vat_notes') && (
+  <div className="text-sm text-gray-600">
+    {getEffectiveValue('m4_vat_notes')}
+  </div>
+)}
+```
+
+**错误示例**：
+```typescript
+// ❌ 错误：数值字段直接用 &&
+{getEffectiveValue('m5_fba_fee_small_usd') && (
+  <CostItemRow label="FBA小件费用" ... />
+)}
+// 问题：value = 0时渲染字符串"0"，而非不渲染 ⚠️
+
+// ❌ 错误：使用 || 而非 ??
+{(getEffectiveValue('m5_fba_fee_small_usd') || 0) > 0 && ...}
+// 问题：|| 会将0误判为falsy（虽然结果相同，但逻辑不清晰）
+```
+
+**验收命令**：
+```bash
+# 查找可能的问题代码
+grep -n "getEffectiveValue.*) &&" components/wizard/Step2DataCollection.tsx | grep -v "??" | grep -v "!!"
+
+# 查找正确的模式
+grep -n "(.*?? 0) > 0 &&" components/wizard/Step2DataCollection.tsx
+```
+
+---
+
+### 规范C2: 使用Nullish Coalescing (??) 而非Logical OR (||) 🟡 推荐
+
+**推荐原因**：`??` 只处理null/undefined，保留0、false、空字符串等合法falsy值
+
+**推荐场景**：
+- ✅ **数值字段**：优先使用 `??`（避免0被误判）
+- ✅ **计算fallback**：使用 `??`（保留0值）
+- 🟢 **字符串字段**：`??` 和 `||` 效果相同（空字符串是合法falsy）
+- 🟢 **布尔字段**：必须用 `??` 或显式检查
+
+**正确示例**：
+```typescript
+// ✅ 推荐：数值字段用 ??
+const fbaFee = (costFactor.m5_fba_fee_usd ?? 0);
+// 行为：value = 0 → 返回0 ✅ | value = null → 返回0 | value = undefined → 返回0
+
+// ✅ 推荐：字段映射优先级链
+m2_product_testing_cost_usd:
+  (VN_PET_FOOD as any).m2_product_certification_usd ??  // 行业特定
+  (VN_PET_FOOD as any).m2_compliance_testing_usd ??     // 通用数据
+  0,  // 默认值
+
+// ✅ 推荐：布尔字段用 ??
+const required = data.m1_import_license_required ?? false;
+```
+
+**不推荐示例**：
+```typescript
+// ❌ 不推荐：数值字段用 ||
+const fbaFee = (costFactor.m5_fba_fee_usd || 0);
+// 行为：value = 0 → 返回0（但逻辑上0被当作falsy处理，语义不清）⚠️
+
+// ❌ 不推荐：布尔字段用 ||
+const required = data.m1_import_license_required || false;
+// 问题：false被当作falsy，返回false（逻辑混乱）
+```
+
+**例外场景**：
+```typescript
+// 字符串字段：|| 和 ?? 效果相同（空字符串是合法falsy）
+const notes = data.m4_vat_notes || '无备注';  // ✅ 可接受
+const notes2 = data.m4_vat_notes ?? '无备注';  // ✅ 推荐（语义更清晰）
+```
+
+---
+
+### 规范C3: 字段映射优先级链必须明确 🔴 强制
+
+**问题根因**：34个字段因UI字段名与数据字段名不匹配导致显示0（2025-11-14修复）
+
+**强制规则**：
+- ✅ **必须**：优先级顺序明确标注（行业特定 > 国家通用 > 默认值）
+- ✅ **必须**：最后一级是默认值（0、''、false等）
+- ✅ **必须**：使用 `??` 而非 `||` 处理数值字段
+- ❌ **禁止**：隐式依赖spread顺序决定优先级
+
+**正确示例**：
+```typescript
+// ✅ 正确：三级优先级链
+const costFactor: CostFactor = {
+  ...VN_PET_FOOD,  // 完整spread导入
+
+  // 明确优先级链：specific > base > default
+  m2_product_testing_cost_usd:
+    (VN_PET_FOOD as any).m2_product_certification_usd ??  // Level 1: 行业特定（1200 USD）
+    (VN_PET_FOOD as any).m2_compliance_testing_usd ??     // Level 2: 国家通用（800 USD）
+    0,                                                     // Level 3: 默认值
+
+  // 计算字段：明确数据来源
+  m3_total_estimated_usd:
+    ((VN_PET_FOOD as any).m3_initial_inventory_usd ?? 0) +      // VN_PET_FOOD_SPECIFIC
+    ((VN_PET_FOOD as any).m3_warehouse_deposit_usd ?? 0) +      // VN_BASE_DATA
+    ((VN_PET_FOOD as any).m3_system_setup_usd ?? 0),            // VN_BASE_DATA
+
+  // 溯源字段优先级链
+  m1_data_source:
+    (VN_PET_FOOD as any).m1_industry_data_source ??
+    (VN_PET_FOOD as any).m1_base_data_source ??
+    'MARD官网 + 越南进口代理公司报价',
+};
+```
+
+**错误示例**：
+```typescript
+// ❌ 错误：缺少fallback默认值
+m2_product_testing_cost_usd:
+  (VN_PET_FOOD as any).m2_product_certification_usd ??
+  (VN_PET_FOOD as any).m2_compliance_testing_usd;
+  // 缺少 ?? 0，可能返回undefined ⚠️
+
+// ❌ 错误：使用 || 处理数值
+m5_fba_fee_small_usd:
+  (VN_PET_FOOD as any).m5_fba_fee_usd || 0;
+  // 如果m5_fba_fee_usd = 0（合法值），会错误fallback到0
+  // 应使用 ?? 0
+```
+
+---
+
+### 规范C4: TypeScript类型断言明确标注 🟡 推荐
+
+**推荐原因**：提升代码可读性，明确告知是intentional的类型绕过
+
+**推荐做法**：
+```typescript
+// ✅ 推荐：显式 as any 断言
+const value = (VN_PET_FOOD as any).m2_product_certification_usd ?? 0;
+
+// ✅ 更推荐：完整类型定义（如有时间）
+interface PetFoodCostFactor extends CostFactor {
+  m2_product_certification_usd?: number;
+  m2_compliance_testing_usd?: number;
+}
+const data = VN_PET_FOOD as PetFoodCostFactor;
+const value = data.m2_product_certification_usd ?? 0;
+```
+
+**不推荐做法**：
+```typescript
+// ❌ 不推荐：隐式any（TypeScript strict模式会报错）
+const value = VN_PET_FOOD.m2_product_certification_usd ?? 0;
+// Error: Property 'm2_product_certification_usd' does not exist on type 'CostFactor'
+```
+
+---
+
+### 规范C5: 字段分组注释清晰 🟡 推荐
+
+**推荐原因**：提升代码可维护性，快速定位字段所属模块（本次修复涉及M1-M8共62个字段）
+
+**推荐做法**：
+```typescript
+const costFactor: CostFactor = {
+  ...VN_PET_FOOD,
+
+  // ========== M1 市场准入 ==========
+  m1_data_source: (VN_PET_FOOD as any).m1_industry_data_source ?? ...,
+  m1_import_license_cost_usd: (VN_PET_FOOD as any).m1_industry_license_usd ?? 0,
+
+  // ========== M2 技术合规 ==========
+  m2_data_source: (VN_PET_FOOD as any).m2_product_certification_data_source ?? ...,
+  m2_product_testing_cost_usd:
+    (VN_PET_FOOD as any).m2_product_certification_usd ??  // VN_PET_FOOD_SPECIFIC: 1200 USD
+    (VN_PET_FOOD as any).m2_compliance_testing_usd ??     // VN_BASE_DATA: 800 USD
+    0,  // 默认值（数据不存在时）
+
+  // ========== M3-M8 同理 ==========
+};
+```
+
+---
+
+## 📐 第8章：文档管理3层规则（v2.0新增）
+
+### 规则D1: 项目文档层（docs/）
+
+**适用范围**：当前项目使用的所有规范、分析、管理文档
+
+**保留规则**：
+- ✅ 保留所有当前版本的规范文档（如本文档）
+- ✅ 保留所有当前阶段的分析文档（如SESSION-SUMMARY-*.md）
+- ✅ 保留所有未完成任务的关联文档
+- ✅ 文档命名包含日期（便于追溯）：如 `M1-M8-COMPLETE-FIELD-MAPPING-TABLE-2025-11-14.md`
+- ✅ 文档必须有状态标记：✅ 已完成 | 🚧 进行中 | 📋 草稿
+
+**示例结构**：
+```
+docs/
+├── DATA-USAGE-SPECIFICATION.md                          # ✅ 生产环境规范
+├── DATA-COLLECTION-STANDARD.md                          # ✅ 生产环境规范
+├── MVP-2.0-任务清单.md                                  # ✅ SSOT（第1层）
+├── SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md        # ✅ 会话总结（第2层）
+├── M1-M8-COMPLETE-FIELD-MAPPING-TABLE.md               # ✅ 分析文档（第2层）
+├── CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md             # ✅ 事后分析（第2层）
+└── ...
+```
+
+---
+
+### 规则D2: 历史归档层（docs/archive/）
+
+**适用范围**：废弃但有参考价值的文档
+
+**归档条件**（满足任一条件即归档）：
+- 文档已被新版本替代，但有历史参考价值
+- 文档内容过时，但方法论仍有借鉴意义
+- 重要会话的历史快照（6个月后）
+- 已完成任务的临时分析文档（保留3个月）
+
+**归档规则**：
+- ✅ 归档时添加 `ARCHIVED-` 前缀或移至 `archive/` 目录
+- ✅ 归档文档头部添加 `⚠️ 已归档` 标记和归档原因
+- ✅ 归档文档保留至少6个月
+- ✅ 归档时记录替代文档链接
+
+**示例结构**：
+```
+docs/archive/
+├── README-original.md                                    # ✅ 原始README（已被新版替代）
+├── ARCHIVED-POC-PLAN-V1.md                               # ✅ POC v1计划（已完成）
+├── SESSION-2025-11-01-DATA-IMPORT.md                     # ✅ 历史会话快照
+└── ...
+```
+
+**归档文档头部示例**：
+```markdown
+# 🗄️ ARCHIVED - POC实施计划 v1.0
+
+> ⚠️ **已归档**
+> - 归档日期：2025-11-10
+> - 归档原因：POC已完成，升级为MVP 2.0
+> - 替代文档：[MVP-2.0-详细规划方案.md](../MVP-2.0-详细规划方案.md)
+> - 保留价值：POC阶段的技术决策和经验总结
+
+（原文档内容...）
+```
+
+---
+
+### 规则D3: Git删除层
+
+**适用范围**：完全过时、无参考价值的文档
+
+**删除条件**（必须满足以下ALL条件）：
+- 文档内容完全错误或误导性
+- 临时测试文档已完成验证且无保留价值
+- 重复文档（内容与其他文档100%重复）
+- 6个月未被引用的归档文档
+
+**删除规则**：
+- ✅ 删除前在Git commit message中说明删除原因
+- ✅ 重要文档删除前先归档至 `archive/`（双重保险）
+- ❌ **禁止**：直接删除生产环境规范文档
+- ❌ **禁止**：删除未归档的会话总结文档
+
+**删除示例**：
+```bash
+# Git commit message示例
+git commit -m "清理：删除过时的临时测试文档
+
+删除文档：
+- tmp-test-results-2025-11-01.md（已完成验证，无保留价值）
+- DUPLICATE-DATA-STANDARD.md（与DATA-COLLECTION-STANDARD.md完全重复）
+
+保留依据：
+- 临时测试文档已验证通过，结果已合并到正式文档
+- 重复文档内容100%相同，保留主文档即可
+- 归档文件夹中已有6个月未引用的旧版本可删除
+"
+```
+
+**删除决策树**：
+```
+文档是否过时？
+├─ 否 → 保留在 docs/
+└─ 是 → 有参考价值？
+    ├─ 是 → 归档到 docs/archive/
+    └─ 否 → 完全重复或错误？
+        ├─ 是 → Git删除（记录原因）
+        └─ 否 → 归档到 docs/archive/（保险起见）
+```
+
+---
+
+## ✅ 第9章：v2.0规范验收清单
+
+### 代码编写验收（新增）
+
+**条件渲染（规范C1）**：
+- [ ] 所有数值字段使用 `(value ?? 0) > 0 &&`
+- [ ] 所有布尔字段使用 `!!value &&`
+- [ ] 所有字符串字段使用 `!!value &&` 或 `value?.length > 0 &&`
+- [ ] 没有直接使用 `value &&` 的数值判断
+- [ ] 运行grep命令验证无问题代码
+
+**Nullish Coalescing（规范C2）**：
+- [ ] 数值字段优先级链使用 `??` 而非 `||`
+- [ ] 布尔字段使用 `??` 或显式检查
+- [ ] 字符串字段优先使用 `??`（语义清晰）
+
+**字段映射（规范C3）**：
+- [ ] 所有映射有>=2级优先级链
+- [ ] 最后一级是明确的默认值
+- [ ] 数值字段使用 `??`
+
+**类型断言（规范C4）**：
+- [ ] 动态访问字段使用 `as any` 显式标注
+- [ ] 重要类型转换有注释说明
+
+**代码组织（规范C5）**：
+- [ ] 字段按M1-M8模块分组
+- [ ] 关键字段有行内注释
+
+### 文档管理验收（新增）
+
+**项目文档（规则D1）**：
+- [ ] 文档有状态标记（✅ 已完成 | 🚧 进行中 | 📋 草稿）
+- [ ] 文档命名包含日期（如需要）
+- [ ] 文档头部有创建日期、版本、适用范围
+
+**历史归档（规则D2）**：
+- [ ] 归档文档有 `⚠️ 已归档` 标记
+- [ ] 归档原因说明
+- [ ] 替代文档链接
+- [ ] 保留价值说明
+
+**文档删除（规则D3）**：
+- [ ] Git commit message说明删除原因
+- [ ] 重要文档已先归档
+- [ ] 非生产环境规范文档
+
+---
+
+## 📝 变更日志（更新）
+
+**v1.0 (2025-11-13)**:
+- 初始版本发布
+- 完整4个核心规范（强制2个 + 推荐2个）
+- 3个反模式案例 + 正确做法对比
+- 3个完整代码示例（静态/动态/批量）
+- 5章字段命名约定参考表
+- 完整验收清单
+
+**v2.0 (2025-11-14)**: ⭐ 重要更新
+- ✅ 新增第7章：代码编写规范（基于34字段映射+28条件渲染修复经验）
+  - 规范C1: 条件渲染类型安全（强制）
+  - 规范C2: Nullish Coalescing使用（推荐）
+  - 规范C3: 字段映射优先级链（强制）
+  - 规范C4: TypeScript类型断言（推荐）
+  - 规范C5: 字段分组注释（推荐）
+- ✅ 新增第8章：文档管理3层规则（D1-D3）
+  - D1: 项目文档层（docs/）
+  - D2: 历史归档层（docs/archive/）
+  - D3: Git删除层
+- ✅ 新增第9章：v2.0规范验收清单
+- ✅ 更新文档头部版本信息
+- ✅ 基于实际bug修复总结，规范更具实践指导性
