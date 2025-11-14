@@ -495,11 +495,6 @@ export default function Step4ScenarioAnalysis({ project, costResult }: Step4Scen
             </ul>
           </div>
         </div>
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-xs text-yellow-800">
-            <strong>注意：</strong> 当前使用模拟数据演示智能推荐功能。MVP 2.0完整版将基于19国真实成本因子库进行多市场并行计算。
-          </p>
-        </div>
       </div>
     </div>
   );
