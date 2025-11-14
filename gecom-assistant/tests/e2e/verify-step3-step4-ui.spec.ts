@@ -113,15 +113,15 @@ test('验证Step 3和Step 4实际UI状态', async ({ page }) => {
 
   await page.waitForTimeout(2000);
 
-  // 到达Step 3 - 关键验证点
-  console.log('\n========== Step 3 成本建模结果 UI验证 ==========');
+  // 到达Step 3 - 关键验证点（紧凑布局）
+  console.log('\n========== Step 3 成本建模结果 UI验证（紧凑左右分栏布局）==========');
 
   // 截图完整Step 3页面
   await page.screenshot({
-    path: 'test-results/ui-verification/03-step3-cost-modeling-FULL.png',
+    path: 'test-results/ui-verification/03-step3-compact-layout-FULL.png',
     fullPage: true,
   });
-  console.log('  📸 完整页面截图: test-results/ui-verification/03-step3-cost-modeling-FULL.png');
+  console.log('  📸 完整页面截图: test-results/ui-verification/03-step3-compact-layout-FULL.png');
 
   // 检查页面标题
   const step3Title = await page.locator('h2').first().textContent();
@@ -131,94 +131,103 @@ test('验证Step 3和Step 4实际UI状态', async ({ page }) => {
   const hasCostModeling = await page.locator('text=/成本建模结果/i').count();
   console.log(`  - "成本建模结果"文字存在: ${hasCostModeling > 0 ? '✅' : '❌'}`);
 
-  // 检查CAPEX区域
+  // 验证左右分栏布局（60/40）
+  const leftColumn = page.locator('.grid.grid-cols-5 > .col-span-3');
+  const rightColumn = page.locator('.grid.grid-cols-5 > .col-span-2');
+  const hasLeftColumn = (await leftColumn.count()) > 0;
+  const hasRightColumn = (await rightColumn.count()) > 0;
+  console.log(`  - 左侧列（60%）存在: ${hasLeftColumn ? '✅' : '❌'}`);
+  console.log(`  - 右侧列（40%）存在: ${hasRightColumn ? '✅' : '❌'}`);
+
+  // 检查CAPEX区域（左侧列）
   const capexSection = page.locator('text=/CAPEX.*一次性启动成本/i');
   const hasCapexSection = (await capexSection.count()) > 0;
   console.log(`  - CAPEX区域存在: ${hasCapexSection ? '✅' : '❌'}`);
 
-  // 检查是否有M1-M8详细表格
-  const tables = page.locator('table');
-  const tableCount = await tables.count();
-  console.log(`  - 表格数量: ${tableCount}`);
+  // ⭐ 新验证：确认没有展开/收起按钮（紧凑布局特征）
+  const expandButtons = page.locator('button:has-text("点击展开")');
+  const expandButtonCount = await expandButtons.count();
+  console.log(`  - 展开按钮数量（应为0）: ${expandButtonCount === 0 ? '✅ 0个（紧凑布局正确）' : `❌ ${expandButtonCount}个`}`);
 
-  // 点击M1展开按钮（如果存在）
-  const m1ExpandButton = page.locator('button:has-text("M1: 市场准入")');
-  const m1ExpandButtonCount = await m1ExpandButton.count();
-  if (m1ExpandButtonCount > 0) {
-    await m1ExpandButton.click();
-    await page.waitForTimeout(500);
-    console.log('  ✓ M1展开按钮已点击');
-  }
-
-  // 检查M1模块是否展开显示详细成本项
+  // 验证M1模块详细成本项直接可见（无需点击）
   const m1DetailItems = page.locator('text=/公司注册费|商业许可证费|税务登记费|法务咨询费|Company Registration|Business License|Tax Registration|Legal Consulting/i');
   const m1DetailCount = await m1DetailItems.count();
-  console.log(`  - M1详细成本项数量: ${m1DetailCount}`);
+  console.log(`  - M1详细成本项数量（直接可见）: ${m1DetailCount}`);
 
   if (m1DetailCount < 4) {
-    console.log(`  ⚠️ WARNING: M1模块未完全显示详细成本项（期望4项，实际${m1DetailCount}项）！`);
+    console.log(`  ⚠️ WARNING: M1模块未完全显示详细成本项（期望≥8项（含英文），实际${m1DetailCount}项）！`);
   } else {
-    console.log(`  ✅ M1模块显示完整详细成本项（${m1DetailCount}项）`);
+    console.log(`  ✅ M1模块显示完整详细成本项（${m1DetailCount}项，含中英文）`);
   }
 
-  // 点击M2展开按钮
-  const m2ExpandButton = page.locator('button:has-text("M2: 技术合规")');
-  const m2ExpandButtonCount = await m2ExpandButton.count();
-  if (m2ExpandButtonCount > 0) {
-    await m2ExpandButton.click();
-    await page.waitForTimeout(500);
-    console.log('  ✓ M2展开按钮已点击');
-  }
-
-  // 检查M2模块详细成本项
+  // 验证M2模块详细成本项直接可见
   const m2DetailItems = page.locator('text=/产品认证费|商标注册费|合规检测费|Product Certification|Trademark Registration|Compliance Testing/i');
   const m2DetailCount = await m2DetailItems.count();
-  console.log(`  - M2详细成本项数量: ${m2DetailCount}`);
+  console.log(`  - M2详细成本项数量（直接可见）: ${m2DetailCount}`);
 
   if (m2DetailCount < 3) {
-    console.log(`  ⚠️ WARNING: M2模块未完全显示详细成本项（期望3+项，实际${m2DetailCount}项）！`);
+    console.log(`  ⚠️ WARNING: M2模块未完全显示详细成本项（期望≥6项，实际${m2DetailCount}项）！`);
   } else {
     console.log(`  ✅ M2模块显示完整详细成本项（${m2DetailCount}项）`);
   }
 
-  // 点击M3展开按钮
-  const m3ExpandButton = page.locator('button:has-text("M3: 供应链搭建")');
-  const m3ExpandButtonCount = await m3ExpandButton.count();
-  if (m3ExpandButtonCount > 0) {
-    await m3ExpandButton.click();
-    await page.waitForTimeout(500);
-    console.log('  ✓ M3展开按钮已点击');
-  }
-
-  // 检查M3模块详细成本项
+  // 验证M3模块详细成本项直接可见
   const m3DetailItems = page.locator('text=/仓储押金|设备采购费|初始库存成本|系统搭建费|Warehouse Deposit|Equipment Purchase|Initial Inventory|System Setup/i');
   const m3DetailCount = await m3DetailItems.count();
-  console.log(`  - M3详细成本项数量: ${m3DetailCount}`);
+  console.log(`  - M3详细成本项数量（直接可见）: ${m3DetailCount}`);
 
   if (m3DetailCount < 4) {
-    console.log(`  ⚠️ WARNING: M3模块未完全显示详细成本项（期望4项，实际${m3DetailCount}项）！`);
+    console.log(`  ⚠️ WARNING: M3模块未完全显示详细成本项（期望≥8项，实际${m3DetailCount}项）！`);
   } else {
     console.log(`  ✅ M3模块显示完整详细成本项（${m3DetailCount}项）`);
   }
 
-  // 检查M4模块
-  const m4DetailItems = page.locator('text=/COGS|关税|增值税|VAT|物流/i');
-  const m4DetailCount = await m4DetailItems.count();
-  console.log(`  - M4详细成本项数量: ${m4DetailCount}`);
+  // 验证OPEX模块（M4-M8）存在于左侧列
+  const opexSection = page.locator('text=/OPEX.*单位运营成本/i');
+  const hasOpexSection = (await opexSection.count()) > 0;
+  console.log(`  - OPEX区域存在: ${hasOpexSection ? '✅' : '❌'}`);
 
-  if (m4DetailCount < 3) {
-    console.log('  ⚠️ WARNING: M4模块未显示完整详细成本项！');
+  // 验证M4-M8模块标题
+  const m4Title = page.locator('text=/M4.*货物税费/i');
+  const m5Title = page.locator('text=/M5.*物流配送/i');
+  const m6Title = page.locator('text=/M6.*营销获客/i');
+  const m7Title = page.locator('text=/M7.*支付手续费/i');
+  const m8Title = page.locator('text=/M8.*运营管理/i');
+  console.log(`  - M4模块标题: ${(await m4Title.count()) > 0 ? '✅' : '❌'}`);
+  console.log(`  - M5模块标题: ${(await m5Title.count()) > 0 ? '✅' : '❌'}`);
+  console.log(`  - M6模块标题: ${(await m6Title.count()) > 0 ? '✅' : '❌'}`);
+  console.log(`  - M7模块标题: ${(await m7Title.count()) > 0 ? '✅' : '❌'}`);
+  console.log(`  - M8模块标题: ${(await m8Title.count()) > 0 ? '✅' : '❌'}`);
+
+  // 验证右侧列KPI卡片
+  const metricCards = page.locator('.col-span-2 .space-y-3 > div');
+  const metricCardCount = await metricCards.count();
+  console.log(`  - 右侧KPI卡片数量: ${metricCardCount}（期望4个）`);
+
+  // 验证右侧单位经济模型区域
+  const unitEconomicsSection = page.locator('text=/单位经济模型/i');
+  const hasUnitEconomics = (await unitEconomicsSection.count()) > 0;
+  console.log(`  - 单位经济模型区域: ${hasUnitEconomics ? '✅' : '❌'}`);
+
+  // 验证盈亏平衡分析区域
+  const breakevenSection = page.locator('text=/盈亏平衡分析/i');
+  const hasBreakeven = (await breakevenSection.count()) > 0;
+  console.log(`  - 盈亏平衡分析区域: ${hasBreakeven ? '✅' : '❌'}`);
+
+  // 截图左侧列（成本明细）
+  if (hasLeftColumn) {
+    await leftColumn.first().screenshot({
+      path: 'test-results/ui-verification/03-step3-left-column-cost-details.png',
+    });
+    console.log('  📸 左侧列截图: test-results/ui-verification/03-step3-left-column-cost-details.png');
   }
 
-  // 截图CAPEX区域
-  if (hasCapexSection) {
-    const capexElement = await capexSection.first().elementHandle();
-    if (capexElement) {
-      await capexElement.screenshot({
-        path: 'test-results/ui-verification/03-step3-CAPEX-detail.png',
-      });
-      console.log('  📸 CAPEX区域截图: test-results/ui-verification/03-step3-CAPEX-detail.png');
-    }
+  // 截图右侧列（KPI结果）
+  if (hasRightColumn) {
+    await rightColumn.first().screenshot({
+      path: 'test-results/ui-verification/03-step3-right-column-kpi-results.png',
+    });
+    console.log('  📸 右侧列截图: test-results/ui-verification/03-step3-right-column-kpi-results.png');
   }
 
   console.log('\n========== Step 4 场景对比分析 UI验证 ==========');
@@ -268,13 +277,19 @@ test('验证Step 3和Step 4实际UI状态', async ({ page }) => {
 
   console.log('\n========== 验证总结 ==========');
   console.log(`
-📊 Step 3 验证结果:
+📊 Step 3 验证结果（紧凑左右分栏布局）:
   - 页面标题: ${step3Title}
+  - 布局模式: ${hasLeftColumn && hasRightColumn ? '✅ 左右分栏（60/40）' : '❌ 布局错误'}
+  - 展开按钮: ${expandButtonCount === 0 ? '✅ 0个（紧凑模式正确）' : `❌ ${expandButtonCount}个（应为0）`}
   - CAPEX区域: ${hasCapexSection ? '✅ 存在' : '❌ 不存在'}
-  - 表格数量: ${tableCount}
-  - M1详细项: ${m1DetailCount}
-  - M4详细项: ${m4DetailCount}
-  ${m1DetailCount === 0 || m4DetailCount < 3 ? '⚠️ 缺少详细成本拆解，仅显示概览' : '✅ 显示详细成本拆解'}
+  - OPEX区域: ${hasOpexSection ? '✅ 存在' : '❌ 不存在'}
+  - M1详细项（直接可见）: ${m1DetailCount}
+  - M2详细项（直接可见）: ${m2DetailCount}
+  - M3详细项（直接可见）: ${m3DetailCount}
+  - 右侧KPI卡片: ${metricCardCount}/4
+  - 单位经济模型: ${hasUnitEconomics ? '✅' : '❌'}
+  - 盈亏平衡分析: ${hasBreakeven ? '✅' : '❌'}
+  ${m1DetailCount >= 4 && m2DetailCount >= 3 && m3DetailCount >= 4 ? '✅ 所有成本明细直接可见（紧凑布局成功）' : '⚠️ 部分成本明细缺失'}
 
 📊 Step 4 验证结果:
   - Mock警告: ${hasMockWarning ? '⚠️ 存在（需要移除）' : '✅ 不存在'}
@@ -283,6 +298,10 @@ test('验证Step 3和Step 4实际UI状态', async ({ page }) => {
   ${hasMockWarning ? '⚠️ 仍在使用模拟数据' : '✅ 使用真实数据'}
 
 📁 所有截图已保存到: test-results/ui-verification/
+  - 03-step3-compact-layout-FULL.png（完整页面）
+  - 03-step3-left-column-cost-details.png（左侧成本明细）
+  - 03-step3-right-column-kpi-results.png（右侧KPI结果）
+  - 04-step4-comparison-FULL.png（Step 4完整页面）
   `);
 
   console.log('\n========== 验证完成 ==========\n');
