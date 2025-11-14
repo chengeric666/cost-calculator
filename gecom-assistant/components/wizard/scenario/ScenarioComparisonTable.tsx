@@ -14,7 +14,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, TrendingUp, AlertTriangle, Lightbulb, BarChart3 } from 'lucide-react';
+import { TrendingUp, AlertTriangle, Lightbulb, BarChart3 } from 'lucide-react';
 import { TargetCountry, CostResult } from '@/types/gecom';
 import { ScenarioParams } from './ScenarioParameterPanel';
 import TierBadge from '@/components/ui/TierBadge';
@@ -26,7 +26,6 @@ interface ComparisonRow {
   label: string;
   type: 'header' | 'data' | 'subdata';
   values: Map<TargetCountry, number | string>;
-  expandable?: boolean;
   icon?: string;
   highlight?: boolean; // 是否高亮显示（关键指标）
 }
@@ -102,22 +101,6 @@ export default function ScenarioComparisonTable({
   results,
   tierMap,
 }: ScenarioComparisonTableProps) {
-  // 展开状态管理
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['metrics']));
-
-  // 切换展开状态
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => {
-      const next = new Set(prev);
-      if (next.has(section)) {
-        next.delete(section);
-      } else {
-        next.add(section);
-      }
-      return next;
-    });
-  };
-
   // 获取国家列表
   const countries = useMemo(() => Array.from(results.keys()), [results]);
 
@@ -192,12 +175,11 @@ export default function ScenarioComparisonTable({
       label: '📈 关键指标',
       type: 'header',
       values: new Map(),
-      expandable: true,
       icon: '📈',
     });
 
-    if (expandedSections.has('metrics')) {
-      rows.push({
+    // 默认展开所有数据
+    rows.push({
         label: '单位收入',
         type: 'data',
         values: new Map(countries.map(c => [c, `$${results.get(c)!.unit_economics.revenue.toFixed(2)}`])),
@@ -245,19 +227,17 @@ export default function ScenarioComparisonTable({
         })),
         highlight: true,
       });
-    }
 
     // M4 货物税费
     rows.push({
-      label: '🛍️ M4 货物税费',
+      label: '📦 M4 货物税费',
       type: 'header',
       values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.total.toFixed(2)}`])),
-      expandable: true,
-      icon: '🛍️',
+      icon: '📦',
     });
 
-    if (expandedSections.has('m4')) {
-      rows.push({
+    // 默认展开所有数据
+    rows.push({
         label: '  ├─ COGS',
         type: 'subdata',
         values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.cogs.toFixed(2)}`])),
@@ -277,14 +257,12 @@ export default function ScenarioComparisonTable({
         type: 'subdata',
         values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.vat.toFixed(2)}`])),
       });
-    }
 
     // M5 物流配送
     rows.push({
       label: '🚚 M5 物流配送',
       type: 'header',
       values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m5_logistics.total.toFixed(2)}`])),
-      expandable: true,
       icon: '🚚',
     });
 
@@ -293,7 +271,6 @@ export default function ScenarioComparisonTable({
       label: '📢 M6 营销获客',
       type: 'header',
       values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m6_marketing.toFixed(2)}`])),
-      expandable: false,
       icon: '📢',
     });
 
@@ -302,7 +279,6 @@ export default function ScenarioComparisonTable({
       label: '💳 M7 支付费用',
       type: 'header',
       values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m7_payment.toFixed(2)}`])),
-      expandable: false,
       icon: '💳',
     });
 
@@ -311,12 +287,11 @@ export default function ScenarioComparisonTable({
       label: '⚙️ M8 运营管理',
       type: 'header',
       values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m8_operations.total.toFixed(2)}`])),
-      expandable: false,
       icon: '⚙️',
     });
 
     return rows;
-  }, [countries, results, expandedSections, params, insights]);
+  }, [countries, results, params, insights]);
 
   return (
     <div className="bg-gradient-to-br from-indigo-50/30 to-purple-50/20 backdrop-blur-md border border-indigo-100/50 rounded-2xl p-6 shadow-glass-md">
@@ -391,18 +366,6 @@ export default function ScenarioComparisonTable({
                   {/* 标签列 */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      {row.type === 'header' && row.expandable && (
-                        <button
-                          onClick={() => toggleSection(row.label.includes('关键指标') ? 'metrics' : 'm4')}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors"
-                        >
-                          {expandedSections.has(row.label.includes('关键指标') ? 'metrics' : 'm4') ? (
-                            <ChevronUp className="h-4 w-4 text-gray-600" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4 text-gray-600" />
-                          )}
-                        </button>
-                      )}
                       <span className={`
                         ${row.type === 'header' ? 'font-semibold text-gray-900' : ''}
                         ${row.type === 'data' ? 'font-medium text-gray-700' : ''}
