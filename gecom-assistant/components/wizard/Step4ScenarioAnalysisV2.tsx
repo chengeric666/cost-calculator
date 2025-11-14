@@ -81,10 +81,25 @@ export default function Step4ScenarioAnalysisV2({
         // Mock M4-M8 数据
         m4_effective_tariff_rate: country === 'US' ? 0.04 : country === 'DE' ? 0.05 : 0.038,
         m4_vat_rate: country === 'US' ? 0 : country === 'DE' ? 0.19 : country === 'JP' ? 0.10 : 0.10,
-        m4_logistics: {
-          sea_freight_usd_kg: 2.5,
-          air_freight_usd_kg: 8.5,
-        } as any,
+        m4_logistics: JSON.stringify({
+          sea_freight: {
+            usd_per_kg: 2.5,
+            lcl_usd_per_cbm_min: 100,
+            lcl_usd_per_cbm_max: 150,
+            fcl_20ft_usd_min: 1500,
+            fcl_20ft_usd_max: 2000,
+            transit_days_min: 25,
+            transit_days_max: 35,
+            data_source: 'tier2_authoritative'
+          },
+          air_freight: {
+            usd_per_kg: 8.5,
+            ddp_usd_per_kg: 10.0,
+            transit_days_min: 3,
+            transit_days_max: 7,
+            data_source: 'tier2_authoritative'
+          }
+        }),
 
         m5_fba_fee_standard_usd: 3.5,
         m5_warehouse_fee_per_unit_month_usd: 2.8,
