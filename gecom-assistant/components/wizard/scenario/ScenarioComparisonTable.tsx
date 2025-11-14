@@ -251,7 +251,7 @@ export default function ScenarioComparisonTable({
     rows.push({
       label: '🛍️ M4 货物税费',
       type: 'header',
-      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.toFixed(2)}`])),
+      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.total.toFixed(2)}`])),
       expandable: true,
       icon: '🛍️',
     });
@@ -260,22 +260,22 @@ export default function ScenarioComparisonTable({
       rows.push({
         label: '  ├─ COGS',
         type: 'subdata',
-        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax * 0.35).toFixed(2)}`])),
+        values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.cogs.toFixed(2)}`])),
       });
       rows.push({
         label: '  ├─ 头程物流',
         type: 'subdata',
-        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax * 0.15).toFixed(2)} ${params.logisticsMode === 'sea' ? '🚢' : '✈️'}`])),
+        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax.cogs * 0.15).toFixed(2)} ${params.logisticsMode === 'sea' ? '🚢' : '✈️'}`])),
       });
       rows.push({
         label: '  ├─ 进口关税',
         type: 'subdata',
-        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax * 0.08).toFixed(2)}`])),
+        values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.importTariff.toFixed(2)}`])),
       });
       rows.push({
         label: '  └─ 增值税',
         type: 'subdata',
-        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax * 0.42).toFixed(2)}`])),
+        values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m4_goodsTax.vat.toFixed(2)}`])),
       });
     }
 
@@ -283,7 +283,7 @@ export default function ScenarioComparisonTable({
     rows.push({
       label: '🚚 M5 物流配送',
       type: 'header',
-      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m5_logistics.toFixed(2)}`])),
+      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m5_logistics.total.toFixed(2)}`])),
       expandable: true,
       icon: '🚚',
     });
@@ -310,7 +310,7 @@ export default function ScenarioComparisonTable({
     rows.push({
       label: '⚙️ M8 运营管理',
       type: 'header',
-      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m8_operations.toFixed(2)}`])),
+      values: new Map(countries.map(c => [c, `$${results.get(c)!.opex.m8_operations.total.toFixed(2)}`])),
       expandable: false,
       icon: '⚙️',
     });
