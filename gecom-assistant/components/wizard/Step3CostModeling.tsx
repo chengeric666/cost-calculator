@@ -191,58 +191,203 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
               阶段1-N: OPEX（单位运营成本）
             </h3>
 
-            {/* M4: Goods & Tax */}
-            <div className="mb-2">
+            {/* M4: Goods & Tax - Detailed */}
+            <div className="mb-3">
               <div className="text-xs font-semibold text-green-700 mb-1">M4: 货物税费</div>
               <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs">
-                  <span className="text-gray-600">COGS + 关税 + 物流 + 增值税</span>
-                  <span className="font-bold text-gray-900">${m4Total.toFixed(2)}</span>
-                </div>
+                {costResult.opex.m4_goodsTax ? (
+                  <>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">商品成本 <span className="text-gray-400">COGS</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m4_goodsTax.cogs.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">进口关税 <span className="text-gray-400">Import Tariff</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">增值税 <span className="text-gray-400">VAT</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m4_goodsTax.vat.toFixed(2)}</span>
+                    </div>
+                    {costResult.opex.m4_goodsTax.exciseTax && costResult.opex.m4_goodsTax.exciseTax > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">消费税 <span className="text-gray-400">Excise Tax</span></span>
+                        <span className="font-semibold text-gray-900">${costResult.opex.m4_goodsTax.exciseTax.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-1 text-xs bg-green-50 px-2 -mx-2 rounded">
+                      <span className="font-bold text-gray-900">M4 小计</span>
+                      <span className="font-bold text-green-900">${costResult.opex.m4_goodsTax.total.toFixed(2)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between py-1 text-xs">
+                    <span className="text-gray-600">COGS + 关税 + 增值税</span>
+                    <span className="font-bold text-gray-900">${m4Total.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* M5: Logistics */}
-            <div className="mb-2">
+            {/* M5: Logistics - Detailed */}
+            <div className="mb-3">
               <div className="text-xs font-semibold text-green-700 mb-1">M5: 物流配送</div>
               <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs">
-                  <span className="text-gray-600">国际运输 + 本地配送 + FBA</span>
-                  <span className="font-bold text-gray-900">${m5Total.toFixed(2)}</span>
-                </div>
+                {costResult.opex.m5_logistics ? (
+                  <>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">国际运输 <span className="text-gray-400">International Shipping</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m5_logistics.intlShipping.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">本地配送 <span className="text-gray-400">Local Delivery</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m5_logistics.localDelivery.toFixed(2)}</span>
+                    </div>
+                    {costResult.opex.m5_logistics.fbaFee && costResult.opex.m5_logistics.fbaFee > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">FBA费用 <span className="text-gray-400">FBA Fee</span></span>
+                        <span className="font-semibold text-gray-900">${costResult.opex.m5_logistics.fbaFee.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">仓储费 <span className="text-gray-400">Warehouse Fee</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m5_logistics.warehouseFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">退货物流 <span className="text-gray-400">Return Logistics</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m5_logistics.returnLogistics.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs bg-green-50 px-2 -mx-2 rounded">
+                      <span className="font-bold text-gray-900">M5 小计</span>
+                      <span className="font-bold text-green-900">${costResult.opex.m5_logistics.total.toFixed(2)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between py-1 text-xs">
+                    <span className="text-gray-600">国际运输 + 本地配送 + FBA</span>
+                    <span className="font-bold text-gray-900">${m5Total.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* M6: Marketing */}
-            <div className="mb-2">
+            {/* M6: Marketing - Detailed */}
+            <div className="mb-3">
               <div className="text-xs font-semibold text-green-700 mb-1">M6: 营销获客</div>
               <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs">
-                  <span className="text-gray-600">CAC + 平台佣金</span>
-                  <span className="font-bold text-gray-900">${m6Total.toFixed(2)}</span>
-                </div>
+                {costResult.opex.m6_marketing && typeof costResult.opex.m6_marketing === 'object' ? (
+                  <>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">客户获取成本 <span className="text-gray-400">CAC</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m6_marketing as any).cac.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">平台佣金 <span className="text-gray-400">Platform Commission</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m6_marketing as any).platformCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">广告支出 <span className="text-gray-400">Ad Spend</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m6_marketing as any).adSpend.toFixed(2)}</span>
+                    </div>
+                    {(costResult.opex.m6_marketing as any).influencerMarketing && (costResult.opex.m6_marketing as any).influencerMarketing > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">网红营销 <span className="text-gray-400">Influencer Marketing</span></span>
+                        <span className="font-semibold text-gray-900">${(costResult.opex.m6_marketing as any).influencerMarketing.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {(costResult.opex.m6_marketing as any).seo && (costResult.opex.m6_marketing as any).seo > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">SEO优化 <span className="text-gray-400">SEO</span></span>
+                        <span className="font-semibold text-gray-900">${(costResult.opex.m6_marketing as any).seo.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-1 text-xs bg-green-50 px-2 -mx-2 rounded">
+                      <span className="font-bold text-gray-900">M6 小计</span>
+                      <span className="font-bold text-green-900">${m6Total.toFixed(2)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between py-1 text-xs">
+                    <span className="text-gray-600">CAC + 平台佣金</span>
+                    <span className="font-bold text-gray-900">${m6Total.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* M7: Payment */}
-            <div className="mb-2">
+            {/* M7: Payment - Detailed */}
+            <div className="mb-3">
               <div className="text-xs font-semibold text-green-700 mb-1">M7: 支付手续费</div>
               <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs">
-                  <span className="text-gray-600">网关费用 + 汇率损失</span>
-                  <span className="font-bold text-gray-900">${m7Total.toFixed(2)}</span>
-                </div>
+                {costResult.opex.m7_payment && typeof costResult.opex.m7_payment === 'object' ? (
+                  <>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">支付网关费 <span className="text-gray-400">Payment Gateway</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m7_payment as any).paymentGatewayFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">货币兑换 <span className="text-gray-400">Currency Conversion</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m7_payment as any).currencyConversion.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">退款费用 <span className="text-gray-400">Chargeback Fee</span></span>
+                      <span className="font-semibold text-gray-900">${(costResult.opex.m7_payment as any).chargebackFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs bg-green-50 px-2 -mx-2 rounded">
+                      <span className="font-bold text-gray-900">M7 小计</span>
+                      <span className="font-bold text-green-900">${m7Total.toFixed(2)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between py-1 text-xs">
+                    <span className="text-gray-600">网关费用 + 汇率损失</span>
+                    <span className="font-bold text-gray-900">${m7Total.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* M8: Operations */}
-            <div className="mb-2">
+            {/* M8: Operations - Detailed */}
+            <div className="mb-3">
               <div className="text-xs font-semibold text-green-700 mb-1">M8: 运营管理</div>
               <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs">
-                  <span className="text-gray-600">客服 + 人员 + 软件</span>
-                  <span className="font-bold text-gray-900">${m8Total.toFixed(2)}</span>
-                </div>
+                {costResult.opex.m8_operations ? (
+                  <>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">客服成本 <span className="text-gray-400">Customer Service</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m8_operations.customerService.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">人员成本 <span className="text-gray-400">Staff</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m8_operations.staff.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                      <span className="text-gray-700">软件成本 <span className="text-gray-400">Software</span></span>
+                      <span className="font-semibold text-gray-900">${costResult.opex.m8_operations.software.toFixed(2)}</span>
+                    </div>
+                    {costResult.opex.m8_operations.officeRent && costResult.opex.m8_operations.officeRent > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">办公室租金 <span className="text-gray-400">Office Rent</span></span>
+                        <span className="font-semibold text-gray-900">${costResult.opex.m8_operations.officeRent.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {costResult.opex.m8_operations.utilities && costResult.opex.m8_operations.utilities > 0 && (
+                      <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                        <span className="text-gray-700">水电费 <span className="text-gray-400">Utilities</span></span>
+                        <span className="font-semibold text-gray-900">${costResult.opex.m8_operations.utilities.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-1 text-xs bg-green-50 px-2 -mx-2 rounded">
+                      <span className="font-bold text-gray-900">M8 小计</span>
+                      <span className="font-bold text-green-900">${costResult.opex.m8_operations.total.toFixed(2)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between py-1 text-xs">
+                    <span className="text-gray-600">客服 + 人员 + 软件</span>
+                    <span className="font-bold text-gray-900">${m8Total.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
