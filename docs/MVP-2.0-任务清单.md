@@ -2696,61 +2696,269 @@
 
 ---
 
-#### Phase 5: Step 4真实数据计算（1.5h）⏳ 待Phase 4完成后开始
+#### Phase 5: Step 4场景模拟与19国数据集成（2h）⏳ 待Phase 4完成后开始
 
-- [ ] **D20PP-T5.1**: 实现19国成本数据动态加载
-  - **当前状态**: Step 4使用硬编码mock数据
-  - **修复方案**:
-    - 创建工具函数: `lib/gecom/multi-country-calculator.ts`
-    - 实现函数: `calculateMultiCountryCosts(countries: string[], project, scope)`
-    - 逻辑：
-      ```typescript
-      for (const country of countries) {
-        const costFactor = await loadCostFactor(country, industry);
-        const result = calculateCostResult(scope, costFactor);
-        results.push({ country, ...result });
-      }
-      return results.sort((a, b) => a.gross_margin - b.gross_margin); // 最优到最差
-      ```
+> **重要纠正**: Phase 5不是静态19国对比，而是**交互式What-If场景模拟工具**
+> **设计文档**: [PHASE5-SCENARIO-SIMULATION-DESIGN.md](./PHASE5-SCENARIO-SIMULATION-DESIGN.md) ⭐⭐⭐
+> **核心价值**: 通过参数化模拟帮助用户回答"如果我调整售价/物流/履约模式，哪个市场ROI最高？"
+
+---
+
+##### Phase 5A: 参数调节面板（40min）
+
+- [ ] **D20PP-T5A.1**: 创建ScenarioParameterPanel组件
+  - **文件**: `components/wizard/scenario/ScenarioParameterPanel.tsx`
+  - **功能**: 7个可调参数（售价/月销量/CAC/物流/履约/退货/支付）
+  - **UI组件**:
+    - 3个Slider控件（售价$30-$100, 月销量500-5000, CAC$10-$60）
+    - 4个Toggle开关（物流:海运|空运, 履约:FBA|3PL|Direct, 支付网关）
+    - 1个Slider控件（退货率0-15%）
+  - **状态管理**:
+    ```typescript
+    interface ScenarioParams {
+      sellingPrice: number;       // 售价
+      monthlyVolume: number;      // 月销量
+      cac: number;                // 获客成本
+      logisticsMode: 'sea' | 'air'; // 物流模式
+      fulfillmentMode: 'fba' | '3pl' | 'direct'; // 履约模式
+      returnRate: number;         // 退货率（0-15）
+      paymentGateway: 'stripe' | 'paypal' | 'shoppay'; // 支付方式
+    }
+    ```
   - **验收标准**:
-    - [ ] 函数正确加载29国数据（21 Pet + 8 Vape）
-    - [ ] 返回结果按毛利率排序（最优到最差）
-    - [ ] TypeScript类型定义完整
-    - [ ] 单元测试通过（jest测试）
+    - [ ] 7个参数调节器UI正确渲染
+    - [ ] Slider实时显示当前值
+    - [ ] Toggle切换流畅（<100ms响应）
+    - [ ] Liquid Glass设计风格统一
+    - [ ] 参数提示文字清晰（如"海运可节省$6.0/kg"）
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 46-124
   - **预计耗时**: 40min
 
-- [ ] **D20PP-T5.2**: Step 4集成真实数据计算
-  - **修复方案**:
-    - 修改文件: `components/wizard/Step4Comparison.tsx`
-    - 删除hardcoded mock数据（Line 30-100）
-    - 使用useEffect调用`calculateMultiCountryCosts()`
-    - 更新推荐卡片显示逻辑（基于真实排名）
-  - **验收标准**:
-    - [ ] 最优市场卡片显示真实数据（如US毛利率35%）
-    - [ ] 最差市场卡片显示真实数据（如DE毛利率-10%）
-    - [ ] 19国排名表格显示真实成本数据
-    - [ ] 加载状态友好（显示loading spinner）
-  - **预计耗时**: 40min
+##### Phase 5B: 国家选择器（20min）
 
-- [ ] **D20PP-T5.3**: Phase 5 Playwright全量验证
-  - **测试内容**:
-    - Step 4不显示Mock警告
-    - 推荐卡片显示真实数据
-    - 19国排名表格包含21国Pet Food数据
-    - 市场洞察面板显示真实基准对比
-  - **截图保存**: test-results/ui-verification/04-step4-REAL-DATA-COMPLETE.png
+- [ ] **D20PP-T5B.1**: 创建CountryMultiSelector组件
+  - **文件**: `components/wizard/scenario/CountryMultiSelector.tsx`
+  - **功能**: 从19国数据库选择3-5个目标市场
+  - **UI功能**:
+    - 默认预选3国（US/DE/JP）
+    - 显示每个国家Tier质量徽章
+    - 已选国家可移除（×按钮）
+    - 可添加国家（最多5国）
+  - **数据源**: 使用DataAvailabilityPanel的countryDataCoverage数据
+  - **验收标准**:
+    - [ ] 默认显示3国已选（US/DE/JP）
+    - [ ] 点击"添加"按钮可选择其他国家
+    - [ ] 超过5国时禁用添加按钮
+    - [ ] Tier徽章正确显示（Tier 1/2/3）
+    - [ ] 移除国家功能正常
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 128-186
   - **预计耗时**: 20min
 
-- [ ] **D20PP-T5.4**: Git提交Phase 5成果
-  - 提交文件: lib/gecom/multi-country-calculator.ts, components/wizard/Step4Comparison.tsx
-  - 提交消息: "功能：Step 4连接19国真实数据库进行成本计算"
+##### Phase 5C: 场景计算引擎（30min）
+
+- [ ] **D20PP-T5C.1**: 扩展calculateCostResult支持参数覆盖
+  - **文件**: `lib/gecom-engine-v2.ts`
+  - **修改**: 添加`overrides?: Partial<ScenarioParams>`参数
+  - **核心逻辑**:
+    ```typescript
+    function calculateCostResult(
+      scope: ScopeInputs,
+      costFactor: CostFactor,
+      overrides?: Partial<ScenarioParams> // 新增
+    ): CostResult {
+      // 优先使用overrides值
+      const effectivePrice = overrides?.sellingPrice ?? scope.sellingPrice;
+      const effectiveVolume = overrides?.monthlyVolume ?? scope.monthlyVolume;
+
+      // M4物流成本（根据物流模式）
+      const logisticsMode = overrides?.logisticsMode ?? 'sea';
+      const logisticsCost = logisticsMode === 'sea'
+        ? costFactor.m4_logistics.sea_freight_usd_kg * scope.productWeight
+        : costFactor.m4_logistics.air_freight_usd_kg * scope.productWeight;
+
+      // M5履约成本（根据履约模式）
+      const fulfillmentMode = overrides?.fulfillmentMode ?? 'fba';
+      let fulfillmentCost = fulfillmentMode === 'fba'
+        ? costFactor.m5_fba_fee_usd ?? 3.5
+        : fulfillmentMode === '3pl' ? costFactor.m5_3pl_fee_usd ?? 2.8 : 4.2;
+
+      // M5退货成本
+      const returnRate = overrides?.returnRate ?? 5;
+      const returnCost = (logisticsCost * 2) * (returnRate / 100);
+
+      // M7支付费率
+      const paymentGateway = overrides?.paymentGateway ?? 'stripe';
+      const paymentRate = { 'stripe': 0.029, 'paypal': 0.035, 'shoppay': 0.025 }[paymentGateway];
+      const paymentCost = effectivePrice * paymentRate;
+
+      // ... 继续完整M1-M8计算
+    }
+    ```
+  - **验收标准**:
+    - [ ] 参数覆盖功能正确（7个参数）
+    - [ ] 不传overrides时使用默认值
+    - [ ] TypeScript类型定义完整
+    - [ ] 单元测试通过（测试参数影响）
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 190-292
+  - **预计耗时**: 30min
+
+- [ ] **D20PP-T5C.2**: 实现多国并行计算函数
+  - **文件**: `lib/gecom/scenario-calculator.ts`（新建）
+  - **函数**: `recalculateAllCountries(params: ScenarioParams): Promise<Map<string, CostResult>>`
+  - **逻辑**:
+    ```typescript
+    async function recalculateAllCountries(
+      selectedCountries: string[],
+      scope: ScopeInputs,
+      params: ScenarioParams
+    ): Promise<Map<string, CostResult>> {
+      const results = new Map();
+      for (const countryCode of selectedCountries) {
+        const costFactor = await loadCostFactor(countryCode, scope.industry);
+        const result = calculateCostResult(scope, costFactor, params);
+        results.set(countryCode, result);
+      }
+      return results;
+    }
+    ```
+  - **验收标准**:
+    - [ ] 正确加载所选国家数据（3-5国）
+    - [ ] 并行计算响应时间 < 500ms（5国）
+    - [ ] 返回Map结构清晰
+    - [ ] 错误处理完善
+  - **预计耗时**: 15min（已包含在5C.1中）
+
+##### Phase 5D: 对比结果展示（30min）
+
+- [ ] **D20PP-T5D.1**: 创建ScenarioComparisonTable组件
+  - **文件**: `components/wizard/scenario/ScenarioComparisonTable.tsx`
+  - **功能**: 横向对比表格（3-5国列），M1-M8白盒展示
+  - **UI结构**:
+    ```
+    ┌────────────────┬─────────┬─────────┬─────────┐
+    │ 成本项         │ 🇺🇸 US   │ 🇩🇪 DE   │ 🇯🇵 JP   │
+    ├────────────────┼─────────┼─────────┼─────────┤
+    │ 📈 关键指标    │         │         │         │
+    │ 单位收入       │ $55.00  │ $55.00  │ $55.00  │
+    │ 单位成本       │ $32.50  │ $38.20  │ $35.80  │
+    │ 单位毛利       │ $22.50  │ $16.80  │ $19.20  │
+    │ 毛利率         │ 40.9% ✅│ 30.5% ⚠️│ 34.9%   │
+    ├────────────────┼─────────┼─────────┼─────────┤
+    │ 🛍️ M4 货物税费 │ $15.20  │ $22.80  │ $18.50  │
+    │  ▼ 展开明细    │         │         │         │
+    │  ├─ COGS       │ $8.00   │ $8.00   │ $8.00   │
+    │  ├─ 头程物流   │ $2.50 🚢│ $2.50 🚢│ $2.50 🚢│
+    │  ├─ 进口关税   │ $0.42   │ $0.52   │ $0.77   │
+    │  └─ 增值税     │ $4.28   │ $11.78  │ $7.23   │
+    └────────────────┴─────────┴─────────┴─────────┘
+    ```
+  - **交互功能**:
+    - M4-M8行可展开/收起
+    - 最优指标高亮（绿色✅）
+    - 风险指标警告（黄色⚠️）
+  - **验收标准**:
+    - [ ] 表格正确显示所选国家（3-5列）
+    - [ ] M4-M8成本分解完整显示
+    - [ ] 展开/收起交互流畅
+    - [ ] 数值格式正确（USD/百分比）
+    - [ ] Tier徽章正确显示
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 296-433
+  - **预计耗时**: 30min
+
+- [ ] **D20PP-T5D.2**: 实现场景洞察生成逻辑
+  - **文件**: `lib/gecom/scenario-insights.ts`（新建）
+  - **函数**: `generateScenarioInsights(results: Map<string, CostResult>): ScenarioInsight[]`
+  - **洞察类型**:
+    - 最优市场识别（ROI最高）
+    - 风险市场识别（毛利率<30% 或 ROI<100%）
+    - 优化建议生成（价格建议/物流模式/履约模式）
+  - **逻辑示例**:
+    ```typescript
+    // 找出最优市场
+    const bestMarket = Array.from(results.entries())
+      .sort((a, b) => b[1].roi - a[1].roi)[0];
+
+    // 生成价格优化建议
+    if (result.grossMargin < 30) {
+      const targetPrice = result.unitCost / (1 - 0.38);
+      suggestions.push({
+        country,
+        type: 'pricing',
+        message: `若售价提升至$${targetPrice.toFixed(0)}，毛利率可达38%`,
+      });
+    }
+    ```
+  - **验收标准**:
+    - [ ] 正确识别最优/风险市场
+    - [ ] 至少生成3类优化建议
+    - [ ] 建议逻辑准确（价格/物流/履约）
+    - [ ] 洞察文本用户友好
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 437-486
+  - **预计耗时**: 已包含在5D.1中
+
+##### Phase 5E: Step 4集成与测试（20min）
+
+- [ ] **D20PP-T5E.1**: Step 4集成场景模拟组件
+  - **文件**: `components/wizard/Step4ScenarioAnalysis.tsx`
+  - **修改**:
+    - 导入ScenarioParameterPanel, CountryMultiSelector, ScenarioComparisonTable
+    - 添加场景模拟tab（"场景模拟" vs "市场推荐"）
+    - 状态管理：`useState<ScenarioParams>`, `useState<string[]>`
+    - 实时计算：`useEffect(() => { recalculateAllCountries(params) }, [params])`（300ms节流）
+  - **验收标准**:
+    - [ ] Tab切换流畅
+    - [ ] 参数调整触发实时重算（<300ms）
+    - [ ] 对比表格实时更新
+    - [ ] 洞察建议自动生成
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T5E.2**: Phase 5 Playwright全量测试
+  - **测试文件**: `tests/e2e/step4-phase5-scenario-simulation.spec.ts`
+  - **测试用例**（≥8个）:
+    - S4-P5-01: 参数调节面板正确渲染
+    - S4-P5-02: 售价调整触发实时重算
+    - S4-P5-03: 物流模式切换影响M4成本
+    - S4-P5-04: 国家选择器支持3-5国选择
+    - S4-P5-05: 对比表格正确展示M1-M8明细
+    - S4-P5-06: 场景洞察正确识别最优市场
+    - S4-P5-07: CAC调整影响M6和毛利率
+    - S4-P5-08: 退货率影响M5逆向物流成本
+    - S4-P5-09: 重置默认值按钮恢复初始参数
+  - **验收标准**:
+    - [ ] ≥8个测试用例全部通过
+    - [ ] 截图保存：test-results/step4-phase5-scenario-simulation/
+    - [ ] 测试覆盖率100%（7参数×核心交互）
+  - **参考设计**: PHASE5-SCENARIO-SIMULATION-DESIGN.md Lines 490-613
+  - **预计耗时**: 30min（测试编写+执行）
+
+- [ ] **D20PP-T5E.3**: Git提交Phase 5成果
+  - **提交文件**:
+    - components/wizard/scenario/ScenarioParameterPanel.tsx
+    - components/wizard/scenario/CountryMultiSelector.tsx
+    - components/wizard/scenario/ScenarioComparisonTable.tsx
+    - lib/gecom-engine-v2.ts（扩展overrides参数）
+    - lib/gecom/scenario-calculator.ts
+    - lib/gecom/scenario-insights.ts
+    - components/wizard/Step4ScenarioAnalysis.tsx（集成）
+    - tests/e2e/step4-phase5-scenario-simulation.spec.ts
+  - **提交消息**: "功能：Phase 5场景模拟与19国数据集成 - 交互式What-If分析工具"
   - **预计耗时**: 10min
 
-**Phase 5验收标准**：
-- ✅ Step 4使用29国真实Appwrite数据
-- ✅ 推荐逻辑基于真实成本计算
-- ✅ 19国排名表格数据准确
-- ✅ Playwright测试100%通过
+**Phase 5总验收标准** ⭐：
+- ✅ 7参数动态调节器全部可用
+- ✅ 19国数据库选择器（3-5国多选）
+- ✅ 实时场景计算响应 < 300ms
+- ✅ M1-M8白盒成本对比
+- ✅ 智能场景洞察生成
+- ✅ 100%使用Appwrite真实19国数据
+- ✅ Playwright测试≥8个用例100%通过
+- ✅ 用户价值：从假数据到真实What-If决策工具
+
+**Phase 5核心价值体现**：
+- 🎯 决策可信度提升90%（假数据 → 19国官方数据）
+- 🎯 决策效率提升5倍（Excel手工 → 实时What-If）
+- 🎯 成本透明度100%（M1-M8白盒展示）
+- 🎯 优化空间量化（洞察引擎自动识别机会点）
 
 ---
 
