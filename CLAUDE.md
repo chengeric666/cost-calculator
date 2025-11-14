@@ -4,9 +4,9 @@
 >
 > **交互语言：** 中文（所有对话必须使用中文） ⭐
 >
-> **文档版本：** v2.4 (MVP 2.0)
-> **最后更新：** 2025-11-13
-> **项目阶段：** MVP 2.0 Week 4 Day 20-21（Step 4智能推荐 + Step 5 AI工具调用完成）
+> **文档版本：** v2.5 (MVP 2.0)
+> **最后更新：** 2025-11-14
+> **项目阶段：** MVP 2.0 Week 4 Day 20-21完成（智能推荐 + AI工具调用） + Day 21+ M1-M8数据显示完整修复
 
 ---
 
@@ -1548,6 +1548,36 @@ m6_platform_commission_rate  // 平台佣金（Pet 15% vs Electronics 8%）
   - ✅ **总计**: 1,230行核心功能代码 + 完整E2E测试覆盖
   - ✅ **Git提交**: commit 1219ff5（本地完成，push网络错误）
 
+### ✅ 已完成（MVP 2.0 实施 - 2025-11-14 M1-M8数据显示完整修复）⭐ 核心质量提升
+**当前状态：Step 2 M1-M8所有62个字段数据100%正确显示，28个条件渲染bug全部修复**
+
+- [x] **2025-11-14 数据显示完整修复**（1700+行文档 + 62字段修复 + 规范升级）
+  - ✅ **核心修复**：34个字段映射缺失修复（M1-M8完整覆盖）
+    - M1: 2个字段映射（import_license_cost/required → industry_license/pre_approval）
+    - M2: 1个字段映射（product_testing_cost → certification/compliance优先级链）
+    - M3: 4个字段映射（warehouse_deposit/initial_inventory/system_setup等）
+    - M4: 8个字段映射（tariff/vat/logistics子字段完整溯源）
+    - M5: 11个字段映射（FBA费用/本地配送/退货物流/COD等）
+    - M6: 3个字段映射（CAC/佣金率/营销子字段）
+    - M7: 3个字段映射（支付费率/固定费用/平台佣金）
+    - M8: 2个字段映射（客服成本/G&A费率）
+  - ✅ **条件渲染修复**：28个spurious "0"字符bug全部修复
+    - 强制规范：数值字段使用 `(value ?? 0) > 0 &&`
+    - 布尔字段使用 `!!value &&`
+    - 字符串字段使用 `!!value &&` 或 `value?.length > 0 &&`
+  - ✅ **规范文档升级**：DATA-USAGE-SPECIFICATION.md v1.0 → v2.0（+410行）
+    - 新增第7章：代码编写规范（C1-C5）
+    - 新增第8章：文档管理3层规则（D1-D3）
+    - 新增第9章：v2.0规范验收清单
+  - ✅ **会话总结**：SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md（1700+行）
+    - 完整问题根因分析
+    - 62个字段详细修复记录
+    - 代码质量提升经验总结
+    - 防止回退的验收清单
+  - ✅ **Git提交**：2次commit全部push成功
+    - commit cc874af: 核心修复（Step2DataCollection.tsx +62字段映射）
+    - commit fff3ff0: 规范文档更新（DATA-USAGE-SPECIFICATION v2.0）
+
 ### 🚧 进行中（MVP 2.0 实施 - Week 4 Day 22+）
 **计划：0/3 任务**
 
@@ -1600,11 +1630,23 @@ m6_platform_commission_rate  // 平台佣金（Pet 15% vs Electronics 8%）
 - [.env.example](./.env.example) - 环境变量配置
 - [gecom-engine.ts](./gecom-assistant/lib/gecom-engine.ts) - 计算引擎核心代码（v1.0 POC）
 - [gecom-engine-v2.ts](./gecom-assistant/lib/gecom-engine-v2.ts) - 计算引擎v2.0（待实现）
-- [DATA-USAGE-SPECIFICATION.md](./docs/DATA-USAGE-SPECIFICATION.md) - **数据使用规范** ⭐新增（2025-11-13）
+- [DATA-USAGE-SPECIFICATION.md](./docs/DATA-USAGE-SPECIFICATION.md) - **数据使用规范 v2.0** ⭐更新（2025-11-14）
   - 3层数据架构使用指南
   - 4个核心导入规范 + 3个反模式案例
   - 完整代码示例（静态/动态/批量加载）
   - M1-M8字段命名约定表
+  - **v2.0新增**：代码编写规范（C1-C5）+ 文档管理3层规则（D1-D3）
+- [SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md](./docs/SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md) - **M1-M8数据修复会话总结** ⭐新增（2025-11-14）
+  - 完整问题根因分析（34字段映射 + 28条件渲染）
+  - 62个字段详细修复记录
+  - 代码质量提升经验（类型安全条件渲染、Nullish Coalescing规范等）
+  - 防止回退的验收清单
+- [ULTRA-THINK-NEXT-STEPS-ANALYSIS-2025-11-14.md](./docs/ULTRA-THINK-NEXT-STEPS-ANALYSIS-2025-11-14.md) - **Week 5待办任务Ultra-Think分析** ⭐新增（2025-11-14）
+  - Week 1-4进度全景回顾（61.4%总进度，29/38数据记录）
+  - Week 5详细任务分解（92任务，8天，Day 21-28）
+  - 关键路径分析（63小时CPM，3个高风险节点）
+  - 风险识别与缓解策略（Day 23/25/26里程碑检查）
+  - 执行建议（迭代验证策略 + 资源估算）
 
 ### 参考文档
 - [env_sample.md](./docs/reference/env_sample.md) - 环境变量参考
@@ -1637,5 +1679,5 @@ GECOM方法论源自创始团队多年跨境电商实战经验，结合了：
 ---
 
 **文档维护者**: GECOM Team
-**最后更新**: 2025-11-13
-**版本**: v2.0 (MVP 2.0 - 实施阶段)
+**最后更新**: 2025-11-14
+**版本**: v2.5 (MVP 2.0 - 实施阶段，M1-M8数据显示完整修复完成)
