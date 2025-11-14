@@ -24,11 +24,12 @@
 
 ---
 
-**核心指标（真实进度 - 2025-11-14 18:30更新）**：
-- **总任务数**: 191任务（v2.2: 184 + Day 21准备7任务）
-- **当前进度**: 129/191 (67.5%) ⭐持续超预期
+**核心指标（真实进度 - 2025-11-14 20:00更新）**：
+- **总任务数**: 217任务（v2.3: 191 + Day 20++ 26任务）
+- **当前进度**: 129/217 (59.4%)
   - Week 1-3: 100/103任务完成（数据基础）
   - Week 4: 22/22任务完成（UI重构 + 数据修复）✅ 100%
+  - **Day 20++ UI优化**: 0/26任务⏳ **当前执行中**
   - Week 5准备: 7/7任务完成（图表导出质量验证）✅ 100%
   - Week 5正式: 0/59任务待执行（报告生成 + AI集成）
 - **数据覆盖**: 29/38记录（76.3%）🎉
@@ -2516,6 +2517,280 @@
   - commit 35f1e51: CLAUDE.md v2.5更新
 - ✅ SESSION-SUMMARY-2025-11-14-M1-M8-DATA-FIX.md完成（1700+行）
 - ✅ ULTRA-THINK-NEXT-STEPS-ANALYSIS-2025-11-14.md完成（900+行）
+
+---
+
+### Day 20++: 紧急UI优化修复（2025-11-14 18:00开始）⏳ 进行中
+
+> **触发原因**: Playwright实际UI验证发现Step 3/Step 4未按ULTRA-THINK分析要求实现
+> **验证工具**: tests/e2e/verify-step3-step4-ui.spec.ts（2025-11-14创建）
+> **截图证据**: test-results/ui-verification/ (7张截图)
+> **根本问题**:
+> - ❌ Step 3：仅显示概览（1图表+2KPI），缺少M1-M8详细成本表格
+> - ❌ Step 4：仍显示Mock警告，未连接19国真实数据库
+> **参考文档**:
+> - [ULTRA-THINK-ANALYSIS-2025-11-13.md](./ULTRA-THINK-ANALYSIS-2025-11-13.md) - 问题1/4
+> - [CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md](./CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md) - 问题4/5
+> **执行原则**: 一个优化一个优化来做，每次迭代Playwright验证，遵循SSOT
+
+---
+
+#### Phase 1: Step 3 CAPEX详细表格（1.5h）⏳ 当前任务
+
+- [ ] **D20PP-T1.1**: 添加M1市场准入详细成本表格
+  - **当前状态**: Step 3仅显示概览，M1模块缺少详细表格
+  - **Playwright证据**: test-results/ui-verification/03-step3-cost-modeling-FULL.png（表格数量：0）
+  - **修复方案**:
+    - 修改文件: `components/wizard/Step3CostModeling.tsx`
+    - 在CAPEX区域添加M1详细表格（11行成本项）:
+      ```
+      公司注册费 (m1_company_registration_usd)
+      税务登记费 (m1_tax_registration_usd)
+      法务咨询费 (m1_legal_consulting_usd)
+      行业许可费 (m1_industry_license_usd)
+      ... (共11个字段)
+      ```
+    - 每行显示：成本项名称 + 金额 + Tier徽章
+    - 表格可折叠/展开
+  - **验收标准**:
+    - [ ] M1表格显示11行成本明细
+    - [ ] M1总计匹配costResult.capex.m1值
+    - [ ] 表格可折叠/展开交互正常
+    - [ ] TypeScript 0错误
+    - [ ] Playwright测试通过：`npx playwright test tests/e2e/verify-step3-step4-ui.spec.ts`
+      - 验证点更新：`const m1DetailCount = await m1DetailItems.count(); expect(m1DetailCount).toBeGreaterThanOrEqual(11);`
+    - [ ] 截图对比保存：test-results/ui-verification/03-step3-M1-AFTER-FIX.png
+  - **测试命令**: `npm run dev` → 手动操作到Step 3 → Playwright验证
+  - **预计耗时**: 40min
+
+- [ ] **D20PP-T1.2**: 添加M2技术合规详细成本表格
+  - **修复方案**: 在M1表格下方添加M2表格（10行成本项）
+  - **验收标准**:
+    - [ ] M2表格显示10行成本明细
+    - [ ] M2总计匹配costResult.capex.m2值
+    - [ ] Playwright验证：m2DetailCount >= 10
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T1.3**: 添加M3供应链搭建详细成本表格
+  - **修复方案**: 在M2表格下方添加M3表格（9行成本项）
+  - **验收标准**:
+    - [ ] M3表格显示9行成本明细
+    - [ ] M3总计匹配costResult.capex.m3值
+    - [ ] Playwright验证：m3DetailCount >= 9
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T1.4**: Phase 1 Playwright全量验证
+  - **测试内容**:
+    - CAPEX区域显示3个详细表格（M1/M2/M3）
+    - 总计30行成本明细（11+10+9）
+    - 每个表格可折叠/展开
+    - CAPEX总计 = M1+M2+M3
+  - **截图保存**: test-results/ui-verification/03-step3-CAPEX-COMPLETE.png
+  - **预计耗时**: 10min
+
+- [ ] **D20PP-T1.5**: Git提交Phase 1成果
+  - 提交文件: components/wizard/Step3CostModeling.tsx, tests/e2e/verify-step3-step4-ui.spec.ts
+  - 提交消息: "修复：Step 3添加M1-M3 CAPEX详细成本表格（30行明细）"
+  - **验收**: Git log显示commit
+  - **预计耗时**: 5min
+
+**Phase 1验收标准**：
+- ✅ CAPEX区域显示M1/M2/M3完整表格（30行成本明细）
+- ✅ Playwright测试100%通过
+- ✅ TypeScript 0错误
+- ✅ 截图对比证明修复成功
+
+---
+
+#### Phase 2: Step 3 OPEX详细表格（2h）⏳ 待Phase 1完成后开始
+
+- [ ] **D20PP-T2.1**: 添加M4货物税费详细成本表格
+  - **修复方案**: 在OPEX区域添加M4表格（9行成本项，包括COGS/关税/VAT/物流）
+  - **验收标准**:
+    - [ ] M4表格显示9行成本明细
+    - [ ] M4总计匹配costResult.opex.m4_total
+    - [ ] Playwright验证：m4DetailCount >= 9
+  - **预计耗时**: 30min
+
+- [ ] **D20PP-T2.2**: 添加M5物流配送详细成本表格
+  - **修复方案**: 添加M5表格（13行成本项，包括国际运输/本地配送/FBA）
+  - **预计耗时**: 30min
+
+- [ ] **D20PP-T2.3**: 添加M6营销获客详细成本表格
+  - **修复方案**: 添加M6表格（7行成本项）
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T2.4**: 添加M7支付手续费详细成本表格
+  - **修复方案**: 添加M7表格（7行成本项）
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T2.5**: 添加M8运营管理详细成本表格
+  - **修复方案**: 添加M8表格（8行成本项）
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T2.6**: Phase 2 Playwright全量验证
+  - **测试内容**:
+    - OPEX区域显示5个详细表格（M4/M5/M6/M7/M8）
+    - 总计44行成本明细
+    - OPEX总计 = M4+M5+M6+M7+M8
+  - **截图保存**: test-results/ui-verification/03-step3-OPEX-COMPLETE.png
+  - **预计耗时**: 15min
+
+- [ ] **D20PP-T2.7**: Git提交Phase 2成果
+  - 提交消息: "修复：Step 3添加M4-M8 OPEX详细成本表格（44行明细）"
+  - **预计耗时**: 5min
+
+**Phase 2验收标准**：
+- ✅ OPEX区域显示M4/M5/M6/M7/M8完整表格（44行成本明细）
+- ✅ Step 3总计74行成本明细（30 CAPEX + 44 OPEX）
+- ✅ Playwright测试100%通过
+
+---
+
+#### Phase 3: Step 3布局优化（30min）⏳ 待Phase 2完成后开始
+
+- [ ] **D20PP-T3.1**: 优化Step 3页面布局（紧凑显示）
+  - **当前问题**: 表格占用过多垂直空间，滚动体验差
+  - **修复方案**:
+    - 减少表格行间距（从16px → 12px）
+    - 折叠状态默认显示总计，展开显示明细
+    - 优化KPI卡片布局（从2列 → 4列）
+  - **验收标准**:
+    - [ ] 页面高度减少30%（基于截图对比）
+    - [ ] 核心KPI在首屏可见（无需滚动）
+    - [ ] Playwright截图对比：test-results/ui-verification/03-step3-LAYOUT-OPTIMIZED.png
+  - **预计耗时**: 25min
+
+- [ ] **D20PP-T3.2**: Git提交Phase 3成果
+  - 提交消息: "优化：Step 3布局紧凑显示（减少30%页面高度）"
+  - **预计耗时**: 5min
+
+**Phase 3验收标准**：
+- ✅ 页面布局紧凑，核心信息首屏可见
+- ✅ Playwright测试通过
+- ✅ 用户体验提升（对比截图证明）
+
+---
+
+#### Phase 4: Step 4 Mock警告移除（20min）⏳ 待Phase 3完成后开始
+
+- [ ] **D20PP-T4.1**: 移除Step 4 Mock数据警告
+  - **当前状态**: 黄色警告"当前使用模拟数据演示智能推荐功能..."
+  - **Playwright证据**: test-results/ui-verification/04-step4-MOCK-WARNING.png
+  - **修复方案**:
+    - 修改文件: `components/wizard/Step4Comparison.tsx`
+    - 定位并删除Mock警告Alert组件（约Line 50-70）
+  - **验收标准**:
+    - [ ] Playwright验证：`const mockWarning = await page.locator('text=/模拟数据|mock/i').count(); expect(mockWarning).toBe(0);`
+    - [ ] 截图证明：test-results/ui-verification/04-step4-NO-MOCK-WARNING.png
+    - [ ] TypeScript 0错误
+  - **预计耗时**: 15min
+
+- [ ] **D20PP-T4.2**: Git提交Phase 4成果
+  - 提交消息: "修复：Step 4移除Mock数据警告"
+  - **预计耗时**: 5min
+
+**Phase 4验收标准**：
+- ✅ Step 4不再显示Mock警告
+- ✅ Playwright测试通过（mockWarning count = 0）
+
+---
+
+#### Phase 5: Step 4真实数据计算（1.5h）⏳ 待Phase 4完成后开始
+
+- [ ] **D20PP-T5.1**: 实现19国成本数据动态加载
+  - **当前状态**: Step 4使用硬编码mock数据
+  - **修复方案**:
+    - 创建工具函数: `lib/gecom/multi-country-calculator.ts`
+    - 实现函数: `calculateMultiCountryCosts(countries: string[], project, scope)`
+    - 逻辑：
+      ```typescript
+      for (const country of countries) {
+        const costFactor = await loadCostFactor(country, industry);
+        const result = calculateCostResult(scope, costFactor);
+        results.push({ country, ...result });
+      }
+      return results.sort((a, b) => a.gross_margin - b.gross_margin); // 最优到最差
+      ```
+  - **验收标准**:
+    - [ ] 函数正确加载29国数据（21 Pet + 8 Vape）
+    - [ ] 返回结果按毛利率排序（最优到最差）
+    - [ ] TypeScript类型定义完整
+    - [ ] 单元测试通过（jest测试）
+  - **预计耗时**: 40min
+
+- [ ] **D20PP-T5.2**: Step 4集成真实数据计算
+  - **修复方案**:
+    - 修改文件: `components/wizard/Step4Comparison.tsx`
+    - 删除hardcoded mock数据（Line 30-100）
+    - 使用useEffect调用`calculateMultiCountryCosts()`
+    - 更新推荐卡片显示逻辑（基于真实排名）
+  - **验收标准**:
+    - [ ] 最优市场卡片显示真实数据（如US毛利率35%）
+    - [ ] 最差市场卡片显示真实数据（如DE毛利率-10%）
+    - [ ] 19国排名表格显示真实成本数据
+    - [ ] 加载状态友好（显示loading spinner）
+  - **预计耗时**: 40min
+
+- [ ] **D20PP-T5.3**: Phase 5 Playwright全量验证
+  - **测试内容**:
+    - Step 4不显示Mock警告
+    - 推荐卡片显示真实数据
+    - 19国排名表格包含21国Pet Food数据
+    - 市场洞察面板显示真实基准对比
+  - **截图保存**: test-results/ui-verification/04-step4-REAL-DATA-COMPLETE.png
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-T5.4**: Git提交Phase 5成果
+  - 提交文件: lib/gecom/multi-country-calculator.ts, components/wizard/Step4Comparison.tsx
+  - 提交消息: "功能：Step 4连接19国真实数据库进行成本计算"
+  - **预计耗时**: 10min
+
+**Phase 5验收标准**：
+- ✅ Step 4使用29国真实Appwrite数据
+- ✅ 推荐逻辑基于真实成本计算
+- ✅ 19国排名表格数据准确
+- ✅ Playwright测试100%通过
+
+---
+
+#### 最终验收：Day 20++ UI优化完整验收（30min）
+
+- [ ] **D20PP-FINAL-T1**: 完整Playwright回归测试
+  - **测试命令**: `npx playwright test tests/e2e/verify-step3-step4-ui.spec.ts --headed`
+  - **验收点**:
+    - [ ] Step 3 CAPEX表格：M1/M2/M3共30行明细 ✅
+    - [ ] Step 3 OPEX表格：M4/M5/M6/M7/M8共44行明细 ✅
+    - [ ] Step 3布局紧凑，核心信息首屏可见 ✅
+    - [ ] Step 4不显示Mock警告 ✅
+    - [ ] Step 4推荐基于真实数据 ✅
+  - **截图集**:
+    - test-results/ui-verification/FINAL-step3-COMPLETE.png
+    - test-results/ui-verification/FINAL-step4-COMPLETE.png
+  - **预计耗时**: 20min
+
+- [ ] **D20PP-FINAL-T2**: 更新文档与任务清单
+  - **更新文件**:
+    - MVP-2.0-任务清单.md：标记所有D20PP任务为完成 ✅
+    - CLAUDE.md：添加Day 20++ UI优化记录
+    - CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md：标记问题4/5已解决
+  - **预计耗时**: 10min
+
+- [ ] **D20PP-FINAL-T3**: Git提交Day 20++完整成果
+  - 提交消息: "完成：Day 20++ UI优化修复（Step 3详细表格74行 + Step 4真实数据）"
+  - Push到远程分支
+  - **预计耗时**: 5min
+
+**Day 20++总验收标准**⭐全部待验证：
+- [ ] Step 3显示M1-M8完整成本表格（74行明细）
+- [ ] Step 4使用19国真实数据，无Mock警告
+- [ ] Playwright测试100%通过
+- [ ] TypeScript 0错误
+- [ ] 截图对比证明修复成功
+- [ ] 所有代码Git提交并push到远程
+- [ ] 任务清单和文档更新完整
+
+**Day 20++预计总耗时**: 6小时（5个Phase + 最终验收）
 
 ---
 
