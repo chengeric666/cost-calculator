@@ -231,6 +231,72 @@ export default function Step2DataCollection({ project, onUpdate, costResult }: S
       // ⭐ 字段映射：行业许可费（m1_industry_license_usd → m1_import_license_cost_usd）
       m1_import_license_cost_usd: (VN_PET_FOOD as any).m1_industry_license_usd || 0,
       m1_import_license_required: (VN_PET_FOOD as any).m1_pre_approval_required || false,
+
+      // ⭐ 字段映射：M2技术合规明细字段（UI字段名 → 数据字段名）
+      m2_product_testing_cost_usd:
+        (VN_PET_FOOD as any).m2_product_certification_usd ||  // 行业特定优先
+        (VN_PET_FOOD as any).m2_compliance_testing_usd ||     // 通用数据
+        0,
+      m2_patent_filing_usd: (VN_PET_FOOD as any).m2_patent_filing_usd || 0,
+
+      // ⭐ 字段映射：M3供应链搭建明细字段
+      m3_data_updated_at: (VN_PET_FOOD as any).m3_collected_at ||
+                         (VN_PET_FOOD as any).m3_base_collected_at ||
+                         '2025-11-09',
+      m3_equipment_purchase_usd: 0,  // 数据中不存在，默认0
+      m3_minimum_order_quantity: 0,  // 数据中不存在，默认0
+      m3_total_estimated_usd: ((VN_PET_FOOD as any).m3_initial_inventory_usd || 0) +
+                             ((VN_PET_FOOD as any).m3_warehouse_deposit_usd || 0) +
+                             ((VN_PET_FOOD as any).m3_system_setup_usd || 0),
+      m3_warehouse_rent_per_sqm_usd: 0,  // 数据中不存在，默认0
+
+      // ⭐ 字段映射：M4货物税费时间戳
+      m4_tariff_updated_at: (VN_PET_FOOD as any).m4_tariff_collected_at ||
+                           (VN_PET_FOOD as any).m4_collected_at ||
+                           '2025-11-09',
+
+      // ⭐ 字段映射：M5物流配送明细字段
+      m5_data_updated_at: (VN_PET_FOOD as any).m5_collected_at ||
+                         (VN_PET_FOOD as any).m5_return_collected_at ||
+                         '2025-11-09',
+      m5_cod_available: false,  // 数据中不存在，默认false
+      m5_cod_fee_rate: 0,  // 数据中不存在，默认0
+      m5_delivery_time_days_min: 0,  // 数据中不存在，默认0
+      m5_delivery_time_days_max: 0,  // 数据中不存在，默认0
+      m5_fba_fee_small_usd: (VN_PET_FOOD as any).m5_fba_fee_usd || 0,
+      m5_fba_fee_standard_usd: (VN_PET_FOOD as any).m5_fba_fee_usd || 0,
+      m5_fba_fee_large_usd: (VN_PET_FOOD as any).m5_fba_fee_usd || 0,
+      m5_return_logistics_usd: 0,  // 数据中不存在，默认0
+      m5_total_estimated_per_unit_usd: ((VN_PET_FOOD as any).m5_last_mile_delivery_usd || 0) +
+                                      ((VN_PET_FOOD as any).m5_return_cost_rate || 0) * ((VN_PET_FOOD as any).m5_return_rate || 0),
+      m5_warehouse_fee_per_unit_month_usd: 0,  // 数据中不存在，默认0
+
+      // ⭐ 字段映射：M6营销获客明细字段（补充完整）
+      m6_cac_estimated_usd: (VN_PET_FOOD as any).m6_cac_usd || 0,
+      m6_data_updated_at: (VN_PET_FOOD as any).m6_collected_at ||
+                         (VN_PET_FOOD as any).m6_cac_collected_at ||
+                         '2025-11-09',
+      m6_ad_cpc_usd: (VN_PET_FOOD as any).m6_amazon_ads_cpc ||
+                    (VN_PET_FOOD as any).m6_google_ads_cpc ||
+                    0,
+      m6_acos_target: 0,  // 数据中不存在，默认0
+      m6_conversion_rate: 0,  // 数据中不存在，默认0
+
+      // ⭐ 字段映射：M7支付手续费明细字段
+      m7_data_updated_at: (VN_PET_FOOD as any).m7_collected_at || '2025-11-09',
+      m7_chargeback_rate: 0,  // 数据中不存在，默认0
+      m7_currency_conversion_rate: 0,  // 数据中不存在，默认0
+
+      // ⭐ 字段映射：M8运营管理明细字段
+      m8_data_updated_at: (VN_PET_FOOD as any).m8_collected_at ||
+                         (VN_PET_FOOD as any).m8_cs_collected_at ||
+                         '2025-11-09',
+      m8_customer_service_cost_per_order_usd: 0,  // 数据中有customer_service_rate，但UI期望per_order值
+      m8_monthly_software_cost_usd: (VN_PET_FOOD as any).m8_software_subscription_usd_month || 0,
+      m8_monthly_staff_cost_usd: 0,  // 数据中不存在，默认0
+      m8_office_rent_usd: 0,  // 数据中不存在，默认0
+      m8_utilities_usd: 0,  // 数据中不存在，默认0
+      m8_insurance_rate: 0,  // 数据中不存在，默认0
     };
 
     // 预期成本结构（COGS=$10, 售价=$30, 月销量=100）：
@@ -631,7 +697,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
             </div>
 
             {/* 进口许可区 */}
-            {getEffectiveValue('m1_import_license_required') && (
+            {!!getEffectiveValue('m1_import_license_required') && (
               <div className="space-y-3 mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h4 className="text-sm font-semibold text-yellow-800 flex items-center gap-2">
                   <span>⚠️</span>
@@ -768,7 +834,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
                   <span>📦</span>
                   标签与包装要求
                 </h4>
-                {getEffectiveValue('m2_labeling_requirements') && (
+                {!!getEffectiveValue('m2_labeling_requirements') && (
                   <CostItemRow
                     label="标签要求"
                     value={getEffectiveValue('m2_labeling_requirements')}
@@ -779,7 +845,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
                     description="产品标签必须符合的法规要求"
                   />
                 )}
-                {getEffectiveValue('m2_packaging_requirements') && (
+                {!!getEffectiveValue('m2_packaging_requirements') && (
                   <CostItemRow
                     label="包装要求"
                     value={getEffectiveValue('m2_packaging_requirements')}
@@ -848,7 +914,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
                 mode={state.mode}
                 description="仓储货架、打包设备等一次性投资"
               />
-              {getEffectiveValue('m3_warehouse_rent_per_sqm_usd') && (
+              {(getEffectiveValue('m3_warehouse_rent_per_sqm_usd') ?? 0) > 0 && (
                 <CostItemRow
                   label="仓储租金参考"
                   value={`${getEffectiveValue('m3_warehouse_rent_per_sqm_usd')}/m²/月`}
@@ -892,7 +958,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
                 mode={state.mode}
                 description="WMS、ERP等系统开发/集成费用"
               />
-              {getEffectiveValue('m3_minimum_order_quantity') && (
+              {(getEffectiveValue('m3_minimum_order_quantity') ?? 0) > 0 && (
                 <CostItemRow
                   label="最小起订量"
                   value={`${getEffectiveValue('m3_minimum_order_quantity')}件`}
@@ -906,7 +972,7 @@ function CAPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, s
             </div>
 
             {/* 包装本地化区 */}
-            {getEffectiveValue('m3_packaging_rate') && (
+            {(getEffectiveValue('m3_packaging_rate') ?? 0) > 0 && (
               <div className="space-y-3 mb-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
                 <h4 className="text-sm font-semibold text-indigo-800 flex items-center gap-2">
                   <span>🎁</span>
@@ -1037,7 +1103,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 mode={state.mode}
                 description="本地配送、FBA费用等"
               />
-              {getEffectiveValue('m5_delivery_time_days_min') && (
+              {(getEffectiveValue('m5_delivery_time_days_min') ?? 0) > 0 && (
                 <CostItemRow
                   label="配送时效"
                   value={`${getEffectiveValue('m5_delivery_time_days_min')}-${getEffectiveValue('m5_delivery_time_days_max')}天`}
@@ -1057,7 +1123,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                   <span>📦</span>
                   FBA费用明细
                 </h4>
-                {getEffectiveValue('m5_fba_fee_small_usd') && (
+                {(getEffectiveValue('m5_fba_fee_small_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="FBA小件费用"
                     value={getEffectiveValue('m5_fba_fee_small_usd')}
@@ -1069,7 +1135,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="小尺寸商品FBA配送费"
                   />
                 )}
-                {getEffectiveValue('m5_fba_fee_standard_usd') && (
+                {(getEffectiveValue('m5_fba_fee_standard_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="FBA标准费用"
                     value={getEffectiveValue('m5_fba_fee_standard_usd')}
@@ -1081,7 +1147,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="标准尺寸商品FBA配送费"
                   />
                 )}
-                {getEffectiveValue('m5_fba_fee_large_usd') && (
+                {(getEffectiveValue('m5_fba_fee_large_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="FBA大件费用"
                     value={getEffectiveValue('m5_fba_fee_large_usd')}
@@ -1093,7 +1159,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="大尺寸商品FBA配送费"
                   />
                 )}
-                {getEffectiveValue('m5_warehouse_fee_per_unit_month_usd') && (
+                {(getEffectiveValue('m5_warehouse_fee_per_unit_month_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="FBA仓储费"
                     value={getEffectiveValue('m5_warehouse_fee_per_unit_month_usd')}
@@ -1132,7 +1198,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 readOnly
                 description={`计算: $${sellingPrice.toFixed(2)} × ${((getEffectiveValue('m5_return_cost_rate') || 0) * 100).toFixed(1)}% × ${((getEffectiveValue('m5_return_rate') || 0) * 100).toFixed(1)}% = $${(sellingPrice * (getEffectiveValue('m5_return_cost_rate') || 0) * (getEffectiveValue('m5_return_rate') || 0)).toFixed(2)}/单位`}
               />
-              {getEffectiveValue('m5_return_logistics_usd') && (
+              {(getEffectiveValue('m5_return_logistics_usd') ?? 0) > 0 && (
                 <CostItemRow
                   label="退货物流成本"
                   value={getEffectiveValue('m5_return_logistics_usd')}
@@ -1147,7 +1213,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
             </div>
 
             {/* COD货到付款区 */}
-            {getEffectiveValue('m5_cod_available') && (
+            {!!getEffectiveValue('m5_cod_available') && (
               <div className="space-y-3 mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h4 className="text-sm font-semibold text-green-800 flex items-center gap-2">
                   <span>💵</span>
@@ -1161,7 +1227,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                   updatedAt={getEffectiveValue('m5_data_updated_at')}
                   readOnly
                 />
-                {getEffectiveValue('m5_cod_fee_rate') && (
+                {(getEffectiveValue('m5_cod_fee_rate') ?? 0) > 0 && (
                   <CostItemRow
                     label="COD手续费率"
                     value={`${((getEffectiveValue('m5_cod_fee_rate') || 0) * 100).toFixed(1)}%`}
@@ -1257,7 +1323,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                   <span>📢</span>
                   广告投放数据
                 </h4>
-                {getEffectiveValue('m6_ad_cpc_usd') && (
+                {(getEffectiveValue('m6_ad_cpc_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="广告CPC"
                     value={getEffectiveValue('m6_ad_cpc_usd')}
@@ -1269,7 +1335,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="该国市场平均点击成本"
                   />
                 )}
-                {getEffectiveValue('m6_conversion_rate') && (
+                {(getEffectiveValue('m6_conversion_rate') ?? 0) > 0 && (
                   <CostItemRow
                     label="转化率"
                     value={`${((getEffectiveValue('m6_conversion_rate') || 0) * 100).toFixed(1)}%`}
@@ -1280,7 +1346,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="点击到购买的转化率"
                   />
                 )}
-                {getEffectiveValue('m6_acos_target') && (
+                {(getEffectiveValue('m6_acos_target') ?? 0) > 0 && (
                   <CostItemRow
                     label="目标ACoS"
                     value={`${((getEffectiveValue('m6_acos_target') || 0) * 100).toFixed(1)}%`}
@@ -1334,7 +1400,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 mode={state.mode}
                 description="Stripe/PayPal等支付网关费率"
               />
-              {getEffectiveValue('m7_payment_fixed_usd') && (
+              {(getEffectiveValue('m7_payment_fixed_usd') ?? 0) > 0 && (
                 <CostItemRow
                   label="固定手续费"
                   value={getEffectiveValue('m7_payment_fixed_usd')}
@@ -1365,7 +1431,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 <span className="text-orange-600">💱</span>
                 汇率与风险
               </h4>
-              {getEffectiveValue('m7_currency_conversion_rate') && (
+              {(getEffectiveValue('m7_currency_conversion_rate') ?? 0) > 0 && (
                 <CostItemRow
                   label="货币转换费率"
                   value={`${((getEffectiveValue('m7_currency_conversion_rate') || 0) * 100).toFixed(2)}%`}
@@ -1378,7 +1444,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                   description="跨币种交易汇率损失"
                 />
               )}
-              {getEffectiveValue('m7_chargeback_rate') && (
+              {(getEffectiveValue('m7_chargeback_rate') ?? 0) > 0 && (
                 <CostItemRow
                   label="拒付风险率"
                   value={`${((getEffectiveValue('m7_chargeback_rate') || 0) * 100).toFixed(2)}%`}
@@ -1392,7 +1458,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
             </div>
 
             {/* 平台佣金区 */}
-            {getEffectiveValue('m7_platform_commission_rate') && (
+            {(getEffectiveValue('m7_platform_commission_rate') ?? 0) > 0 && (
               <div className="space-y-3 mb-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
                 <h4 className="text-sm font-semibold text-indigo-800 flex items-center gap-2">
                   <span>🏪</span>
@@ -1441,7 +1507,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 <span className="text-blue-600">👥</span>
                 客服与人力成本
               </h4>
-              {getEffectiveValue('m8_customer_service_cost_per_order_usd') && (
+              {(getEffectiveValue('m8_customer_service_cost_per_order_usd') ?? 0) > 0 && (
                 <CostItemRow
                   label="客服成本"
                   value={getEffectiveValue('m8_customer_service_cost_per_order_usd')}
@@ -1466,7 +1532,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                 mode={state.mode}
                 description={`本地人力与行政费率，计算: $${sellingPrice.toFixed(2)} × ${((getEffectiveValue('m8_ga_rate') || 0) * 100).toFixed(1)}% = $${(sellingPrice * (getEffectiveValue('m8_ga_rate') || 0)).toFixed(2)}/单位`}
               />
-              {getEffectiveValue('m8_monthly_staff_cost_usd') && (
+              {(getEffectiveValue('m8_monthly_staff_cost_usd') ?? 0) > 0 && (
                 <CostItemRow
                   label="月度人员成本"
                   value={getEffectiveValue('m8_monthly_staff_cost_usd')}
@@ -1487,7 +1553,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                   <span className="text-green-600">🏢</span>
                   办公与固定成本
                 </h4>
-                {getEffectiveValue('m8_office_rent_usd') && (
+                {(getEffectiveValue('m8_office_rent_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="办公室租金"
                     value={getEffectiveValue('m8_office_rent_usd')}
@@ -1501,7 +1567,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="本地办公场所月租金"
                   />
                 )}
-                {getEffectiveValue('m8_utilities_usd') && (
+                {(getEffectiveValue('m8_utilities_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="水电网费"
                     value={getEffectiveValue('m8_utilities_usd')}
@@ -1515,7 +1581,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
                     description="办公场所水电网月度费用"
                   />
                 )}
-                {getEffectiveValue('m8_monthly_software_cost_usd') && (
+                {(getEffectiveValue('m8_monthly_software_cost_usd') ?? 0) > 0 && (
                   <CostItemRow
                     label="软件订阅费"
                     value={getEffectiveValue('m8_monthly_software_cost_usd')}
@@ -1533,7 +1599,7 @@ function OPEXSection({ state, toggleSection, getEffectiveValue, isOverridden, se
             )}
 
             {/* 保险费用区 */}
-            {getEffectiveValue('m8_insurance_rate') && (
+            {(getEffectiveValue('m8_insurance_rate') ?? 0) > 0 && (
               <div className="space-y-3 mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h4 className="text-sm font-semibold text-yellow-800 flex items-center gap-2">
                   <span>🛡️</span>
@@ -1824,7 +1890,7 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
           </div>
 
           {/* VAT备注 */}
-          {getEffectiveValue('m4_vat_notes') && (
+          {!!getEffectiveValue('m4_vat_notes') && (
             <div className="text-xs text-gray-600 bg-white/50 rounded p-2">
               💡 {getEffectiveValue('m4_vat_notes')}
             </div>

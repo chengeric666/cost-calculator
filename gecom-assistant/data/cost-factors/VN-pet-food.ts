@@ -30,7 +30,15 @@ import type { CostFactor } from '../../types/gecom';
  */
 
 export const VN_PET_FOOD: any = {
-  // ========== 基础元数据 ==========
+  // ========== 合并数据（优先级：specific > base）==========
+
+  // 1️⃣ 先合并通用数据（优先级低，适用于所有行业）
+  ...VN_BASE_DATA,
+
+  // 2️⃣ 再合并行业特定数据（优先级高，会覆盖冲突字段）
+  ...VN_PET_FOOD_SPECIFIC,
+
+  // ========== 基础元数据（覆盖spread的字段）==========
 
   country: 'VN',
   country_name_cn: '越南',
@@ -44,14 +52,6 @@ export const VN_PET_FOOD: any = {
   collected_by: 'Claude AI + Manual Research',
   verified_at: '2025-11-09T21:00:00+08:00',  // Week 2 Day 6回溯验证
   next_update_due: '2025-04-01',  // 下次更新时间（2025 Q2）
-
-  // ========== 合并数据（优先级：specific > base）==========
-
-  // 1️⃣ 先合并通用数据（优先级低，适用于所有行业）
-  ...VN_BASE_DATA,
-
-  // 2️⃣ 再合并行业特定数据（优先级高，会覆盖冲突字段）
-  ...VN_PET_FOOD_SPECIFIC,
 
   // ========== 数据质量元数据 ==========
 
