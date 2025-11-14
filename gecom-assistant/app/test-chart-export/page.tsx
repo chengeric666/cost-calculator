@@ -188,6 +188,7 @@ export default function TestChartExport() {
             new Paragraph({
               children: [
                 new ImageRun({
+                  type: 'png',
                   data: pieBuffer,
                   transformation: {
                     width: 540,  // Word中显示宽度（点），保持9:7宽高比
@@ -209,6 +210,7 @@ export default function TestChartExport() {
             new Paragraph({
               children: [
                 new ImageRun({
+                  type: 'png',
                   data: barBuffer,
                   transformation: {
                     width: 540,  // 保持相同宽高比
