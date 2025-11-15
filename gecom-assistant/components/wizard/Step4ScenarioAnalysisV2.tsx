@@ -177,21 +177,21 @@ export default function Step4ScenarioAnalysisV2({
 
   // ============ Main Render ============
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* 标题 */}
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-          <Sparkles className="h-8 w-8 text-purple-600" />
+        <h2 className="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+          <Sparkles className="h-6 w-6 text-purple-600" />
           智能场景分析
-          <span className="text-sm font-normal text-purple-600">(Phase 5 What-If模拟)</span>
+          <span className="text-xs font-normal text-purple-600">(Phase 5 What-If模拟)</span>
         </h2>
-        <p className="text-gray-600">
+        <p className="text-sm text-gray-600">
           基于GECOM方法论的交互式场景模拟，调整参数查看对3-5个目标市场的实时影响
         </p>
       </div>
 
       {/* 场景模拟主内容 */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Phase 5A: 参数调节面板 */}
           <ScenarioParameterPanel
             params={scenarioParams}

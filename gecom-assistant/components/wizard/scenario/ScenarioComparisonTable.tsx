@@ -336,14 +336,14 @@ export default function ScenarioComparisonTable({
           <table className="w-full" data-testid="comparison-table">
             <thead>
               <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 min-w-[200px]">
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-900 min-w-[160px]">
                   成本项
                 </th>
                 {countries.map(country => (
-                  <th key={country} className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[120px]">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-2xl">{COUNTRY_INFO[country].flag}</span>
-                      <span>{country}</span>
+                  <th key={country} className="px-3 py-2 text-center text-xs font-semibold text-gray-900 min-w-[100px]">
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-base">{COUNTRY_INFO[country].flag}</span>
+                      <span className="text-xs">{country}</span>
                       <TierBadge tier={tierMap.get(country) || 'Tier 3'} />
                     </div>
                   </th>
@@ -364,12 +364,12 @@ export default function ScenarioComparisonTable({
                   data-testid={`row-${row.label.replace(/\s+/g, '-')}`}
                 >
                   {/* 标签列 */}
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     <div className="flex items-center gap-2">
-                      <span className={`
+                      <span className={`text-xs
                         ${row.type === 'header' ? 'font-semibold text-gray-900' : ''}
                         ${row.type === 'data' ? 'font-medium text-gray-700' : ''}
-                        ${row.type === 'subdata' ? 'text-gray-600 font-mono' : ''}
+                        ${row.type === 'subdata' ? 'text-gray-600' : ''}
                       `}>
                         {row.label}
                       </span>
@@ -378,12 +378,12 @@ export default function ScenarioComparisonTable({
 
                   {/* 数值列 */}
                   {countries.map(country => (
-                    <td key={country} className="px-4 py-3 text-center">
-                      <span className={`
+                    <td key={country} className="px-3 py-1.5 text-center">
+                      <span className={`text-xs
                         ${row.type === 'header' ? 'font-semibold text-gray-900' : ''}
                         ${row.type === 'data' && row.highlight ? 'font-semibold text-blue-700' : ''}
                         ${row.type === 'data' ? 'text-gray-700' : ''}
-                        ${row.type === 'subdata' ? 'text-gray-600 text-sm font-mono' : ''}
+                        ${row.type === 'subdata' ? 'text-gray-600' : ''}
                       `}>
                         {row.values.get(country) || '-'}
                       </span>
