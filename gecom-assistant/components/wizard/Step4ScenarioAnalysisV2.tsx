@@ -64,10 +64,12 @@ export default function Step4ScenarioAnalysisV2({
   const loadCostFactors = async (countries: TargetCountry[]): Promise<Map<TargetCountry, CostFactor>> => {
     const costFactors = new Map<TargetCountry, CostFactor>();
     const newTierMap = new Map<TargetCountry, string>();
-    const industry = project.industry || 'pet';
-    const industryFileSuffix = industry === 'pet' ? 'pet-food' : 'vape';
 
-    console.log('📦 加载本地数据:', countries, `行业: ${industryFileSuffix}`);
+    // 修复：确保industry值正确映射到文件名
+    const rawIndustry = project.industry || 'pet';
+    const industryFileSuffix = rawIndustry === 'pet' || rawIndustry === 'pet_food' ? 'pet-food' : 'vape';
+
+    console.log('📦 加载本地数据:', countries, `原始行业: ${rawIndustry}, 文件后缀: ${industryFileSuffix}`);
 
     // 动态加载每个国家的本地数据文件
     for (const country of countries) {
