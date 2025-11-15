@@ -1,9 +1,8 @@
 'use client';
 
 import { Project, CostResult } from '@/types/gecom';
-import { AlertCircle, TrendingUp, Target, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { AlertCircle, TrendingUp, Target } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { useState } from 'react';
 
 interface Step3CostModelingProps {
   project: Partial<Project>;
@@ -12,16 +11,6 @@ interface Step3CostModelingProps {
 }
 
 export default function Step3CostModeling({ project, costResult }: Step3CostModelingProps) {
-  const [capexExpanded, setCapexExpanded] = useState(false);
-  const [m1Expanded, setM1Expanded] = useState(false);
-  const [m2Expanded, setM2Expanded] = useState(false);
-  const [m3Expanded, setM3Expanded] = useState(false);
-  const [m4Expanded, setM4Expanded] = useState(true); // 默认展开最大成本项
-  const [m5Expanded, setM5Expanded] = useState(false);
-  const [m6Expanded, setM6Expanded] = useState(false);
-  const [m7Expanded, setM7Expanded] = useState(false);
-  const [m8Expanded, setM8Expanded] = useState(false);
-
   if (!costResult) {
     return (
       <div className="text-center py-12">
@@ -97,7 +86,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
               <h4 className="text-sm font-semibold text-red-900 mb-2">💡 成本结构优化建议</h4>
               <p className="text-sm text-red-800">
                 当前毛利率为负（{grossMargin.toFixed(1)}%），每销售一单亏损${Math.abs(grossProfit).toFixed(2)}。
-                建议重点关注下方瀑布式成本拆解中的<span className="font-semibold">最大成本项</span>，进行针对性优化。
+                建议重点关注下方成本拆解表中的<span className="font-semibold">最大成本项</span>，进行针对性优化。
               </p>
             </div>
           </div>
@@ -106,333 +95,659 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
 
       {/* Main Layout: 65% Left + 35% Right */}
       <div className="grid grid-cols-3 gap-6">
-        {/* LEFT COLUMN (65%): Waterfall Cost Breakdown */}
-        <div className="col-span-2 space-y-4">
-          {/* ========== 瀑布式成本拆解表 ========== */}
-          <div className="bg-white rounded-lg border-2 border-gray-200 shadow-sm">
+        {/* LEFT COLUMN (65%): Simple Table Layout */}
+        <div className="col-span-2">
+          <div className="bg-white rounded-lg border-2 border-gray-200 shadow-sm overflow-hidden">
             {/* Table Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-t-lg border-b-2 border-blue-200">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b-2 border-blue-200">
               <h3 className="text-lg font-bold text-gray-900">
                 单位经济模型 (Unit Economics)
               </h3>
               <p className="text-xs text-gray-600 mt-1">
-                从营收到毛利的完整计算链路
+                从营收到毛利的完整计算链路 · 月销量: {monthlyVolume}单
               </p>
             </div>
 
-            <div className="p-4 space-y-3">
-              {/* 1. 营收起点 */}
-              <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="text-sm font-semibold text-gray-700">营收</span>
-                    <div className="text-xs text-gray-500">Average Order Value (AOV)</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-green-700">${revenue.toFixed(2)}</div>
-                    <div className="text-xs text-gray-500">100%</div>
-                  </div>
-                </div>
-              </div>
+            {/* Simple Table - NO Folding */}
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-6 py-3 text-left font-semibold text-gray-700">成本项目</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">金额</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">占售价</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-700">备注说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* ========== 1. 营收起点 ========== */}
+                <tr className="bg-green-50 border-b border-green-200">
+                  <td className="px-6 py-3 font-semibold text-gray-900">营收 (AOV)</td>
+                  <td className="px-4 py-3 text-right font-bold text-green-700 text-base">${revenue.toFixed(2)}</td>
+                  <td className="px-4 py-3 text-right text-gray-600">100%</td>
+                  <td className="px-6 py-3 text-gray-600 text-xs">平均订单价值</td>
+                </tr>
 
-              {/* 2. CAPEX分摊区域 (可折叠) */}
-              <div className="border-l-4 border-blue-300 bg-blue-50 rounded">
-                <button
-                  className="w-full p-3 text-left flex justify-between items-center hover:bg-blue-100 transition-colors"
-                  onClick={() => setCapexExpanded(!capexExpanded)}
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-blue-900">(-) 阶段0-1: CAPEX (一次性启动成本分摊)</span>
-                      {capexExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {/* ========== 2. CAPEX Section Header ========== */}
+                <tr className="bg-blue-100 border-b border-blue-200">
+                  <td colSpan={4} className="px-6 py-2.5 font-bold text-blue-900 text-xs uppercase tracking-wide">
+                    阶段0-1: CAPEX (一次性启动成本分摊 - 总计 ${costResult.capex.total.toFixed(2)} ÷ {monthlyVolume}单)
+                  </td>
+                </tr>
+
+                {/* ========== M1: 市场准入 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M1: 市场准入</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      监管: {costResult.capex.m1_regulatory_agency} · 复杂度: {costResult.capex.m1_complexity}
                     </div>
-                    <div className="text-xs text-gray-600">M1 + M2 + M3 总计 ${costResult.capex.total.toFixed(2)} ÷ {monthlyVolume}单</div>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="text-lg font-bold text-blue-900">-${capexPerUnit.toFixed(2)}</div>
-                    <div className="text-xs text-gray-600">{((capexPerUnit / revenue) * 100).toFixed(1)}%</div>
-                  </div>
-                </button>
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${(costResult.capex.m1 / monthlyVolume).toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((costResult.capex.m1 / monthlyVolume / revenue) * 100).toFixed(1)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    总计${costResult.capex.m1.toFixed(2)} ÷ {monthlyVolume}单
+                  </td>
+                </tr>
 
-                {/* CAPEX详情 (展开后) */}
-                {capexExpanded && (
-                  <div className="px-6 pb-3 space-y-3 border-t border-blue-200">
-                    {/* M1 Market Entry */}
-                    <div className="pt-3">
-                      <button
-                        className="w-full flex justify-between items-start py-2 hover:bg-blue-100 rounded px-2 -mx-2"
-                        onClick={() => setM1Expanded(!m1Expanded)}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-800">M1: 市场准入</span>
-                            <TierBadge tier="tier1" />
-                            {m1Expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                          </div>
-                          <div className="text-xs text-gray-500">监管: {costResult.capex.m1_regulatory_agency} · 复杂度: {costResult.capex.m1_complexity}</div>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="font-semibold text-gray-900">${costResult.capex.m1.toFixed(2)}</div>
-                          <div className="text-xs text-gray-600">${(costResult.capex.m1 / monthlyVolume).toFixed(2)}/单</div>
-                        </div>
-                      </button>
-
-                      {/* M1 详细拆解 */}
-                      {m1Expanded && (
-                        <div className="pl-4 mt-2 space-y-1 text-xs bg-white p-2 rounded">
-                          <CostDetailRow label="公司注册费" amount={costResult.capex.m1_company_registration} />
-                          <CostDetailRow label="商业许可证费" amount={costResult.capex.m1_business_license} />
-                          <CostDetailRow label="税务登记费" amount={costResult.capex.m1_tax_registration} />
-                          <CostDetailRow label="法务咨询费" amount={costResult.capex.m1_legal_consulting} />
-                          {costResult.capex.m1_industry_license > 0 && (
-                            <CostDetailRow label="行业许可证" amount={costResult.capex.m1_industry_license} />
-                          )}
-                          <div className="flex justify-between font-medium bg-blue-50 px-2 py-1 rounded mt-2">
-                            <span>M1小计</span>
-                            <span>${costResult.capex.m1.toFixed(2)} → ${(costResult.capex.m1 / monthlyVolume).toFixed(2)}/单</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* M2 Tech Compliance */}
-                    <div>
-                      <button
-                        className="w-full flex justify-between items-start py-2 hover:bg-blue-100 rounded px-2 -mx-2"
-                        onClick={() => setM2Expanded(!m2Expanded)}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-800">M2: 技术合规</span>
-                            <TierBadge tier="tier1" />
-                            {m2Expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                          </div>
-                          <div className="text-xs text-gray-500">有效期: {costResult.capex.m2_certification_validity_years}年 · 检验: {costResult.capex.m2_inspection_frequency}</div>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="font-semibold text-gray-900">${costResult.capex.m2.toFixed(2)}</div>
-                          <div className="text-xs text-gray-600">${(costResult.capex.m2 / monthlyVolume).toFixed(2)}/单</div>
-                        </div>
-                      </button>
-
-                      {m2Expanded && (
-                        <div className="pl-4 mt-2 space-y-1 text-xs bg-white p-2 rounded">
-                          <CostDetailRow label="产品认证费" amount={costResult.capex.m2_product_certification} />
-                          <CostDetailRow label="商标注册费" amount={costResult.capex.m2_trademark_registration} />
-                          <CostDetailRow label="合规检测费" amount={costResult.capex.m2_compliance_testing} />
-                          {costResult.capex.m2_product_testing_cost > 0 && (
-                            <CostDetailRow label="产品检测费" amount={costResult.capex.m2_product_testing_cost} />
-                          )}
-                          {costResult.capex.m2_patent_filing > 0 && (
-                            <CostDetailRow label="专利申请费" amount={costResult.capex.m2_patent_filing} />
-                          )}
-                          <div className="flex justify-between font-medium bg-blue-50 px-2 py-1 rounded mt-2">
-                            <span>M2小计</span>
-                            <span>${costResult.capex.m2.toFixed(2)} → ${(costResult.capex.m2 / monthlyVolume).toFixed(2)}/单</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* M3 Supply Chain */}
-                    <div>
-                      <button
-                        className="w-full flex justify-between items-start py-2 hover:bg-blue-100 rounded px-2 -mx-2"
-                        onClick={() => setM3Expanded(!m3Expanded)}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-800">M3: 供应链搭建</span>
-                            <TierBadge tier="tier2" />
-                            {m3Expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                          </div>
-                          <div className="text-xs text-gray-500">仓库: {costResult.capex.m3_warehouse_type} · {costResult.capex.m3_warehouse_size_sqm}㎡</div>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="font-semibold text-gray-900">${costResult.capex.m3.toFixed(2)}</div>
-                          <div className="text-xs text-gray-600">${(costResult.capex.m3 / monthlyVolume).toFixed(2)}/单</div>
-                        </div>
-                      </button>
-
-                      {m3Expanded && (
-                        <div className="pl-4 mt-2 space-y-1 text-xs bg-white p-2 rounded">
-                          <CostDetailRow label="仓储押金" amount={costResult.capex.m3_warehouse_deposit} />
-                          <CostDetailRow label="设备采购" amount={costResult.capex.m3_equipment_purchase} />
-                          <CostDetailRow label="初始库存" amount={costResult.capex.m3_initial_inventory} />
-                          <CostDetailRow label="系统搭建" amount={costResult.capex.m3_system_setup} />
-                          {costResult.capex.m3_software_cost > 0 && (
-                            <CostDetailRow label="软件订阅" amount={costResult.capex.m3_software_cost} />
-                          )}
-                          <div className="flex justify-between font-medium bg-blue-50 px-2 py-1 rounded mt-2">
-                            <span>M3小计</span>
-                            <span>${costResult.capex.m3.toFixed(2)} → ${(costResult.capex.m3 / monthlyVolume).toFixed(2)}/单</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                {/* M1 详细项 - Always visible */}
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 公司注册费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m1_company_registration.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 商业许可证费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m1_business_license.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 税务登记费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m1_tax_registration.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">└─ 法务咨询费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m1_legal_consulting.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                {costResult.capex.m1_industry_license > 0 && (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">└─ 行业许可证</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m1_industry_license.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      续期: {costResult.capex.m1_renewal_required ? costResult.capex.m1_renewal_frequency : '无需'}
+                    </td>
+                  </tr>
                 )}
-              </div>
 
-              {/* 3. OPEX区域 */}
-              <div className="border-l-4 border-green-400 bg-green-50 rounded">
-                <div className="p-3">
-                  <div className="font-semibold text-green-900 mb-3 flex items-center gap-2">
-                    <span>阶段1-N: OPEX (单位运营成本)</span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {/* M4 - 默认展开(最大成本项) */}
-                    <OPEXModule
-                      name="M4: 货物税费"
-                      total={m4Total}
-                      revenue={revenue}
-                      expanded={m4Expanded}
-                      onToggle={() => setM4Expanded(!m4Expanded)}
-                      isTopCost={costDrivers[0]?.module === 'M4'}
-                    >
-                      {costResult.opex.m4_goodsTax ? (
-                        <>
-                          <CostDetailRow label="商品成本 (COGS)" amount={costResult.opex.m4_goodsTax.cogs} tier="tier1" />
-                          <CostDetailRow label="进口关税" amount={costResult.opex.m4_goodsTax.importTariff} tier="tier1" />
-                          <CostDetailRow label="增值税 (VAT)" amount={costResult.opex.m4_goodsTax.vat} tier="tier1" />
-                          {costResult.opex.m4_goodsTax.exciseTax && costResult.opex.m4_goodsTax.exciseTax > 0 && (
-                            <CostDetailRow label="消费税" amount={costResult.opex.m4_goodsTax.exciseTax} tier="tier2" />
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <CostDetailRow label="商品成本 (COGS)" amount={costResult.opex.m4_cogs} tier="tier1" />
-                          <CostDetailRow label="进口关税" amount={costResult.opex.m4_tariff} tier="tier1" />
-                          <CostDetailRow label="增值税 (VAT)" amount={costResult.opex.m4_vat} tier="tier1" />
-                          <CostDetailRow label="头程物流" amount={costResult.opex.m4_logistics} tier="tier2" />
-                        </>
-                      )}
-                    </OPEXModule>
-
-                    {/* M5 */}
-                    <OPEXModule
-                      name="M5: 物流配送"
-                      total={m5Total}
-                      revenue={revenue}
-                      expanded={m5Expanded}
-                      onToggle={() => setM5Expanded(!m5Expanded)}
-                      isTopCost={costDrivers[0]?.module === 'M5'}
-                    >
-                      {costResult.opex.m5_logistics ? (
-                        <>
-                          <CostDetailRow label="国际运输" amount={costResult.opex.m5_logistics.intlShipping} tier="tier2" />
-                          <CostDetailRow label="本地配送" amount={costResult.opex.m5_logistics.localDelivery} tier="tier2" />
-                          {costResult.opex.m5_logistics.fbaFee && costResult.opex.m5_logistics.fbaFee > 0 && (
-                            <CostDetailRow label="FBA费用" amount={costResult.opex.m5_logistics.fbaFee} tier="tier1" />
-                          )}
-                          <CostDetailRow label="仓储费" amount={costResult.opex.m5_logistics.warehouseFee} tier="tier2" />
-                          <CostDetailRow label="退货物流" amount={costResult.opex.m5_logistics.returnLogistics} tier="tier2" />
-                        </>
-                      ) : (
-                        <>
-                          <CostDetailRow label="尾程物流" amount={costResult.opex.m5_last_mile} tier="tier2" />
-                          <CostDetailRow label="退货成本" amount={costResult.opex.m5_return} tier="tier2" />
-                        </>
-                      )}
-                    </OPEXModule>
-
-                    {/* M6 */}
-                    <OPEXModule
-                      name="M6: 营销获客"
-                      total={m6Total}
-                      revenue={revenue}
-                      expanded={m6Expanded}
-                      onToggle={() => setM6Expanded(!m6Expanded)}
-                      isTopCost={costDrivers[0]?.module === 'M6'}
-                    >
-                      {costResult.opex.m6_marketing && typeof costResult.opex.m6_marketing === 'object' ? (
-                        <>
-                          <CostDetailRow label="客户获取成本 (CAC)" amount={(costResult.opex.m6_marketing as any).cac} tier="tier2" />
-                          <CostDetailRow label="平台佣金" amount={(costResult.opex.m6_marketing as any).platformCommission} tier="tier1" />
-                          <CostDetailRow label="广告支出" amount={(costResult.opex.m6_marketing as any).adSpend} tier="tier2" />
-                        </>
-                      ) : (
-                        <CostDetailRow label="CAC + 平台佣金" amount={m6Total} tier="tier2" />
-                      )}
-                    </OPEXModule>
-
-                    {/* M7 */}
-                    <OPEXModule
-                      name="M7: 支付手续费"
-                      total={m7Total}
-                      revenue={revenue}
-                      expanded={m7Expanded}
-                      onToggle={() => setM7Expanded(!m7Expanded)}
-                      isTopCost={false}
-                    >
-                      {costResult.opex.m7_payment && typeof costResult.opex.m7_payment === 'object' ? (
-                        <>
-                          <CostDetailRow label="支付网关费" amount={(costResult.opex.m7_payment as any).paymentGatewayFee} tier="tier1" />
-                          <CostDetailRow label="货币兑换" amount={(costResult.opex.m7_payment as any).currencyConversion} tier="tier2" />
-                        </>
-                      ) : (
-                        <>
-                          <CostDetailRow label="支付手续费" amount={costResult.opex.m7_payment as number} tier="tier1" />
-                          {costResult.opex.m7_platform_commission && (
-                            <CostDetailRow label="平台佣金" amount={costResult.opex.m7_platform_commission} tier="tier1" />
-                          )}
-                        </>
-                      )}
-                    </OPEXModule>
-
-                    {/* M8 */}
-                    <OPEXModule
-                      name="M8: 运营管理"
-                      total={m8Total}
-                      revenue={revenue}
-                      expanded={m8Expanded}
-                      onToggle={() => setM8Expanded(!m8Expanded)}
-                      isTopCost={false}
-                    >
-                      {costResult.opex.m8_operations ? (
-                        <>
-                          <CostDetailRow label="客服成本" amount={costResult.opex.m8_operations.customerService} tier="tier2" />
-                          <CostDetailRow label="人员成本" amount={costResult.opex.m8_operations.staff} tier="tier2" />
-                          <CostDetailRow label="软件成本" amount={costResult.opex.m8_operations.software} tier="tier2" />
-                        </>
-                      ) : (
-                        <CostDetailRow label="运营管理费用" amount={m8Total} tier="tier2" />
-                      )}
-                    </OPEXModule>
-                  </div>
-                </div>
-              </div>
-
-              {/* 4. 底部总结 */}
-              <div className="border-t-2 border-gray-300 bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-b-lg">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-base">
-                    <span className="font-bold text-gray-900">(=) 总成本</span>
-                    <div className="text-right">
-                      <span className="font-bold text-gray-900 text-lg">${totalCost.toFixed(2)}</span>
-                      <span className="text-sm text-gray-600 ml-2">{((totalCost / revenue) * 100).toFixed(0)}%</span>
+                {/* ========== M2: 技术合规 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M2: 技术合规</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      有效期: {costResult.capex.m2_certification_validity_years}年 · 检验: {costResult.capex.m2_inspection_frequency}
                     </div>
-                  </div>
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${(costResult.capex.m2 / monthlyVolume).toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((costResult.capex.m2 / monthlyVolume / revenue) * 100).toFixed(1)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    总计${costResult.capex.m2.toFixed(2)} ÷ {monthlyVolume}单
+                  </td>
+                </tr>
 
-                  <div className="h-px bg-gray-300"></div>
+                {/* M2 详细项 */}
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 产品认证费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m2_product_certification.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 商标注册费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m2_trademark_registration.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    {costResult.capex.m2_trademark_notes || <TierBadge tier="tier1" />}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">└─ 合规检测费</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m2_compliance_testing.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier1" />
+                  </td>
+                </tr>
+                {costResult.capex.m2_product_testing_cost > 0 && (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">├─ 产品检测费</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m2_product_testing_cost.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      <TierBadge tier="tier2" />
+                    </td>
+                  </tr>
+                )}
+                {costResult.capex.m2_patent_filing > 0 && (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">└─ 专利申请费</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m2_patent_filing.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      <TierBadge tier="tier2" />
+                    </td>
+                  </tr>
+                )}
 
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-bold text-gray-900">(=) 毛利</span>
-                    <span className={`font-bold text-xl ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      ${grossProfit.toFixed(2)}
-                    </span>
-                  </div>
+                {/* ========== M3: 供应链搭建 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M3: 供应链搭建</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      仓库: {costResult.capex.m3_warehouse_type} · {costResult.capex.m3_warehouse_size_sqm}㎡
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${(costResult.capex.m3 / monthlyVolume).toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((costResult.capex.m3 / monthlyVolume / revenue) * 100).toFixed(1)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    总计${costResult.capex.m3.toFixed(2)} ÷ {monthlyVolume}单
+                  </td>
+                </tr>
 
-                  <div className="flex justify-between items-center text-xl">
-                    <span className="font-bold text-gray-900">(=) 毛利率</span>
-                    <span className={`font-bold text-2xl ${grossMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {grossMargin.toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                {/* M3 详细项 */}
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 仓储押金</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m3_warehouse_deposit.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier2" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 设备采购</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m3_equipment_purchase.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier2" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">├─ 初始库存</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m3_initial_inventory.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    {costResult.capex.m3_inventory_months}个月库存
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <td className="px-8 py-2 text-gray-700 text-xs">└─ 系统搭建</td>
+                  <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m3_system_setup.toFixed(2)}</td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-6 py-2 text-xs text-gray-500">
+                    <TierBadge tier="tier2" />
+                  </td>
+                </tr>
+                {costResult.capex.m3_software_cost > 0 && (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">└─ 软件订阅</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.capex.m3_software_cost.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      首年订阅费
+                    </td>
+                  </tr>
+                )}
+
+                {/* CAPEX 小计 */}
+                <tr className="bg-blue-50 border-b-2 border-blue-300">
+                  <td className="px-6 py-2.5 font-bold text-blue-900">CAPEX 小计 (单位分摊)</td>
+                  <td className="px-4 py-2.5 text-right font-bold text-blue-900">${capexPerUnit.toFixed(2)}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-blue-800">
+                    {((capexPerUnit / revenue) * 100).toFixed(1)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    总计${costResult.capex.total.toFixed(2)} ÷ {monthlyVolume}单
+                  </td>
+                </tr>
+
+                {/* ========== 3. OPEX Section Header ========== */}
+                <tr className="bg-green-100 border-b border-green-200">
+                  <td colSpan={4} className="px-6 py-2.5 font-bold text-green-900 text-xs uppercase tracking-wide">
+                    阶段1-N: OPEX (单位运营成本)
+                  </td>
+                </tr>
+
+                {/* ========== M4: 货物税费 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M4: 货物税费</div>
+                    {costDrivers[0]?.module === 'M4' && (
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] rounded font-semibold">
+                        ⚠️ 最大成本项
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${m4Total.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((m4Total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    COGS + 关税 + VAT + 物流
+                  </td>
+                </tr>
+
+                {/* M4 详细项 - 兼容两种数据结构 */}
+                {costResult.opex.m4_goodsTax ? (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 商品成本 (COGS)</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_goodsTax.cogs.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 进口关税</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_goodsTax.importTariff.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 增值税 (VAT)</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_goodsTax.vat.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    {(costResult.opex.m4_goodsTax.exciseTax ?? 0) > 0 && (
+                      <tr className="border-b border-gray-100 bg-gray-50">
+                        <td className="px-8 py-2 text-gray-700 text-xs">└─ 消费税</td>
+                        <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_goodsTax.exciseTax.toFixed(2)}</td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-6 py-2 text-xs text-gray-500">
+                          <TierBadge tier="tier2" />
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 商品成本 (COGS)</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_cogs.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 进口关税</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_tariff.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 增值税 (VAT)</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_vat.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 头程物流</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m4_logistics.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                )}
+
+                {/* ========== M5: 物流配送 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M5: 物流配送</div>
+                    {costDrivers[0]?.module === 'M5' && (
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] rounded font-semibold">
+                        ⚠️ 最大成本项
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${m5Total.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((m5Total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    配送 + 退货 + 仓储
+                  </td>
+                </tr>
+
+                {/* M5 详细项 - 兼容两种数据结构 */}
+                {costResult.opex.m5_logistics ? (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 国际运输</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_logistics.intlShipping.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 本地配送</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_logistics.localDelivery.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    {(costResult.opex.m5_logistics.fbaFee ?? 0) > 0 && (
+                      <tr className="border-b border-gray-100 bg-gray-50">
+                        <td className="px-8 py-2 text-gray-700 text-xs">├─ FBA费用</td>
+                        <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_logistics.fbaFee.toFixed(2)}</td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-6 py-2 text-xs text-gray-500">
+                          <TierBadge tier="tier1" />
+                        </td>
+                      </tr>
+                    )}
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 仓储费</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_logistics.warehouseFee.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 退货物流</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_logistics.returnLogistics.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 尾程物流</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_last_mile.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 退货成本</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m5_return.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                )}
+
+                {/* ========== M6: 营销获客 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M6: 营销获客</div>
+                    {costDrivers[0]?.module === 'M6' && (
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] rounded font-semibold">
+                        ⚠️ 最大成本项
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${m6Total.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((m6Total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    CAC + 平台佣金 + 广告
+                  </td>
+                </tr>
+
+                {/* M6 详细项 - 兼容两种数据结构 */}
+                {costResult.opex.m6_marketing && typeof costResult.opex.m6_marketing === 'object' ? (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 客户获取成本 (CAC)</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${((costResult.opex.m6_marketing as any).cac).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 平台佣金</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${((costResult.opex.m6_marketing as any).platformCommission).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 广告支出</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${((costResult.opex.m6_marketing as any).adSpend).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">└─ CAC + 平台佣金</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${m6Total.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      <TierBadge tier="tier2" />
+                    </td>
+                  </tr>
+                )}
+
+                {/* ========== M7: 支付手续费 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M7: 支付手续费</div>
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${m7Total.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((m7Total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    支付网关 + 货币兑换
+                  </td>
+                </tr>
+
+                {/* M7 详细项 - 兼容两种数据结构 */}
+                {costResult.opex.m7_payment && typeof costResult.opex.m7_payment === 'object' ? (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 支付网关费</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${((costResult.opex.m7_payment as any).paymentGatewayFee).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 货币兑换</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${((costResult.opex.m7_payment as any).currencyConversion).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 支付手续费</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${(costResult.opex.m7_payment as number).toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier1" />
+                      </td>
+                    </tr>
+                    {(costResult.opex.m7_platform_commission ?? 0) > 0 && (
+                      <tr className="border-b border-gray-100 bg-gray-50">
+                        <td className="px-8 py-2 text-gray-700 text-xs">└─ 平台佣金</td>
+                        <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m7_platform_commission.toFixed(2)}</td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-6 py-2 text-xs text-gray-500">
+                          <TierBadge tier="tier1" />
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                )}
+
+                {/* ========== M8: 运营管理 ========== */}
+                <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-2.5">
+                    <div className="font-medium text-gray-900">(-) M8: 运营管理</div>
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    ${m8Total.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-gray-600">
+                    {((m8Total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    客服 + 人员 + 软件
+                  </td>
+                </tr>
+
+                {/* M8 详细项 - 兼容两种数据结构 */}
+                {costResult.opex.m8_operations ? (
+                  <>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 客服成本</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m8_operations.customerService.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">├─ 人员成本</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m8_operations.staff.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <td className="px-8 py-2 text-gray-700 text-xs">└─ 软件成本</td>
+                      <td className="px-4 py-2 text-right text-gray-700 text-xs">${costResult.opex.m8_operations.software.toFixed(2)}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-6 py-2 text-xs text-gray-500">
+                        <TierBadge tier="tier2" />
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td className="px-8 py-2 text-gray-700 text-xs">└─ 运营管理费用</td>
+                    <td className="px-4 py-2 text-right text-gray-700 text-xs">${m8Total.toFixed(2)}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-6 py-2 text-xs text-gray-500">
+                      <TierBadge tier="tier2" />
+                    </td>
+                  </tr>
+                )}
+
+                {/* OPEX 小计 */}
+                <tr className="bg-green-50 border-b-2 border-green-300">
+                  <td className="px-6 py-2.5 font-bold text-green-900">OPEX 小计</td>
+                  <td className="px-4 py-2.5 text-right font-bold text-green-900">${costResult.opex.total.toFixed(2)}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-green-800">
+                    {((costResult.opex.total / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-2.5 text-xs text-gray-600">
+                    M4 + M5 + M6 + M7 + M8
+                  </td>
+                </tr>
+
+                {/* ========== 总成本 ========== */}
+                <tr className="bg-gray-100 border-b-2 border-gray-400">
+                  <td className="px-6 py-3 font-bold text-gray-900 text-base">(=) 总成本</td>
+                  <td className="px-4 py-3 text-right font-bold text-gray-900 text-lg">${totalCost.toFixed(2)}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-gray-800 text-base">
+                    {((totalCost / revenue) * 100).toFixed(0)}%
+                  </td>
+                  <td className="px-6 py-3 text-xs text-gray-600">
+                    CAPEX分摊 + OPEX
+                  </td>
+                </tr>
+
+                {/* ========== 毛利 ========== */}
+                <tr className={`border-b-2 ${grossProfit >= 0 ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}`}>
+                  <td className="px-6 py-3 font-bold text-gray-900 text-lg">(=) 毛利</td>
+                  <td className="px-4 py-3 text-right font-bold text-xl" style={{ color: grossProfit >= 0 ? '#16a34a' : '#dc2626' }}>
+                    ${grossProfit.toFixed(2)}
+                  </td>
+                  <td colSpan={2} className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <span className={`font-bold text-2xl ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {grossMargin.toFixed(1)}%
+                      </span>
+                      <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${grossProfit >= 0 ? 'bg-green-500' : 'bg-red-500'}`}
+                          style={{ width: `${Math.min(Math.abs(grossMargin), 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -602,7 +917,7 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
   );
 }
 
-// ========== Helper Components ==========
+// ========== Helper Component ==========
 
 function TierBadge({ tier }: { tier: string }) {
   const colors = {
@@ -617,66 +932,5 @@ function TierBadge({ tier }: { tier: string }) {
     <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${colors[tierNum]}`}>
       Tier {tierNum.slice(-1)}
     </span>
-  );
-}
-
-function CostDetailRow({ label, amount, tier }: { label: string; amount: number; tier?: string }) {
-  return (
-    <div className="flex justify-between text-gray-700 py-0.5">
-      <span className="flex items-center gap-1">
-        ├─ {label}
-        {tier && <TierBadge tier={tier} />}
-      </span>
-      <span className="font-medium">${amount.toFixed(2)}</span>
-    </div>
-  );
-}
-
-function OPEXModule({
-  name,
-  total,
-  revenue,
-  expanded,
-  onToggle,
-  isTopCost,
-  children,
-}: {
-  name: string;
-  total: number;
-  revenue: number;
-  expanded: boolean;
-  onToggle: () => void;
-  isTopCost: boolean;
-  children: React.ReactNode;
-}) {
-  const percentage = ((total / revenue) * 100).toFixed(0);
-
-  return (
-    <div>
-      <button
-        className="w-full flex justify-between items-center bg-white p-2 rounded border border-green-200 hover:bg-green-50 transition-colors"
-        onClick={onToggle}
-      >
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-800 text-sm">(-) {name}</span>
-          {isTopCost && (
-            <span className="px-2 py-0.5 bg-red-100 text-red-700 text-[10px] rounded font-semibold">
-              ⚠️ 最大成本项
-            </span>
-          )}
-          {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </div>
-        <div className="text-right">
-          <div className="text-base font-bold text-gray-900">${total.toFixed(2)}</div>
-          <div className="text-xs text-gray-600">{percentage}%</div>
-        </div>
-      </button>
-
-      {expanded && (
-        <div className="pl-4 mt-1 space-y-1 text-xs bg-white p-2 rounded border border-green-100">
-          {children}
-        </div>
-      )}
-    </div>
   );
 }
