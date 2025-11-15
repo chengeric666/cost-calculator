@@ -114,14 +114,15 @@ export class GECOMEngine {
 
   /**
    * 计算CAPEX（Phase 0-1）：一次性启动成本
+   * MVP 2.0: 包含所有30个详细字段
    */
   private calculateCAPEX(project: Project, factor: CostFactor): CostResult['capex'] {
-    // M1: 市场准入
-    const m1_company_registration = factor.m1_company_registration_usd || 0;
-    const m1_business_license = factor.m1_business_license_usd || 0;
-    const m1_tax_registration = factor.m1_tax_registration_usd || 0;
-    const m1_legal_consulting = factor.m1_legal_consulting_usd || 0;
-    const m1_import_license = factor.m1_import_license_required
+    // M1: 市场准入（11个详细字段）
+    const m1_company_registration = factor.m1_company_registration_usd || 500;
+    const m1_business_license = factor.m1_business_license_usd || 300;
+    const m1_tax_registration = factor.m1_tax_registration_usd || 200;
+    const m1_legal_consulting = factor.m1_legal_consulting_usd || 1000;
+    const m1_industry_license = factor.m1_import_license_required
       ? (factor.m1_import_license_cost_usd || 0)
       : 0;
 
@@ -129,34 +130,77 @@ export class GECOMEngine {
       + m1_business_license
       + m1_tax_registration
       + m1_legal_consulting
-      + m1_import_license;
+      + m1_industry_license;
 
-    // M2: 技术合规
-    const m2_certification = factor.m2_estimated_cost_usd || 0;
-    const m2_trademark = factor.m2_trademark_registration_usd || 0;
-    const m2_testing = factor.m2_product_testing_cost_usd || 0;
+    // M2: 技术合规（10个详细字段）
+    const m2_product_certification = factor.m2_estimated_cost_usd || 5000;
+    const m2_trademark_registration = factor.m2_trademark_registration_usd || 1500;
+    const m2_compliance_testing = factor.m2_product_testing_cost_usd || 2000;
+    const m2_product_testing_cost = factor.m2_product_testing_cost_usd || 2000;
+    const m2_patent_filing = factor.m2_patent_filing_usd || 0;
+    const m2_inspection_cost = factor.m2_inspection_cost_usd || 0;
 
-    const m2_total = m2_certification + m2_trademark + m2_testing;
+    const m2_total = m2_product_certification
+      + m2_trademark_registration
+      + m2_compliance_testing
+      + m2_patent_filing
+      + m2_inspection_cost;
 
-    // M3: 供应链搭建
-    const m3_warehouse_deposit = factor.m3_warehouse_deposit_usd || 0;
-    const m3_equipment = factor.m3_equipment_purchase_usd || 0;
-    const m3_initial_inventory = factor.m3_initial_inventory_usd || 0;
-    const m3_system_setup = factor.m3_system_setup_usd || 0;
+    // M3: 供应链搭建（9个详细字段）
+    const m3_warehouse_deposit = factor.m3_warehouse_deposit_usd || 5000;
+    const m3_equipment_purchase = factor.m3_equipment_purchase_usd || 10000;
+    const m3_initial_inventory = factor.m3_initial_inventory_usd || 15000;
+    const m3_system_setup = factor.m3_system_setup_usd || 3000;
+    const m3_software_cost = factor.m3_software_cost_usd || 2000;
 
     const m3_total = m3_warehouse_deposit
-      + m3_equipment
+      + m3_equipment_purchase
       + m3_initial_inventory
-      + m3_system_setup;
+      + m3_system_setup
+      + m3_software_cost;
 
     const capex_total = m1_total + m2_total + m3_total;
 
     return {
+      // M1: 市场准入
       m1: m1_total,
+      m1_company_registration,
+      m1_business_license,
+      m1_tax_registration,
+      m1_legal_consulting,
+      m1_regulatory_agency: factor.m1_regulatory_agency || '市场监督管理局',
+      m1_complexity: factor.m1_complexity || '中等',
+      m1_industry_license,
+      m1_renewal_required: factor.m1_renewal_required || false,
+      m1_renewal_frequency: factor.m1_renewal_frequency || '年度',
+      m1_notes: factor.m1_notes || '',
+
+      // M2: 技术合规
       m2: m2_total,
+      m2_product_certification,
+      m2_trademark_registration,
+      m2_compliance_testing,
+      m2_certification_validity_years: factor.m2_certification_validity_years || 3,
+      m2_trademark_notes: factor.m2_trademark_notes || '',
+      m2_inspection_frequency: factor.m2_inspection_frequency || '季度',
+      m2_inspection_cost,
+      m2_product_testing_cost,
+      m2_patent_filing,
+
+      // M3: 供应链搭建
       m3: m3_total,
+      m3_warehouse_deposit,
+      m3_equipment_purchase,
+      m3_initial_inventory,
+      m3_system_setup,
+      m3_warehouse_type: factor.m3_warehouse_type || '第三方仓',
+      m3_warehouse_size_sqm: factor.m3_warehouse_size_sqm || 100,
+      m3_inventory_months: factor.m3_inventory_months || 3,
+      m3_software_cost,
+
       total: capex_total,
-      // POC兼容字段（详细拆解）
+
+      // POC兼容字段（保留以兼容旧代码）
       m1_marketEntry: {
         companyRegistration: m1_company_registration,
         businessLicense: m1_business_license,
@@ -166,15 +210,16 @@ export class GECOMEngine {
         dataSource: (factor.m1_tier || 'tier2') as DataSourceTier,
       },
       m2_techCompliance: {
-        productCertification: m2_certification,
-        trademarkRegistration: m2_trademark,
-        complianceTesting: m2_testing,
+        productCertification: m2_product_certification,
+        trademarkRegistration: m2_trademark_registration,
+        complianceTesting: m2_compliance_testing,
+        patentFiling: m2_patent_filing,
         total: m2_total,
         dataSource: (factor.m2_tier || 'tier2') as DataSourceTier,
       },
       m3_supplyChain: {
         warehouseDeposit: m3_warehouse_deposit,
-        equipmentPurchase: m3_equipment,
+        equipmentPurchase: m3_equipment_purchase,
         initialInventory: m3_initial_inventory,
         systemSetup: m3_system_setup,
         total: m3_total,

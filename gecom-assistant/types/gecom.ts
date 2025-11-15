@@ -279,13 +279,47 @@ export interface Scope {
  * 兼容POC版本
  */
 export interface CostResult {
-  // CAPEX结果（MVP 2.0简化结构）
+  // CAPEX结果（MVP 2.0完整结构 - 包含详细字段）
   capex: {
+    // M1: 市场准入（11个详细字段）
     m1: number;
+    m1_company_registration: number;
+    m1_business_license: number;
+    m1_tax_registration: number;
+    m1_legal_consulting: number;
+    m1_regulatory_agency: string;
+    m1_complexity: string;
+    m1_industry_license: number;
+    m1_renewal_required: boolean;
+    m1_renewal_frequency: string;
+    m1_notes: string;
+
+    // M2: 技术合规（10个详细字段）
     m2: number;
+    m2_product_certification: number;
+    m2_trademark_registration: number;
+    m2_compliance_testing: number;
+    m2_certification_validity_years: number;
+    m2_trademark_notes: string;
+    m2_inspection_frequency: string;
+    m2_inspection_cost: number;
+    m2_product_testing_cost: number;
+    m2_patent_filing: number;
+
+    // M3: 供应链搭建（9个详细字段）
     m3: number;
+    m3_warehouse_deposit: number;
+    m3_equipment_purchase: number;
+    m3_initial_inventory: number;
+    m3_system_setup: number;
+    m3_warehouse_type: string;
+    m3_warehouse_size_sqm: number;
+    m3_inventory_months: number;
+    m3_software_cost: number;
+
     total: number;
-    // POC兼容字段
+
+    // POC兼容字段（保留以兼容旧代码）
     m1_marketEntry?: any;
     m2_techCompliance?: any;
     m3_supplyChain?: any;

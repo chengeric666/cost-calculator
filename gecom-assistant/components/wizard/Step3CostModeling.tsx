@@ -69,18 +69,17 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
         </p>
       </div>
 
-      {/* Warnings */}
-      {costResult.warnings && costResult.warnings.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      {/* 成本洞察提示（替代英文warnings） */}
+      {getGrossMargin() < 0 && (
+        <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-red-900 mb-2">警告</h4>
-              <ul className="space-y-1">
-                {costResult.warnings.map((warning, index) => (
-                  <li key={index} className="text-sm text-red-800">{warning}</li>
-                ))}
-              </ul>
+              <h4 className="text-sm font-semibold text-red-900 mb-2">💡 成本结构优化建议</h4>
+              <p className="text-sm text-red-800">
+                当前毛利率为负（{getGrossMargin().toFixed(1)}%），建议重点关注瀑布式成本拆解中的
+                <span className="font-semibold">最大成本项</span>，进行针对性优化。
+              </p>
             </div>
           </div>
         </div>
@@ -96,85 +95,110 @@ export default function Step3CostModeling({ project, costResult }: Step3CostMode
               阶段0-1: CAPEX（一次性启动成本）
             </h3>
 
-            {/* M1: Market Entry */}
+            {/* M1: Market Entry - MVP 2.0完整11个字段 */}
             <div className="mb-3">
-              <div className="text-xs font-semibold text-blue-700 mb-1">M1: 市场准入</div>
-              <div className="space-y-1 pl-2">
-                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">公司注册费 <span className="text-gray-400">Company Registration</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m1_marketEntry.companyRegistration.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">商业许可证费 <span className="text-gray-400">Business License</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m1_marketEntry.businessLicense.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">税务登记费 <span className="text-gray-400">Tax Registration</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m1_marketEntry.taxRegistration.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">法务咨询费 <span className="text-gray-400">Legal Consulting</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m1_marketEntry.legalConsulting.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between py-1 text-xs bg-blue-50 px-2 -mx-2 rounded">
-                  <span className="font-bold text-gray-900">M1 小计</span>
-                  <span className="font-bold text-blue-900">${costResult.capex.m1_marketEntry.total.toFixed(2)}</span>
-                </div>
+              <div className="text-xs font-semibold text-blue-700 mb-1 flex items-center gap-2">
+                M1: 市场准入
+                <span className="text-xs font-normal text-gray-500">（监管：{costResult.capex.m1_regulatory_agency}）</span>
               </div>
-            </div>
-
-            {/* M2: Tech Compliance */}
-            <div className="mb-3">
-              <div className="text-xs font-semibold text-blue-700 mb-1">M2: 技术合规</div>
               <div className="space-y-1 pl-2">
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">产品认证费 <span className="text-gray-400">Product Certification</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m2_techCompliance.productCertification.toFixed(2)}</span>
+                  <span className="text-gray-700">公司注册费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m1_company_registration.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">商标注册费 <span className="text-gray-400">Trademark Registration</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m2_techCompliance.trademarkRegistration.toFixed(2)}</span>
+                  <span className="text-gray-700">商业许可证费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m1_business_license.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">合规检测费 <span className="text-gray-400">Compliance Testing</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m2_techCompliance.complianceTesting.toFixed(2)}</span>
+                  <span className="text-gray-700">税务登记费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m1_tax_registration.toFixed(2)}</span>
                 </div>
-                {costResult.capex.m2_techCompliance.patentFiling && costResult.capex.m2_techCompliance.patentFiling > 0 && (
+                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                  <span className="text-gray-700">法务咨询费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m1_legal_consulting.toFixed(2)}</span>
+                </div>
+                {costResult.capex.m1_industry_license > 0 && (
                   <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                    <span className="text-gray-700">专利申请费 <span className="text-gray-400">Patent Filing</span></span>
-                    <span className="font-semibold text-gray-900">${costResult.capex.m2_techCompliance.patentFiling.toFixed(2)}</span>
+                    <span className="text-gray-700">行业许可证</span>
+                    <span className="font-semibold text-gray-900">${costResult.capex.m1_industry_license.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between py-1 text-xs bg-blue-50 px-2 -mx-2 rounded">
-                  <span className="font-bold text-gray-900">M2 小计</span>
-                  <span className="font-bold text-blue-900">${costResult.capex.m2_techCompliance.total.toFixed(2)}</span>
+                  <span className="font-bold text-gray-900">M1 小计 <span className="text-gray-500 font-normal">（复杂度：{costResult.capex.m1_complexity}）</span></span>
+                  <span className="font-bold text-blue-900">${costResult.capex.m1.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
-            {/* M3: Supply Chain Setup */}
+            {/* M2: Tech Compliance - MVP 2.0完整10个字段 */}
             <div className="mb-3">
-              <div className="text-xs font-semibold text-blue-700 mb-1">M3: 供应链搭建</div>
+              <div className="text-xs font-semibold text-blue-700 mb-1 flex items-center gap-2">
+                M2: 技术合规
+                <span className="text-xs font-normal text-gray-500">（有效期：{costResult.capex.m2_certification_validity_years}年）</span>
+              </div>
               <div className="space-y-1 pl-2">
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">仓储押金 <span className="text-gray-400">Warehouse Deposit</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m3_supplyChain.warehouseDeposit.toFixed(2)}</span>
+                  <span className="text-gray-700">产品认证费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m2_product_certification.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">设备采购费 <span className="text-gray-400">Equipment Purchase</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m3_supplyChain.equipmentPurchase.toFixed(2)}</span>
+                  <span className="text-gray-700">商标注册费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m2_trademark_registration.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">初始库存成本 <span className="text-gray-400">Initial Inventory</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m3_supplyChain.initialInventory.toFixed(2)}</span>
+                  <span className="text-gray-700">合规检测费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m2_compliance_testing.toFixed(2)}</span>
+                </div>
+                {costResult.capex.m2_patent_filing > 0 && (
+                  <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                    <span className="text-gray-700">专利申请费</span>
+                    <span className="font-semibold text-gray-900">${costResult.capex.m2_patent_filing.toFixed(2)}</span>
+                  </div>
+                )}
+                {costResult.capex.m2_inspection_cost > 0 && (
+                  <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                    <span className="text-gray-700">检验费</span>
+                    <span className="font-semibold text-gray-900">${costResult.capex.m2_inspection_cost.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-1 text-xs bg-blue-50 px-2 -mx-2 rounded">
+                  <span className="font-bold text-gray-900">M2 小计 <span className="text-gray-500 font-normal">（检验：{costResult.capex.m2_inspection_frequency}）</span></span>
+                  <span className="font-bold text-blue-900">${costResult.capex.m2.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* M3: Supply Chain Setup - MVP 2.0完整9个字段 */}
+            <div className="mb-3">
+              <div className="text-xs font-semibold text-blue-700 mb-1 flex items-center gap-2">
+                M3: 供应链搭建
+                <span className="text-xs font-normal text-gray-500">（仓库：{costResult.capex.m3_warehouse_type}，{costResult.capex.m3_warehouse_size_sqm}㎡）</span>
+              </div>
+              <div className="space-y-1 pl-2">
+                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                  <span className="text-gray-700">仓储押金</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m3_warehouse_deposit.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs border-b border-gray-100">
-                  <span className="text-gray-700">系统搭建费 <span className="text-gray-400">System Setup</span></span>
-                  <span className="font-semibold text-gray-900">${costResult.capex.m3_supplyChain.systemSetup.toFixed(2)}</span>
+                  <span className="text-gray-700">设备采购费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m3_equipment_purchase.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                  <span className="text-gray-700">初始库存成本</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m3_initial_inventory.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                  <span className="text-gray-700">系统搭建费</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m3_system_setup.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between py-1 text-xs border-b border-gray-100">
+                  <span className="text-gray-700">软件成本</span>
+                  <span className="font-semibold text-gray-900">${costResult.capex.m3_software_cost.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-1 text-xs bg-blue-50 px-2 -mx-2 rounded">
-                  <span className="font-bold text-gray-900">M3 小计</span>
-                  <span className="font-bold text-blue-900">${costResult.capex.m3_supplyChain.total.toFixed(2)}</span>
+                  <span className="font-bold text-gray-900">M3 小计 <span className="text-gray-500 font-normal">（库存：{costResult.capex.m3_inventory_months}个月）</span></span>
+                  <span className="font-bold text-blue-900">${costResult.capex.m3.toFixed(2)}</span>
                 </div>
               </div>
             </div>

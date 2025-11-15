@@ -2520,89 +2520,53 @@
 
 ---
 
-### Day 20++: 紧急UI优化修复（2025-11-14 18:00开始）⏳ 进行中
+### Day 20++: 紧急UI优化修复（2025-11-14 18:00开始）⚠️ 部分完成（65%）
 
-> **触发原因**: Playwright实际UI验证发现Step 3/Step 4未按ULTRA-THINK分析要求实现
-> **验证工具**: tests/e2e/verify-step3-step4-ui.spec.ts（2025-11-14创建）
-> **截图证据**: test-results/ui-verification/ (7张截图)
-> **根本问题**:
-> - ❌ Step 3：仅显示概览（1图表+2KPI），缺少M1-M8详细成本表格
-> - ❌ Step 4：仍显示Mock警告，未连接19国真实数据库
-> **参考文档**:
-> - [ULTRA-THINK-ANALYSIS-2025-11-13.md](./ULTRA-THINK-ANALYSIS-2025-11-13.md) - 问题1/4
-> - [CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md](./CRITICAL-ISSUE-POSTMORTEM-2025-11-13.md) - 问题4/5
-> **执行原则**: 一个优化一个优化来做，每次迭代Playwright验证，遵循SSOT
-
----
-
-#### Phase 1: Step 3 CAPEX详细表格（1.5h）⏳ 当前任务
-
-- [ ] **D20PP-T1.1**: 添加M1市场准入详细成本表格
-  - **当前状态**: Step 3仅显示概览，M1模块缺少详细表格
-  - **Playwright证据**: test-results/ui-verification/03-step3-cost-modeling-FULL.png（表格数量：0）
-  - **修复方案**:
-    - 修改文件: `components/wizard/Step3CostModeling.tsx`
-    - 在CAPEX区域添加M1详细表格（11行成本项）:
-      ```
-      公司注册费 (m1_company_registration_usd)
-      税务登记费 (m1_tax_registration_usd)
-      法务咨询费 (m1_legal_consulting_usd)
-      行业许可费 (m1_industry_license_usd)
-      ... (共11个字段)
-      ```
-    - 每行显示：成本项名称 + 金额 + Tier徽章
-    - 表格可折叠/展开
-  - **验收标准**:
-    - [ ] M1表格显示11行成本明细
-    - [ ] M1总计匹配costResult.capex.m1值
-    - [ ] 表格可折叠/展开交互正常
-    - [ ] TypeScript 0错误
-    - [ ] Playwright测试通过：`npx playwright test tests/e2e/verify-step3-step4-ui.spec.ts`
-      - 验证点更新：`const m1DetailCount = await m1DetailItems.count(); expect(m1DetailCount).toBeGreaterThanOrEqual(11);`
-    - [ ] 截图对比保存：test-results/ui-verification/03-step3-M1-AFTER-FIX.png
-  - **测试命令**: `npm run dev` → 手动操作到Step 3 → Playwright验证
-  - **预计耗时**: 40min
-
-- [ ] **D20PP-T1.2**: 添加M2技术合规详细成本表格
-  - **修复方案**: 在M1表格下方添加M2表格（10行成本项）
-  - **验收标准**:
-    - [ ] M2表格显示10行成本明细
-    - [ ] M2总计匹配costResult.capex.m2值
-    - [ ] Playwright验证：m2DetailCount >= 10
-  - **预计耗时**: 20min
-
-- [ ] **D20PP-T1.3**: 添加M3供应链搭建详细成本表格
-  - **修复方案**: 在M2表格下方添加M3表格（9行成本项）
-  - **验收标准**:
-    - [ ] M3表格显示9行成本明细
-    - [ ] M3总计匹配costResult.capex.m3值
-    - [ ] Playwright验证：m3DetailCount >= 9
-  - **预计耗时**: 20min
-
-- [ ] **D20PP-T1.4**: Phase 1 Playwright全量验证
-  - **测试内容**:
-    - CAPEX区域显示3个详细表格（M1/M2/M3）
-    - 总计30行成本明细（11+10+9）
-    - 每个表格可折叠/展开
-    - CAPEX总计 = M1+M2+M3
-  - **截图保存**: test-results/ui-verification/03-step3-CAPEX-COMPLETE.png
-  - **预计耗时**: 10min
-
-- [ ] **D20PP-T1.5**: Git提交Phase 1成果
-  - 提交文件: components/wizard/Step3CostModeling.tsx, tests/e2e/verify-step3-step4-ui.spec.ts
-  - 提交消息: "修复：Step 3添加M1-M3 CAPEX详细成本表格（30行明细）"
-  - **验收**: Git log显示commit
-  - **预计耗时**: 5min
-
-**Phase 1验收标准**：
-- ✅ CAPEX区域显示M1/M2/M3完整表格（30行成本明细）
-- ✅ Playwright测试100%通过
-- ✅ TypeScript 0错误
-- ✅ 截图对比证明修复成功
+> **Playwright验证时间**: 2025-11-15 10:35
+> **验证工具**: tests/e2e/verify-step3-step4-ui.spec.ts
+> **测试结果**: ✅ 1 passed (45.7s)
+> **截图证据**: test-results/ui-verification/ (8张截图,1.38MB)
+> **详细报告**: ⭐ [DAY20-TASK-STATUS-REPORT.md](./DAY20-TASK-STATUS-REPORT.md) ⭐
+>
+> **完成状况**:
+> - ✅ Phase 3: Step 3布局优化（100%）
+> - ✅ Phase 4: Step 4 Mock警告移除（100%）
+> - ✅ Phase 5: Step 4场景模拟（80%）
+> - ⏸️ Phase 1/2: Step 3详细表格（暂缓,推迟到Week 6统一清理POC字段）
+>
+> **总进度**: 17/26任务完成（65%）
+> **主要成就**:
+> 1. Step 3紧凑左右分栏布局已实现
+> 2. Step 4真实数据加载,Mock警告已移除
+> 3. Phase 5核心组件(ScenarioParameterPanel/CountryMultiSelector/ScenarioComparisonTable)已创建并集成
+>
+> **遗留Gap**:
+> - Phase 1/2涉及POC→MVP 2.0字段迁移,与Week 6 Day 29重复,决定合并执行
 
 ---
 
-#### Phase 2: Step 3 OPEX详细表格（2h）⏳ 待Phase 1完成后开始
+#### Phase 1: Step 3 CAPEX详细表格（1.5h）⏸️ 暂缓（推迟到Week 6 POC清理）
+
+> **决策原因**: 与Week 6 Day 29 POC字段清理计划重复,避免重复工作
+> **参考文档**: [POC-FIELD-MIGRATION-PLAN.md](./POC-FIELD-MIGRATION-PLAN.md)
+> **实际状态**: Step 3已显示M1-M3成本明细（11行），但使用POC兼容字段，与MVP 2.0标准不符
+> **执行建议**: Week 5完成后统一迁移POC→MVP 2.0字段
+
+- [ ] **D20PP-T1.1-T1.5**: 暂缓,推迟到Week 6统一执行（参见Week 6 Day 29）
+
+---
+
+#### Phase 2: Step 3 OPEX详细表格（2h）⏸️ 暂缓（推迟到Week 6 POC清理）
+
+> **决策原因**: 与Phase 1相同,涉及POC→MVP 2.0字段迁移
+> **实际状态**: Step 3已显示M4-M8详细拆解,但使用POC对象字段(m4_goodsTax, m5_logistics等)
+> **执行建议**: Week 5完成后统一迁移
+
+- [ ] **D20PP-T2.1-T2.7**: 暂缓,推迟到Week 6统一执行（参见Week 6 Day 29）
+
+---
+
+#### Phase 3: Step 3布局优化（30min）✅ 完成
 
 - [ ] **D20PP-T2.1**: 添加M4货物税费详细成本表格
   - **修复方案**: 在OPEX区域添加M4表格（9行成本项，包括COGS/关税/VAT/物流）
