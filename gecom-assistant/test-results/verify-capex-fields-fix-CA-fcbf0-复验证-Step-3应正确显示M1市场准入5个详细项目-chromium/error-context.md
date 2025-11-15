@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e10]:
+            - heading "GECOM 智能助手" [level=1] [ref=e11]
+            - paragraph [ref=e12]: 全球电商成本计算器
+        - generic [ref=e13]:
+          - generic [ref=e14]: 为出海卖家服务
+          - generic [ref=e15]: 基于GECOM方法论
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "专业的全球电商 成本分析工具" [level=2] [ref=e18]:
+          - text: 专业的全球电商
+          - generic [ref=e19]: 成本分析工具
+        - paragraph [ref=e20]: 科学的、可信赖的海外销售成本测算模型 · 基于GECOM方法论的双阶段八模块成本分析
+        - button "开始成本计算" [ref=e21]:
+          - img [ref=e22]
+          - text: 开始成本计算
+        - paragraph [ref=e24]: 免费使用 · 支持2个行业 × 3个市场 × 3个渠道
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - img [ref=e28]
+          - heading "双阶段分析" [level=3] [ref=e31]
+          - paragraph [ref=e32]: CAPEX（阶段0-1）+ OPEX（阶段1-N）完整成本建模，涵盖M1-M8八大模块
+        - generic [ref=e33]:
+          - img [ref=e35]
+          - heading "多市场支持" [level=3] [ref=e38]
+          - paragraph [ref=e39]: 美国、越南、菲律宾市场，本地化成本参数和税收法规
+        - generic [ref=e40]:
+          - img [ref=e42]
+          - heading "行业因子库" [level=3] [ref=e46]
+          - paragraph [ref=e47]: 基于真实案例数据的宠物和电子烟行业预配置因子库
+      - generic [ref=e48]:
+        - heading "GECOM 五步流程" [level=3] [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]: "1"
+            - generic [ref=e53]:
+              - heading "战略对齐" [level=4] [ref=e54]
+              - paragraph [ref=e55]: 定义业务目标和目标指标
+          - generic [ref=e56]:
+            - generic [ref=e57]: "2"
+            - generic [ref=e58]:
+              - heading "数据采集" [level=4] [ref=e59]
+              - paragraph [ref=e60]: 收集市场、产品和运营数据
+          - generic [ref=e61]:
+            - generic [ref=e62]: "3"
+            - generic [ref=e63]:
+              - heading "成本建模" [level=4] [ref=e64]
+              - paragraph [ref=e65]: 使用8大模块计算CAPEX和OPEX
+          - generic [ref=e66]:
+            - generic [ref=e67]: "4"
+            - generic [ref=e68]:
+              - heading "场景分析" [level=4] [ref=e69]
+              - paragraph [ref=e70]: 对比不同策略和渠道
+          - generic [ref=e71]:
+            - generic [ref=e72]: "5"
+            - generic [ref=e73]:
+              - heading "洞察与路线图" [level=4] [ref=e74]
+              - paragraph [ref=e75]: 生成优化建议和行动计划
+    - contentinfo [ref=e76]:
+      - generic [ref=e78]:
+        - paragraph [ref=e79]: © 2025 GECOM 智能助手 · 基于GECOM方法论 v2.2
+        - paragraph [ref=e80]: 助力中国企业在全球电商市场取得成功
+  - button "Open Next.js Dev Tools" [ref=e86] [cursor=pointer]:
+    - img [ref=e87]
+  - alert [ref=e90]
+```
