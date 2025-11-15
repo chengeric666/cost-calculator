@@ -24,12 +24,16 @@
 
 ---
 
-**核心指标（真实进度 - 2025-11-14 20:00更新）**：
+**核心指标（真实进度 - 2025-11-15 18:00更新）**：
 - **总任务数**: 217任务（v2.3: 191 + Day 20++ 26任务）
-- **当前进度**: 129/217 (59.4%)
+- **当前进度**: 133/217 (61.3%)
   - Week 1-3: 100/103任务完成（数据基础）
   - Week 4: 22/22任务完成（UI重构 + 数据修复）✅ 100%
-  - **Day 20++ UI优化**: 0/26任务⏳ **当前执行中**
+  - **Day 20++ UI优化**: 4/26任务✅ **Step 3重设计完成**
+    - ✅ Phase 3: Step 3简单表格布局（参考SellerSprite）
+    - ✅ 修复: CAPEX Runtime TypeError
+    - ✅ 修复: 条件渲染bug（3处）
+    - ✅ 文档: Step 3重设计报告 + SellerSprite样式分析
   - Week 5准备: 7/7任务完成（图表导出质量验证）✅ 100%
   - Week 5正式: 0/59任务待执行（报告生成 + AI集成）
 - **数据覆盖**: 29/38记录（76.3%）🎉
@@ -2520,28 +2524,29 @@
 
 ---
 
-### Day 20++: 紧急UI优化修复（2025-11-14 18:00开始）⚠️ 部分完成（65%）
+### Day 20++: 紧急UI优化修复（2025-11-14 18:00开始）⚠️ 部分完成（19.2%）
 
-> **Playwright验证时间**: 2025-11-15 10:35
-> **验证工具**: tests/e2e/verify-step3-step4-ui.spec.ts
-> **测试结果**: ✅ 1 passed (45.7s)
-> **截图证据**: test-results/ui-verification/ (8张截图,1.38MB)
-> **详细报告**: ⭐ [DAY20-TASK-STATUS-REPORT.md](./DAY20-TASK-STATUS-REPORT.md) ⭐
+> **最新更新**: 2025-11-15 18:00 - Step 3简单表格重设计完成
 >
-> **完成状况**:
-> - ✅ Phase 3: Step 3布局优化（100%）
-> - ✅ Phase 4: Step 4 Mock警告移除（100%）
-> - ✅ Phase 5: Step 4场景模拟（80%）
-> - ⏸️ Phase 1/2: Step 3详细表格（暂缓,推迟到Week 6统一清理POC字段）
+> **本次会话完成**（2025-11-15）:
+> - ✅ Step 3 Runtime TypeError修复（CAPEX字段undefined）
+> - ✅ Step 3完整重设计（参考SellerSprite简单表格）
+> - ✅ 条件渲染bug修复（3处：exciseTax/fbaFee/platform_commission）
+> - ✅ 文档：Step 3重设计报告 + SellerSprite样式分析测试
+> - ✅ Git提交：4个commits全部推送远程（cbd0c2b/7c0ec15/518d59f/c2f2d9b）
 >
-> **总进度**: 17/26任务完成（65%）
-> **主要成就**:
-> 1. Step 3紧凑左右分栏布局已实现
-> 2. Step 4真实数据加载,Mock警告已移除
-> 3. Phase 5核心组件(ScenarioParameterPanel/CountryMultiSelector/ScenarioComparisonTable)已创建并集成
+> **设计变更**:
+> - 🔄 从瀑布式折叠布局 → 简单4列表格布局（用户明确要求）
+> - ✅ 移除所有9个useState folding hooks
+> - ✅ M1-M8所有详情永久展开显示（937行完整表格）
+> - ✅ 参考SellerSprite专业财务表格样式
 >
 > **遗留Gap**:
-> - Phase 1/2涉及POC→MVP 2.0字段迁移,与Week 6 Day 29重复,决定合并执行
+> - ⏸️ Phase 1/2: Step 3详细表格（暂缓,推迟到Week 6统一清理POC字段）
+> - ⏸️ Phase 4: Step 4 Mock警告移除（未开始）
+> - ⏸️ Phase 5: Step 4场景模拟（未开始）
+>
+> **总进度**: 5/26任务完成（19.2%）
 
 ---
 
