@@ -3487,6 +3487,121 @@
 
 ---
 
-**最后更新**: 2025-11-09
+## Week 6: 技术债清理与架构优化（Post-MVP）⏳
+
+> **优先级**: P2（低优先级）
+> **前置条件**: ✅ Week 5全部功能完成并交付
+> **执行策略**: MVP 2.0主流程完成后，再进行技术架构优化
+> **参考文档**: [POC-FIELD-MIGRATION-PLAN.md](../gecom-assistant/docs/POC-FIELD-MIGRATION-PLAN.md)
+
+**背景说明**：
+MVP 2.0开发过程中发现POC兼容字段（如`m4_goodsTax`, `m5_logistics`, `m8_operations`等对象类型字段）与MVP 2.0新字段结构（如`m4_cogs`, `m4_tariff`等数字类型字段）并存，造成：
+1. 类型混乱：对象字段被误用导致NaN计算错误
+2. 历史包袱：MVP 2.0本应是全新架构，不应保留POC遗留代码
+3. 维护成本：双字段并存增加理解和维护难度
+
+**决策**：先保留POC字段确保功能可用，待主流程完成后统一清理。
+
+---
+
+### Day 29: POC兼容字段彻底清理（6.5h）⏳
+
+#### Phase 1: 类型定义重构（1h）
+
+- [ ] **Task 29.1**: 更新types/gecom.ts添加CAPEX明细字段
+  - 添加m1_company_registration等12个CAPEX子项字段
+  - 添加m2_product_certification等9个M2子项字段
+  - 添加m3_warehouse_deposit等9个M3子项字段
+  - 确保完整替代POC字段功能
+
+- [ ] **Task 29.2**: 删除types/gecom.ts中所有POC兼容字段
+  - 删除capex.m1_marketEntry?: any
+  - 删除capex.m2_techCompliance?: any
+  - 删除capex.m3_supplyChain?: any
+  - 删除opex.m4_goodsTax?: any
+  - 删除opex.m5_logistics?: any
+  - 删除opex.m8_operations?: any
+
+#### Phase 2: GECOMEngine重构（1.5h）
+
+- [ ] **Task 29.3**: 更新gecom-engine-v2.ts填充CAPEX明细字段
+  - 从CostFactor读取m1_company_registration_usd等字段
+  - 填充到CostResult.capex.m1_company_registration
+  - 确保数据完整性无损失
+
+- [ ] **Task 29.4**: 删除gecom-engine-v2.ts中POC字段填充逻辑
+  - 删除行300-320的POC对象构建代码
+  - 移除m4_goodsTax/m5_logistics/m8_operations填充
+  - 简化引擎逻辑
+
+#### Phase 3: UI组件迁移（2h）
+
+- [ ] **Task 29.5**: 迁移Step3CostModeling.tsx（主要工作）
+  - 更新行25-35的OPEX总额计算（移除?.total回退）
+  - 更新行105-169的CAPEX详细展示（使用新字段）
+  - 更新行198-270的OPEX详细展示（使用数字字段）
+  - 测试验证所有数据展示正确
+
+- [ ] **Task 29.6**: 迁移Step2DataCollection.tsx
+  - 审查POC字段使用位置
+  - 替换为MVP 2.0新字段
+  - 确保实时计算逻辑正确
+
+- [ ] **Task 29.7**: 验证ScenarioComparisonTable.tsx
+  - 确认已使用MVP 2.0字段（commit 96a8b00）
+  - 无需额外修改
+
+#### Phase 4: 规范文档创建（1h）
+
+- [ ] **Task 29.8**: 创建DATA-USAGE-STANDARD.md规范文档
+  - 明确MVP 2.0字段结构
+  - 禁止使用POC字段
+  - 提供正确/错误代码示例
+  - 字段命名规范
+
+- [ ] **Task 29.9**: 更新CLAUDE.md添加数据使用规范章节
+  - 引用DATA-USAGE-STANDARD.md
+  - 强调MVP 2.0抛弃历史包袱
+  - 添加到"开发规范"章节
+
+#### Phase 5: 测试验证（1h）
+
+- [ ] **Task 29.10**: TypeScript构建验证
+  - npm run build
+  - 确保0个类型错误
+
+- [ ] **Task 29.11**: E2E测试验证
+  - npx playwright test tests/e2e/step3-cost-modeling-test.spec.ts
+  - 验证Step 3详细展示功能完整
+
+- [ ] **Task 29.12**: 手动验证
+  - Step 3 CAPEX/OPEX详细拆解显示正确
+  - 数据精度无损失
+  - 无控制台错误
+
+#### Phase 6: 代码提交（0.5h）
+
+- [ ] **Task 29.13**: Git提交POC字段清理
+  - 提交信息："重构：清理POC兼容字段，统一MVP 2.0数据模型"
+  - 推送到远程仓库
+
+---
+
+**验收标准**：
+- ✅ types/gecom.ts无任何POC兼容字段
+- ✅ gecom-engine-v2.ts停止填充POC字段
+- ✅ Step 3成本详细展示功能100%正常
+- ✅ TypeScript无编译错误
+- ✅ E2E测试100%通过
+- ✅ DATA-USAGE-STANDARD.md规范文档完成
+
+**风险提示**：
+- ⚠️ 这是Breaking Change，必须完整迁移所有使用位置
+- ⚠️ 需要仔细测试避免数据丢失
+- ⚠️ 建议创建单独分支进行迁移
+
+---
+
+**最后更新**: 2025-11-15
 **维护者**: GECOM Team
-**版本**: v2.1.0（数据优先版）
+**版本**: v2.2.0（添加Week 6技术债清理）
