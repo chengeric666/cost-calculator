@@ -105,11 +105,50 @@ function calculateCAPEX(project: Project, factors: IndustryFactors): CAPEXCosts 
   const total = m1.total + m2.total + m3.total;
 
   return {
+    // MVP 2.0: 完整30个详细字段
+    // M1: 市场准入（11个字段）
+    m1: m1.total,
+    m1_company_registration: m1.companyRegistration,
+    m1_business_license: m1.businessLicense,
+    m1_tax_registration: m1.taxRegistration,
+    m1_legal_consulting: m1.legalConsulting,
+    m1_regulatory_agency: '市场监督管理局',
+    m1_complexity: '中等',
+    m1_industry_license: 0,
+    m1_renewal_required: false,
+    m1_renewal_frequency: '年度',
+    m1_notes: '',
+
+    // M2: 技术合规（10个字段）
+    m2: m2.total,
+    m2_product_certification: m2.productCertification,
+    m2_trademark_registration: m2.trademarkRegistration,
+    m2_compliance_testing: m2.complianceTesting,
+    m2_certification_validity_years: 3,
+    m2_trademark_notes: '',
+    m2_inspection_frequency: '季度',
+    m2_inspection_cost: 0,
+    m2_product_testing_cost: m2.complianceTesting,
+    m2_patent_filing: m2.patentFiling,
+
+    // M3: 供应链搭建（9个字段）
+    m3: m3.total,
+    m3_warehouse_deposit: m3.warehouseDeposit,
+    m3_equipment_purchase: m3.equipmentPurchase,
+    m3_initial_inventory: m3.initialInventory,
+    m3_system_setup: m3.systemSetup,
+    m3_warehouse_type: '第三方仓',
+    m3_warehouse_size_sqm: 100,
+    m3_inventory_months: 3,
+    m3_software_cost: 0,
+
+    total,
+
+    // POC兼容字段（保留以兼容旧代码）
     m1_marketEntry: m1,
     m2_techCompliance: m2,
     m3_supplyChain: m3,
-    total,
-  };
+  } as any;
 }
 
 /**

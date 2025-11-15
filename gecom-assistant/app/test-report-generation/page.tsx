@@ -52,9 +52,42 @@ export default function TestReportGenerationPage() {
     },
     costResult: {
       capex: {
+        // M1: 市场准入（11个字段）
         m1: 2500,
+        m1_company_registration: 500,
+        m1_business_license: 300,
+        m1_tax_registration: 200,
+        m1_legal_consulting: 1000,
+        m1_regulatory_agency: 'FDA & USDA',
+        m1_complexity: '中等',
+        m1_industry_license: 500,
+        m1_renewal_required: true,
+        m1_renewal_frequency: '年度',
+        m1_notes: '宠物食品需FDA注册',
+
+        // M2: 技术合规（10个字段）
         m2: 3000,
+        m2_product_certification: 1500,
+        m2_trademark_registration: 800,
+        m2_compliance_testing: 500,
+        m2_certification_validity_years: 3,
+        m2_trademark_notes: 'USPTO商标注册',
+        m2_inspection_frequency: '季度',
+        m2_inspection_cost: 100,
+        m2_product_testing_cost: 500,
+        m2_patent_filing: 0,
+
+        // M3: 供应链搭建（9个字段）
         m3: 5000,
+        m3_warehouse_deposit: 2000,
+        m3_equipment_purchase: 1500,
+        m3_initial_inventory: 1000,
+        m3_system_setup: 300,
+        m3_warehouse_type: '第三方仓',
+        m3_warehouse_size_sqm: 100,
+        m3_inventory_months: 3,
+        m3_software_cost: 200,
+
         total: 10500,
       },
       opex: {
