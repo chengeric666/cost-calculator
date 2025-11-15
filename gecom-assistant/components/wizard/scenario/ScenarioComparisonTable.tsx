@@ -471,32 +471,57 @@ export default function ScenarioComparisonTable({
         <div className="space-y-3">
           {countries.map(country => {
             const result = results.get(country)!;
-            const total = result.opex.m4_goodsTax + result.opex.m5_logistics + result.opex.m6_marketing + result.opex.m7_payment + result.opex.m8_operations;
 
-            // 调试输出
+            // ✅ 修复：使用MVP 2.0新结构字段（数字类型），不使用POC旧字段（对象类型）
+            // M4: 货物税费（4个子项求和）
+            const m4_cogs = typeof result.opex.m4_cogs === 'number' ? result.opex.m4_cogs : 0;
+            const m4_tariff = typeof result.opex.m4_tariff === 'number' ? result.opex.m4_tariff : 0;
+            const m4_logistics = typeof result.opex.m4_logistics === 'number' ? result.opex.m4_logistics : 0;
+            const m4_vat = typeof result.opex.m4_vat === 'number' ? result.opex.m4_vat : 0;
+            const m4 = m4_cogs + m4_tariff + m4_logistics + m4_vat;
+
+            // M5: 物流配送（2个子项求和）
+            const m5_last_mile = typeof result.opex.m5_last_mile === 'number' ? result.opex.m5_last_mile : 0;
+            const m5_return = typeof result.opex.m5_return === 'number' ? result.opex.m5_return : 0;
+            const m5 = m5_last_mile + m5_return;
+
+            // M6: 营销获客
+            const m6 = typeof result.opex.m6_marketing === 'number' ? result.opex.m6_marketing : 0;
+
+            // M7: 支付手续费（2个子项求和）
+            const m7_payment = typeof result.opex.m7_payment === 'number' ? result.opex.m7_payment : 0;
+            const m7_commission = typeof result.opex.m7_platform_commission === 'number' ? result.opex.m7_platform_commission : 0;
+            const m7 = m7_payment + m7_commission;
+
+            // M8: 运营管理
+            const m8 = typeof result.opex.m8_ga === 'number' ? result.opex.m8_ga : 0;
+
+            const total = m4 + m5 + m6 + m7 + m8;
+
+            // 计算百分比
+            const m4Pct = total > 0 ? (m4 / total) * 100 : 0;
+            const m5Pct = total > 0 ? (m5 / total) * 100 : 0;
+            const m6Pct = total > 0 ? (m6 / total) * 100 : 0;
+            const m7Pct = total > 0 ? (m7 / total) * 100 : 0;
+            const m8Pct = total > 0 ? (m8 / total) * 100 : 0;
+
+            // 调试输出（使用新字段）
             if (typeof window !== 'undefined') {
-              console.log(`[${country}] OPEX数据:`, {
-                m4: result.opex.m4_goodsTax,
-                m5: result.opex.m5_logistics,
-                m6: result.opex.m6_marketing,
-                m7: result.opex.m7_payment,
-                m8: result.opex.m8_operations,
-                total,
-                isNaN: isNaN(total)
+              console.log(`[${country}] OPEX明细（MVP 2.0结构）:`, {
+                M4: { cogs: m4_cogs, tariff: m4_tariff, logistics: m4_logistics, vat: m4_vat, total: m4 },
+                M5: { last_mile: m5_last_mile, return: m5_return, total: m5 },
+                M6: m6,
+                M7: { payment: m7_payment, commission: m7_commission, total: m7 },
+                M8: m8,
+                TOTAL: total
               });
-            }
-
-            const m4Pct = total > 0 ? (result.opex.m4_goodsTax / total) * 100 : 0;
-            const m5Pct = total > 0 ? (result.opex.m5_logistics / total) * 100 : 0;
-            const m6Pct = total > 0 ? (result.opex.m6_marketing / total) * 100 : 0;
-            const m7Pct = total > 0 ? (result.opex.m7_payment / total) * 100 : 0;
-            const m8Pct = total > 0 ? (result.opex.m8_operations / total) * 100 : 0;
-
-            // 调试百分比
-            if (typeof window !== 'undefined') {
               console.log(`[${country}] 百分比:`, {
-                m4Pct, m5Pct, m6Pct, m7Pct, m8Pct,
-                sum: m4Pct + m5Pct + m6Pct + m7Pct + m8Pct
+                m4Pct: m4Pct.toFixed(1),
+                m5Pct: m5Pct.toFixed(1),
+                m6Pct: m6Pct.toFixed(1),
+                m7Pct: m7Pct.toFixed(1),
+                m8Pct: m8Pct.toFixed(1),
+                sum: (m4Pct + m5Pct + m6Pct + m7Pct + m8Pct).toFixed(1)
               });
             }
 
