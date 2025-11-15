@@ -473,11 +473,32 @@ export default function ScenarioComparisonTable({
             const result = results.get(country)!;
             const total = result.opex.m4_goodsTax + result.opex.m5_logistics + result.opex.m6_marketing + result.opex.m7_payment + result.opex.m8_operations;
 
+            // 调试输出
+            if (typeof window !== 'undefined') {
+              console.log(`[${country}] OPEX数据:`, {
+                m4: result.opex.m4_goodsTax,
+                m5: result.opex.m5_logistics,
+                m6: result.opex.m6_marketing,
+                m7: result.opex.m7_payment,
+                m8: result.opex.m8_operations,
+                total,
+                isNaN: isNaN(total)
+              });
+            }
+
             const m4Pct = total > 0 ? (result.opex.m4_goodsTax / total) * 100 : 0;
             const m5Pct = total > 0 ? (result.opex.m5_logistics / total) * 100 : 0;
             const m6Pct = total > 0 ? (result.opex.m6_marketing / total) * 100 : 0;
             const m7Pct = total > 0 ? (result.opex.m7_payment / total) * 100 : 0;
             const m8Pct = total > 0 ? (result.opex.m8_operations / total) * 100 : 0;
+
+            // 调试百分比
+            if (typeof window !== 'undefined') {
+              console.log(`[${country}] 百分比:`, {
+                m4Pct, m5Pct, m6Pct, m7Pct, m8Pct,
+                sum: m4Pct + m5Pct + m6Pct + m7Pct + m8Pct
+              });
+            }
 
             return (
               <div key={country} className="flex items-center gap-3">
@@ -485,32 +506,55 @@ export default function ScenarioComparisonTable({
                   {COUNTRY_INFO[country].flag} {country}
                 </div>
                 <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden flex">
-                  {m6Pct > 0 && (
-                    <div className="bg-purple-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m6Pct}%` }}>
-                      {m6Pct > 15 ? `M6 ${m6Pct.toFixed(0)}%` : ''}
-                    </div>
-                  )}
-                  {m4Pct > 0 && (
-                    <div className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m4Pct}%` }}>
-                      {m4Pct > 15 ? `M4 ${m4Pct.toFixed(0)}%` : ''}
-                    </div>
-                  )}
-                  {m5Pct > 0 && (
-                    <div className="bg-green-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m5Pct}%` }}>
-                      {m5Pct > 8 ? `M5 ${m5Pct.toFixed(0)}%` : ''}
-                    </div>
-                  )}
-                  {m7Pct > 0 && (
-                    <div className="bg-yellow-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m7Pct}%` }}>
-                      {m7Pct > 5 ? `M7` : ''}
-                    </div>
-                  )}
-                  {m8Pct > 0 && (
-                    <div className="bg-orange-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m8Pct}%` }}>
-                      {m8Pct > 5 ? `M8` : ''}
-                    </div>
-                  )}
-                  {total === 0 && (
+                  {total > 0 ? (
+                    <>
+                      {m6Pct > 0 && (
+                        <div
+                          className="bg-purple-500 flex items-center justify-center text-xs text-white font-medium"
+                          style={{ width: `${m6Pct}%` }}
+                          title={`M6 营销: ${m6Pct.toFixed(1)}%`}
+                        >
+                          {m6Pct > 10 ? `M6 ${m6Pct.toFixed(0)}%` : ''}
+                        </div>
+                      )}
+                      {m4Pct > 0 && (
+                        <div
+                          className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium"
+                          style={{ width: `${m4Pct}%` }}
+                          title={`M4 货物: ${m4Pct.toFixed(1)}%`}
+                        >
+                          {m4Pct > 10 ? `M4 ${m4Pct.toFixed(0)}%` : ''}
+                        </div>
+                      )}
+                      {m5Pct > 0 && (
+                        <div
+                          className="bg-green-500 flex items-center justify-center text-xs text-white font-medium"
+                          style={{ width: `${m5Pct}%` }}
+                          title={`M5 物流: ${m5Pct.toFixed(1)}%`}
+                        >
+                          {m5Pct > 10 ? `M5 ${m5Pct.toFixed(0)}%` : ''}
+                        </div>
+                      )}
+                      {m7Pct > 0 && (
+                        <div
+                          className="bg-yellow-500 flex items-center justify-center text-xs text-white font-medium"
+                          style={{ width: `${m7Pct}%` }}
+                          title={`M7 支付: ${m7Pct.toFixed(1)}%`}
+                        >
+                          {m7Pct > 5 ? `M7` : ''}
+                        </div>
+                      )}
+                      {m8Pct > 0 && (
+                        <div
+                          className="bg-orange-500 flex items-center justify-center text-xs text-white font-medium"
+                          style={{ width: `${m8Pct}%` }}
+                          title={`M8 运营: ${m8Pct.toFixed(1)}%`}
+                        >
+                          {m8Pct > 5 ? `M8` : ''}
+                        </div>
+                      )}
+                    </>
+                  ) : (
                     <div className="flex-1 flex items-center justify-center text-xs text-gray-400">
                       暂无数据
                     </div>
