@@ -464,18 +464,20 @@ export default function ScenarioComparisonTable({
 
       {/* 成本结构对比图 */}
       <div className="mt-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-4">
-          📊 成本结构对比
+        <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-gray-600" />
+          成本结构对比
         </h4>
         <div className="space-y-3">
           {countries.map(country => {
             const result = results.get(country)!;
             const total = result.opex.m4_goodsTax + result.opex.m5_logistics + result.opex.m6_marketing + result.opex.m7_payment + result.opex.m8_operations;
-            const m4Pct = (result.opex.m4_goodsTax / total) * 100;
-            const m5Pct = (result.opex.m5_logistics / total) * 100;
-            const m6Pct = (result.opex.m6_marketing / total) * 100;
-            const m7Pct = (result.opex.m7_payment / total) * 100;
-            const m8Pct = (result.opex.m8_operations / total) * 100;
+
+            const m4Pct = total > 0 ? (result.opex.m4_goodsTax / total) * 100 : 0;
+            const m5Pct = total > 0 ? (result.opex.m5_logistics / total) * 100 : 0;
+            const m6Pct = total > 0 ? (result.opex.m6_marketing / total) * 100 : 0;
+            const m7Pct = total > 0 ? (result.opex.m7_payment / total) * 100 : 0;
+            const m8Pct = total > 0 ? (result.opex.m8_operations / total) * 100 : 0;
 
             return (
               <div key={country} className="flex items-center gap-3">
@@ -483,21 +485,36 @@ export default function ScenarioComparisonTable({
                   {COUNTRY_INFO[country].flag} {country}
                 </div>
                 <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden flex">
-                  <div className="bg-purple-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m6Pct}%` }}>
-                    {m6Pct > 15 ? `M6 ${m6Pct.toFixed(0)}%` : ''}
-                  </div>
-                  <div className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m4Pct}%` }}>
-                    {m4Pct > 15 ? `M4 ${m4Pct.toFixed(0)}%` : ''}
-                  </div>
-                  <div className="bg-green-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m5Pct}%` }}>
-                    {m5Pct > 8 ? `M5 ${m5Pct.toFixed(0)}%` : ''}
-                  </div>
-                  <div className="bg-yellow-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m7Pct}%` }}>
-                    {m7Pct > 5 ? `M7` : ''}
-                  </div>
-                  <div className="bg-orange-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m8Pct}%` }}>
-                    {m8Pct > 5 ? `M8` : ''}
-                  </div>
+                  {m6Pct > 0 && (
+                    <div className="bg-purple-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m6Pct}%` }}>
+                      {m6Pct > 15 ? `M6 ${m6Pct.toFixed(0)}%` : ''}
+                    </div>
+                  )}
+                  {m4Pct > 0 && (
+                    <div className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m4Pct}%` }}>
+                      {m4Pct > 15 ? `M4 ${m4Pct.toFixed(0)}%` : ''}
+                    </div>
+                  )}
+                  {m5Pct > 0 && (
+                    <div className="bg-green-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m5Pct}%` }}>
+                      {m5Pct > 8 ? `M5 ${m5Pct.toFixed(0)}%` : ''}
+                    </div>
+                  )}
+                  {m7Pct > 0 && (
+                    <div className="bg-yellow-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m7Pct}%` }}>
+                      {m7Pct > 5 ? `M7` : ''}
+                    </div>
+                  )}
+                  {m8Pct > 0 && (
+                    <div className="bg-orange-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: `${m8Pct}%` }}>
+                      {m8Pct > 5 ? `M8` : ''}
+                    </div>
+                  )}
+                  {total === 0 && (
+                    <div className="flex-1 flex items-center justify-center text-xs text-gray-400">
+                      暂无数据
+                    </div>
+                  )}
                 </div>
               </div>
             );
