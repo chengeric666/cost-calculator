@@ -58,12 +58,18 @@ export default function Step4ScenarioAnalysisV2({
 
   // ============ Data Loading ============
   /**
-   * 从Appwrite数据库加载真实成本因子数据
-   * Layer 2: 核心67个P0字段（遵循DATA-USAGE-SPECIFICATION规范）
+   * 从Appwrite数据库加载真实成本因子数据（带fallback机制）
+   *
+   * 数据源策略：
+   * 1. 优先尝试：Appwrite Layer 2（核心67个P0字段）
+   * 2. Fallback：本地TypeScript文件（完整90+字段）
+   *
+   * 遵循DATA-USAGE-SPECIFICATION规范
    */
   const loadCostFactors = async (countries: TargetCountry[]): Promise<Map<TargetCountry, CostFactor>> => {
     try {
-      // 从Appwrite加载真实19国数据（Layer 2核心字段）
+      // 【策略1】优先从Appwrite加载真实19国数据（Layer 2核心字段）
+      console.log('尝试从Appwrite加载数据:', countries);
       const costFactorsArray = await getCostFactorsByCountries(
         countries,
         project.industry || 'pet',
@@ -88,11 +94,43 @@ export default function Step4ScenarioAnalysisV2({
       });
 
       setTierMap(newTierMap);
+      console.log('✅ Appwrite数据加载成功:', costFactors.size, '国');
       return costFactors;
-    } catch (error) {
-      console.error('加载Appwrite成本因子失败:', error);
-      // 返回空Map，让上层处理错误
-      return new Map();
+    } catch (appwriteError) {
+      // 【策略2】Fallback：从本地TypeScript文件加载数据（Layer 1）
+      console.warn('⚠️ Appwrite数据加载失败，使用本地fallback数据:', appwriteError);
+
+      const costFactors = new Map<TargetCountry, CostFactor>();
+      const newTierMap = new Map<TargetCountry, string>();
+      const industry = project.industry || 'pet';
+      const industryFileSuffix = industry === 'pet' ? 'pet-food' : 'vape';
+
+      // 动态加载每个国家的本地数据文件
+      for (const country of countries) {
+        try {
+          const module = await import(`@/data/cost-factors/${country}-${industryFileSuffix}`);
+          const data: CostFactor = module.default;
+
+          if (data) {
+            costFactors.set(country, data);
+
+            // 设置Tier质量等级（从本地数据推断）
+            const tier = data.m4_tariff_data_source?.includes('官网') || data.m4_tariff_data_source?.includes('Official')
+              ? 'Tier 1'
+              : data.m4_tariff_data_source?.includes('报告') || data.m4_tariff_data_source?.includes('Report')
+              ? 'Tier 2'
+              : 'Tier 3';
+
+            newTierMap.set(country, tier);
+          }
+        } catch (localError) {
+          console.warn(`⚠️ 本地数据加载失败: ${country}-${industryFileSuffix}`, localError);
+        }
+      }
+
+      setTierMap(newTierMap);
+      console.log('✅ 本地fallback数据加载成功:', costFactors.size, '国');
+      return costFactors;
     }
   };
 
