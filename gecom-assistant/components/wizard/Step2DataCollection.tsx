@@ -1699,7 +1699,6 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🚢</span>
             <h4 className="font-semibold text-gray-900">头程物流</h4>
             <TierBadgeWithTooltip
               tier={getEffectiveValue('m4_logistics_tier')}
@@ -1719,7 +1718,7 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
                 : 'bg-transparent text-gray-600 hover:bg-gray-200'
             }`}
           >
-            🚢 海运 (${seaFreightRate.toFixed(2)}/kg)
+            海运 (${seaFreightRate.toFixed(2)}/kg)
           </button>
           <button
             onClick={() => setLogisticsMode('air')}
@@ -1729,7 +1728,7 @@ function M4Module({ state, toggleSection, getEffectiveValue, isOverridden, setUs
                 : 'bg-transparent text-gray-600 hover:bg-gray-200'
             }`}
           >
-            ✈️ 空运 (${airFreightRate.toFixed(2)}/kg)
+            空运 (${airFreightRate.toFixed(2)}/kg)
           </button>
         </div>
 

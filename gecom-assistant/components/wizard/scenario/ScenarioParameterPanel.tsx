@@ -226,7 +226,7 @@ export default function ScenarioParameterPanel({
               }`}
               data-testid="logistics-sea-button"
             >
-              🚢 海运
+              海运
             </button>
             <button
               onClick={() => handleParamChange('logisticsMode', 'air')}
@@ -237,7 +237,7 @@ export default function ScenarioParameterPanel({
               }`}
               data-testid="logistics-air-button"
             >
-              ✈️ 空运
+              空运
             </button>
           </div>
 

@@ -245,7 +245,7 @@ export default function ScenarioComparisonTable({
       rows.push({
         label: '  ├─ 头程物流',
         type: 'subdata',
-        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax.cogs * 0.15).toFixed(2)} ${params.logisticsMode === 'sea' ? '🚢' : '✈️'}`])),
+        values: new Map(countries.map(c => [c, `$${(results.get(c)!.opex.m4_goodsTax.cogs * 0.15).toFixed(2)} (${params.logisticsMode === 'sea' ? '海运' : '空运'})`])),
       });
       rows.push({
         label: '  ├─ 进口关税',
@@ -322,7 +322,7 @@ export default function ScenarioComparisonTable({
           <span>|</span>
           <span>CAC <strong className="text-blue-700">${params.cac}</strong></span>
           <span>|</span>
-          <span>物流 <strong className="text-blue-700">{params.logisticsMode === 'sea' ? '海运🚢' : '空运✈️'}</strong></span>
+          <span>物流 <strong className="text-blue-700">{params.logisticsMode === 'sea' ? '海运' : '空运'}</strong></span>
           <span>|</span>
           <span>履约 <strong className="text-blue-700">{params.fulfillmentMode.toUpperCase()}</strong></span>
           <span>|</span>
