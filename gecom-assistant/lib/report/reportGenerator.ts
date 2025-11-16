@@ -273,17 +273,16 @@ export class ReportGenerator {
     const { generateTableOfContents } = await import('./templates/table-of-contents');
     chapters.push(...generateTableOfContents());
 
-    // Day 22-26: 逐步添加其他章节
+    // Day 22: 执行摘要 + 第一章 ✅
+    if (this.options.includeExecutiveSummary) {
+      console.log('[ReportGenerator] 生成执行摘要...');
+      const { generateExecutiveSummary } = await import('./templates/executive-summary');
+      chapters.push(...generateExecutiveSummary(data));
+    }
 
-    // TODO: Day 22 - 执行摘要
-    // if (this.options.includeExecutiveSummary) {
-    //   const { generateExecutiveSummary } = await import('./templates/executive-summary');
-    //   chapters.push(...generateExecutiveSummary(data));
-    // }
-
-    // TODO: Day 22 - 第一章
-    // const { generateChapter1 } = await import('./templates/chapter-1-overview');
-    // chapters.push(...generateChapter1(data));
+    console.log('[ReportGenerator] 生成第一章：项目概况...');
+    const { generateChapter1Overview } = await import('./templates/chapter-1-overview');
+    chapters.push(...generateChapter1Overview(data));
 
     // TODO: Day 23 - 第二章
     // const { generateChapter2 } = await import('./templates/chapter-2-cost-breakdown');
@@ -309,59 +308,16 @@ export class ReportGenerator {
     //   chapters.push(...generateAppendixC(data));
     // }
 
-    // 临时占位段落（Day 21基础版本，避免目录后空白）
+    // Day 23-26占位：后续章节将逐步添加
     chapters.push(
-      new Paragraph({
-        text: '第一章：项目概况（待Day 22实现）',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-      }),
-      new Paragraph({
-        text: '本章将在Day 22完成时自动生成，包含以下内容：',
-        spacing: { after: 200 },
-      }),
-      new Paragraph({
-        text: '• 项目背景与核心假设',
-        indent: { left: 720 },
-      }),
-      new Paragraph({
-        text: '• GECOM方法论说明',
-        indent: { left: 720 },
-      }),
-      new Paragraph({
-        text: '• 核心输入参数汇总',
-        indent: { left: 720 },
-      }),
-      new Paragraph({
-        text: '• 数据质量声明与溯源',
-        indent: { left: 720 },
-        spacing: { after: 400 },
-      }),
       new Paragraph({
         text: '第二章：成本结构拆解（待Day 23实现）',
         heading: HeadingLevel.HEADING_1,
         spacing: { before: 400, after: 200 },
+        pageBreakBefore: true,
       }),
       new Paragraph({
-        text: '本章将详细拆解M1-M8八大成本模块，包含15+可视化图表。',
-        spacing: { after: 400 },
-      }),
-      new Paragraph({
-        text: '第三章：财务分析（待Day 24实现）',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-      }),
-      new Paragraph({
-        text: '本章将展示单位经济模型、关键KPI、盈亏平衡分析等财务指标。',
-        spacing: { after: 400 },
-      }),
-      new Paragraph({
-        text: '第四章：战略建议（待Day 25实现）',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-      }),
-      new Paragraph({
-        text: '本章将由DeepSeek R1 AI引擎生成深度战略建议与优化方案。',
+        text: '本章将详细拆解M1-M8八大成本模块，包含15+可视化图表。Day 23完成时自动生成。',
         spacing: { after: 400 },
       })
     );

@@ -1,14 +1,16 @@
 'use client';
 
 /**
- * Day 21报告生成测试页面
+ * Day 21-22报告生成测试页面
  *
  * 功能：
  * - 测试ReportGenerator核心引擎
- * - 生成包含封面+目录的Word文档
+ * - Day 21: 生成封面+目录
+ * - Day 22: 生成执行摘要+第一章（项目概况）
  * - 提供手动下载按钮
  *
  * @created 2025-11-14
+ * @updated 2025-11-16 (Day 22)
  * @author GECOM Team
  */
 
@@ -166,8 +168,8 @@ export default function TestReportGenerationPage() {
           costFactor: testCostFactor,
         },
         {
-          includeCharts: false, // Day 21暂不包含图表
-          includeExecutiveSummary: false,
+          includeCharts: false, // Day 23实现图表
+          includeExecutiveSummary: true, // Day 22: 执行摘要+第一章
           includeAppendix: false,
           useAI: false,
         }
@@ -193,7 +195,7 @@ export default function TestReportGenerationPage() {
 
       // 自动下载报告
       const { saveAs } = await import('file-saver');
-      saveAs(reportResult.blob, 'gecom-report-day21-test.docx');
+      saveAs(reportResult.blob, 'gecom-report-day22-test.docx');
     } catch (error) {
       console.error('[Test Page] 报告生成失败:', error);
       setResult({
@@ -211,10 +213,10 @@ export default function TestReportGenerationPage() {
         {/* 页面标题 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Day 21 报告生成测试
+            Day 21-22 报告生成测试
           </h1>
           <p className="text-gray-600">
-            测试ReportGenerator核心引擎 - 封面+目录
+            测试ReportGenerator核心引擎 - 封面+目录+执行摘要+第一章
           </p>
         </div>
 
@@ -301,13 +303,15 @@ export default function TestReportGenerationPage() {
                   </span>
                 </div>
                 <div className="mt-4 p-4 bg-white rounded border border-green-300">
-                  <p className="font-medium text-green-800 mb-2">✓ 手动验证清单：</p>
+                  <p className="font-medium text-green-800 mb-2">✓ 手动验证清单（Day 22）：</p>
                   <ul className="list-disc list-inside text-green-700 space-y-1 text-xs">
-                    <li>打开下载的Word文档：gecom-report-day21-test.docx</li>
+                    <li>打开下载的Word文档：gecom-report-day22-test.docx</li>
                     <li>验证封面页：标题、项目信息、日期、版本</li>
                     <li>验证目录：右键更新域可显示页码</li>
-                    <li>验证第一章占位符：项目概况（待Day 22实现）</li>
-                    <li>验证样式：中文宋体、标题加粗、1.5倍行距</li>
+                    <li>验证执行摘要：约800-1,000字，包含项目概述、核心发现、TOP 3成本驱动因素、战略建议预览</li>
+                    <li>验证第一章内容：约2,500-3,000字，包含4个小节（1.1项目背景、1.2核心假设、1.3 GECOM方法论、1.4报告范围）</li>
+                    <li>验证样式：中文宋体、标题加粗、1.5倍行距、两端对齐</li>
+                    <li>验证数据准确性：项目名称、市场、定价、成本数据与测试数据一致</li>
                   </ul>
                 </div>
               </div>
@@ -323,18 +327,21 @@ export default function TestReportGenerationPage() {
         {/* 验收标准 */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            Day 21 验收标准
+            Day 22 验收标准
           </h3>
           <ul className="space-y-2 text-sm text-blue-800">
             <li>✓ TypeScript 0错误</li>
-            <li>✓ 文件大小 &gt;10KB</li>
+            <li>✓ 文件大小 &gt;20KB（Day 22含执行摘要+第一章，预期15-25KB）</li>
             <li>
               ✓ MIME类型正确（application/vnd.openxmlformats-officedocument.wordprocessingml.document）
             </li>
             <li>✓ 封面页信息完整（产品名称、行业、市场、渠道、日期、版本）</li>
             <li>✓ 目录结构正确（可在Word中更新域显示页码）</li>
+            <li>✓ 执行摘要完整（800-1,000字，6个核心部分）</li>
+            <li>✓ 第一章内容完整（2,500-3,000字，4个小节）</li>
+            <li>✓ 数据动态填充正确（项目信息、经济指标、成本结构）</li>
             <li>✓ Word文档可正常打开（Mac/Windows）</li>
-            <li>✓ 生成耗时 &lt;3秒</li>
+            <li>✓ 生成耗时 &lt;5秒（Day 22增加内容，放宽到5秒）</li>
           </ul>
         </div>
       </div>
