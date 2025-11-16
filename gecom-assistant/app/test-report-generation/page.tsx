@@ -195,7 +195,7 @@ export default function TestReportGenerationPage() {
 
       // 自动下载报告
       const { saveAs } = await import('file-saver');
-      saveAs(reportResult.blob, 'gecom-report-day22-test.docx');
+      saveAs(reportResult.blob, 'gecom-report-day23-test.docx');
     } catch (error) {
       console.error('[Test Page] 报告生成失败:', error);
       setResult({
@@ -213,10 +213,10 @@ export default function TestReportGenerationPage() {
         {/* 页面标题 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Day 21-22 报告生成测试
+            Day 21-23 报告生成测试
           </h1>
           <p className="text-gray-600">
-            测试ReportGenerator核心引擎 - 封面+目录+执行摘要+第一章
+            测试ReportGenerator核心引擎 - 封面+目录+执行摘要+第一章+第二章（8表格+5图表）
           </p>
         </div>
 
@@ -303,15 +303,20 @@ export default function TestReportGenerationPage() {
                   </span>
                 </div>
                 <div className="mt-4 p-4 bg-white rounded border border-green-300">
-                  <p className="font-medium text-green-800 mb-2">✓ 手动验证清单（Day 22）：</p>
+                  <p className="font-medium text-green-800 mb-2">✓ 手动验证清单（Day 23）：</p>
                   <ul className="list-disc list-inside text-green-700 space-y-1 text-xs">
-                    <li>打开下载的Word文档：gecom-report-day22-test.docx</li>
+                    <li>打开下载的Word文档：gecom-report-day23-test.docx</li>
                     <li>验证封面页：标题、项目信息、日期、版本</li>
                     <li>验证目录：右键更新域可显示页码</li>
                     <li>验证执行摘要：约800-1,000字，包含项目概述、核心发现、TOP 3成本驱动因素、战略建议预览</li>
                     <li>验证第一章内容：约2,500-3,000字，包含4个小节（1.1项目背景、1.2核心假设、1.3 GECOM方法论、1.4报告范围）</li>
+                    <li><strong>验证第二章内容：约8,000-10,000字，包含3个部分</strong></li>
+                    <li className="ml-6">2.1 CAPEX（M1-M3共3个表格）：市场准入、技术合规、供应链搭建</li>
+                    <li className="ml-6">2.2 OPEX（M4-M8共5个表格）：货物税费、物流配送、营销获客、支付手续费、运营管理</li>
+                    <li className="ml-6">2.3 可视化（5个图表占位符）：关税对比、物流成本、成本饼图、CAPEX vs OPEX、瀑布图</li>
+                    <li>验证表格格式：3列结构（成本项目40%+金额30%+备注30%），灰色表头，蓝色总计行</li>
+                    <li>验证数据准确性：M1-M8成本数据正确显示，formatCurrency格式正确，百分比计算正确</li>
                     <li>验证样式：中文宋体、标题加粗、1.5倍行距、两端对齐</li>
-                    <li>验证数据准确性：项目名称、市场、定价、成本数据与测试数据一致</li>
                   </ul>
                 </div>
               </div>
@@ -327,11 +332,11 @@ export default function TestReportGenerationPage() {
         {/* 验收标准 */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            Day 22 验收标准
+            Day 23 验收标准
           </h3>
           <ul className="space-y-2 text-sm text-blue-800">
             <li>✓ TypeScript 0错误</li>
-            <li>✓ 文件大小 &gt;20KB（Day 22含执行摘要+第一章，预期15-25KB）</li>
+            <li>✓ 文件大小 &gt;35KB（Day 23含第二章8表格，预期30-50KB）</li>
             <li>
               ✓ MIME类型正确（application/vnd.openxmlformats-officedocument.wordprocessingml.document）
             </li>
@@ -339,9 +344,14 @@ export default function TestReportGenerationPage() {
             <li>✓ 目录结构正确（可在Word中更新域显示页码）</li>
             <li>✓ 执行摘要完整（800-1,000字，6个核心部分）</li>
             <li>✓ 第一章内容完整（2,500-3,000字，4个小节）</li>
-            <li>✓ 数据动态填充正确（项目信息、经济指标、成本结构）</li>
+            <li><strong>✓ 第二章内容完整（8,000-10,000字，8表格+5图表占位符）</strong></li>
+            <li className="ml-6">✓ 2.1 CAPEX三模块（M1-M3表格完整，数据正确）</li>
+            <li className="ml-6">✓ 2.2 OPEX五模块（M4-M8表格完整，数据正确）</li>
+            <li className="ml-6">✓ 2.3 图表占位符（5个专业描述格式）</li>
+            <li>✓ 表格格式正确（3列，zebra striping，右对齐数字）</li>
+            <li>✓ 数据动态填充正确（M1-M8成本数据、百分比、格式化货币）</li>
             <li>✓ Word文档可正常打开（Mac/Windows）</li>
-            <li>✓ 生成耗时 &lt;5秒（Day 22增加内容，放宽到5秒）</li>
+            <li>✓ 生成耗时 &lt;8秒（Day 23大幅增加内容，放宽到8秒）</li>
           </ul>
         </div>
       </div>
