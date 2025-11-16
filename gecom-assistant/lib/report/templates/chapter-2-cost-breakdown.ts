@@ -147,20 +147,170 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.1 M1市场准入详细表格（Task 23.2）
+  // 表2.1 M1市场准入详细表格
+  const m1CapexData = raw.calculation.costResult?.capex || {};
+
+  const m1Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 标题行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '金额（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：公司注册
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '公司注册费（Company Registration）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m1CapexData.m1_company_registration || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: m1CapexData.m1_regulatory_agency || '市场准入基本费用' })],
+          }),
+        ],
+      }),
+      // 数据行：商业许可证
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '商业许可证（Business License）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m1CapexData.m1_business_license || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '经营许可申请费用' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 数据行：税务登记
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '税务登记（Tax Registration）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m1CapexData.m1_tax_registration || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '税号申请及登记费用' })],
+          }),
+        ],
+      }),
+      // 数据行：法务咨询
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '法务咨询（Legal Consulting）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m1CapexData.m1_legal_consulting || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '法律顾问和合规咨询费用' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 数据行：行业许可证
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '行业许可证（Industry License）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m1CapexData.m1_industry_license || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: m1CapexData.m1_notes || '宠物食品行业特定许可' })],
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M1总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: capexBreakdown.m1.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占CAPEX总额的${capexBreakdown.m1.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.1】M1市场准入成本明细表（待Task 23.2实现）',
-          italics: true,
+          text: '表2.1 M1市场准入成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m1Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
@@ -208,20 +358,163 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.2 M2技术合规表格（Task 23.2）
+  // 表2.2 M2技术合规详细表格
+  const m2CapexData = raw.calculation.costResult?.capex || {};
+
+  const m2Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '金额（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：产品认证
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '产品认证（Product Certification）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m2CapexData.m2_product_certification || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m2CapexData.m2_certification_validity_years
+                ? `有效期${m2CapexData.m2_certification_validity_years}年`
+                : '产品质量认证费用'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：商标注册
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '商标注册（Trademark Registration）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m2CapexData.m2_trademark_registration || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m2CapexData.m2_trademark_notes || 'USPTO商标注册费用'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 数据行：合规检测
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '合规检测（Compliance Testing）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m2CapexData.m2_compliance_testing || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '产品质量和安全性检测费用' })],
+          }),
+        ],
+      }),
+      // 数据行：检验费用
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '产品检测（Product Testing）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m2CapexData.m2_product_testing_cost || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m2CapexData.m2_inspection_frequency
+                ? `检测频率：${m2CapexData.m2_inspection_frequency}`
+                : '营养成分、微生物检测等'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M2总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: capexBreakdown.m2.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占CAPEX总额的${capexBreakdown.m2.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.2】M2技术合规成本明细表（待Task 23.2实现）',
-          italics: true,
+          text: '表2.2 M2技术合规成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m2Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
@@ -269,20 +562,165 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.3 M3供应链搭建表格（Task 23.2）
+  // 表2.3 M3供应链搭建详细表格
+  const m3CapexData = raw.calculation.costResult?.capex || {};
+
+  const m3Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '金额（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：仓储押金
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '仓储押金（Warehouse Deposit）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m3CapexData.m3_warehouse_deposit || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m3CapexData.m3_warehouse_type
+                ? `仓储类型：${m3CapexData.m3_warehouse_type}`
+                : '第三方仓储押金'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：设备采购
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '设备采购（Equipment Purchase）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m3CapexData.m3_equipment_purchase || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '仓储设备、包装材料等' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 数据行：初始库存
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '初始库存（Initial Inventory）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m3CapexData.m3_initial_inventory || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m3CapexData.m3_inventory_months
+                ? `${m3CapexData.m3_inventory_months}个月安全库存`
+                : '首批货物采购成本'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：系统搭建
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '系统搭建（System Setup）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m3CapexData.m3_system_setup || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: m3CapexData.m3_software_cost
+                ? `软件费用：${formatCurrency(m3CapexData.m3_software_cost)}`
+                : 'ERP、库存管理系统等'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M3总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: capexBreakdown.m3.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占CAPEX总额的${capexBreakdown.m3.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.3】M3供应链搭建成本明细表（待Task 23.2实现）',
-          italics: true,
+          text: '表2.3 M3供应链搭建成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m3Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
