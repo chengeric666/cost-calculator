@@ -1529,72 +1529,108 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 图2.1-2.5（Task 23.6）
+  // 图表占位符（Day 24将替换为真实图表）
+  // 基于chartToImage.ts工具，生成300 DPI高分辨率PNG图片
   paragraphs.push(
     new Paragraph({
-      children: [
-        new TextRun({
-          text: '【图2.1】关税税率对比柱状图（待Task 23.6实现）',
-          italics: true,
-          font: 'SimSun',
-          size: 22,
-          color: '666666',
-        }),
-      ],
-      spacing: { before: 200, after: 200 },
+      text: '图2.1 关税税率对比柱状图',
+      heading: HeadingLevel.HEADING_3,
       alignment: AlignmentType.CENTER,
+      spacing: { before: 300, after: 100 },
     }),
     new Paragraph({
       children: [
         new TextRun({
-          text: '【图2.2】N国物流费用对比（待Task 23.6实现）',
-          italics: true,
+          text: '[本图表将在Day 24实现] 展示19国关税税率横向对比，X轴为国家（按税率升序排列），Y轴为有效关税税率（%）。高亮显示当前项目目标市场（${formattedProject.targetCountryDisplay}），并标注Tier 1官方数据来源。图表基于GECOM数据库19国真实关税数据生成，使用Recharts柱状图组件，转换为2700×2100px PNG图片（300 DPI）。',
           font: 'SimSun',
           size: 22,
+          italics: true,
           color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 100, after: 200 },
+      alignment: AlignmentType.JUSTIFIED,
+      indent: { left: 360, right: 360 },
+    }),
+    new Paragraph({
+      text: '图2.2 多国物流成本对比',
+      heading: HeadingLevel.HEADING_3,
       alignment: AlignmentType.CENTER,
+      spacing: { before: 300, after: 100 },
     }),
     new Paragraph({
       children: [
         new TextRun({
-          text: '【图2.3】N国成本结构饼图（待Task 23.6实现）',
-          italics: true,
+          text: '[本图表将在Day 24实现] 对比19国头程物流成本（海运/空运），使用分组柱状图展示每个国家的海运费率（$/kg）和空运费率（$/kg）。当前项目产品重量为${raw.calculation.scope?.productWeightKg || 0}kg，物流成本直接影响M4总额。图表数据来源：DHL/FedEx官方报价单（Tier 2数据），转换为高分辨率PNG嵌入报告。',
           font: 'SimSun',
           size: 22,
+          italics: true,
           color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 100, after: 200 },
+      alignment: AlignmentType.JUSTIFIED,
+      indent: { left: 360, right: 360 },
+    }),
+    new Paragraph({
+      text: '图2.3 成本结构分布饼图',
+      heading: HeadingLevel.HEADING_3,
       alignment: AlignmentType.CENTER,
+      spacing: { before: 300, after: 100 },
     }),
     new Paragraph({
       children: [
         new TextRun({
-          text: '【图2.4】CAPEX vs OPEX对比（待Task 23.6实现）',
-          italics: true,
+          text: `[本图表将在Day 24实现] 展示项目单位成本结构（M4-M8 OPEX模块占比），饼图展示各模块金额和百分比。当前项目成本分布：M4货物税费${opexBreakdown.m4.percentage}、M5物流配送${opexBreakdown.m5.percentage}、M6营销获客${opexBreakdown.m6.percentage}、M7支付手续费${opexBreakdown.m7.percentage}、M8运营管理${opexBreakdown.m8.percentage}。使用Recharts饼图组件，颜色映射：M4蓝色、M5绿色、M6橙色、M7紫色、M8灰色，转换为300 DPI PNG。`,
           font: 'SimSun',
           size: 22,
+          italics: true,
           color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 100, after: 200 },
+      alignment: AlignmentType.JUSTIFIED,
+      indent: { left: 360, right: 360 },
+    }),
+    new Paragraph({
+      text: '图2.4 CAPEX vs OPEX对比柱状图',
+      heading: HeadingLevel.HEADING_3,
       alignment: AlignmentType.CENTER,
+      spacing: { before: 300, after: 100 },
     }),
     new Paragraph({
       children: [
         new TextRun({
-          text: '【图2.5】成本模块占比瀑布图（待Task 23.6实现）',
-          italics: true,
+          text: `[本图表将在Day 24实现] 对比一次性启动成本（CAPEX）与单位运营成本（OPEX）。CAPEX包含M1-M3三大模块（总额${capexBreakdown.total.formatted}），OPEX包含M4-M8五大模块（总额${opexBreakdown.total.formatted}）。图表展示CAPEX分摊到12个月后的等效月度成本，与OPEX×月销量进行直观对比，帮助理解成本结构和回本周期。使用Recharts分组柱状图，转换为高分辨率PNG。`,
           font: 'SimSun',
           size: 22,
+          italics: true,
           color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 100, after: 200 },
+      alignment: AlignmentType.JUSTIFIED,
+      indent: { left: 360, right: 360 },
+    }),
+    new Paragraph({
+      text: '图2.5 成本模块瀑布图',
+      heading: HeadingLevel.HEADING_3,
       alignment: AlignmentType.CENTER,
+      spacing: { before: 300, after: 100 },
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `[本图表将在Day 24实现] 使用瀑布图（Waterfall Chart）展示成本累积过程，从单位收入${formattedEconomics.revenue}开始，依次减去M4-M8各模块成本，最终得到单位毛利${formattedEconomics.profit}（毛利率${formattedEconomics.margin}）。每个成本模块显示金额和占比，瀑布图清晰揭示成本驱动因素和盈利能力。图表基于Recharts自定义柱状图实现，转换为300 DPI PNG嵌入报告。`,
+          font: 'SimSun',
+          size: 22,
+          italics: true,
+          color: '666666',
+        }),
+      ],
+      spacing: { before: 100, after: 200 },
+      alignment: AlignmentType.JUSTIFIED,
+      indent: { left: 360, right: 360 },
     })
   );
 
