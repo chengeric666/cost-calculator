@@ -1004,20 +1004,120 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.5 M5物流配送表格（Task 23.4）
+  // 表2.5 M5物流配送详细表格
+  const m5OpexData = raw.calculation.costResult?.opex || {};
+
+  const m5Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '单位成本（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：尾程配送
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '尾程配送（Last Mile Delivery）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m5OpexData.m5_last_mile || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formattedProject.salesChannelDisplay.includes('FBA')
+                ? 'Amazon FBA费用（含配送）'
+                : '本地快递配送成本'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：退货物流
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '退货物流（Return Logistics）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m5OpexData.m5_return || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '退货率 × 双向物流成本' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M5总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: opexBreakdown.m5.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占单位总成本的${opexBreakdown.m5.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.5】M5物流配送成本明细表（待Task 23.4实现）',
-          italics: true,
+          text: '表2.5 M5物流配送成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m5Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
@@ -1044,20 +1144,100 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.6 M6营销获客表格（Task 23.4）
+  // 表2.6 M6营销获客详细表格
+  const m6OpexData = raw.calculation.costResult?.opex || {};
+
+  const m6Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '单位成本（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：营销获客成本
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '营销获客（Customer Acquisition）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m6OpexData.m6_marketing || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m6_cac_usd
+                ? `CAC：${formatCurrency(raw.costFactor.m6_cac_usd)}`
+                : '广告投放、推广费用'
+            })],
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M6总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: opexBreakdown.m6.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占单位总成本的${opexBreakdown.m6.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.6】M6营销获客成本明细表（待Task 23.4实现）',
-          italics: true,
+          text: '表2.6 M6营销获客成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m6Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
@@ -1084,20 +1264,124 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.7 M7支付手续费表格（Task 23.4）
+  // 表2.7 M7支付手续费详细表格
+  const m7OpexData = raw.calculation.costResult?.opex || {};
+
+  const m7Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '单位成本（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：支付网关费用
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '支付网关（Payment Gateway）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m7OpexData.m7_payment || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m7_payment_rate
+                ? `费率：${formatPercentage(raw.costFactor.m7_payment_rate * 100)} + 固定费`
+                : 'Stripe/PayPal手续费'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：平台佣金
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '平台佣金（Platform Commission）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m7OpexData.m7_platform_commission || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formattedProject.salesChannelDisplay.includes('亚马逊')
+                ? 'Amazon推荐费15%'
+                : '平台抽成费用'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M7总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: opexBreakdown.m7.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占单位总成本的${opexBreakdown.m7.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.7】M7支付手续费成本明细表（待Task 23.4实现）',
-          italics: true,
+          text: '表2.7 M7支付手续费成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m7Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
@@ -1124,20 +1408,100 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.8 M8运营管理表格（Task 23.4）
+  // 表2.8 M8运营管理详细表格
+  const m8OpexData = raw.calculation.costResult?.opex || {};
+
+  const m8Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '单位成本（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：运营管理成本
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: 'G&A管理费用（General & Administrative）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m8OpexData.m8_ga || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m8_ga_percentage
+                ? `占收入${formatPercentage(raw.costFactor.m8_ga_percentage * 100)}`
+                : '客服、人员、软件等'
+            })],
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M8总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: opexBreakdown.m8.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占单位总成本的${opexBreakdown.m8.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.8】M8运营管理成本明细表（待Task 23.4实现）',
-          italics: true,
+          text: '表2.8 M8运营管理成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m8Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
