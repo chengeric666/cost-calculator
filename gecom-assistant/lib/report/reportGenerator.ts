@@ -284,9 +284,10 @@ export class ReportGenerator {
     const { generateChapter1Overview } = await import('./templates/chapter-1-overview');
     chapters.push(...generateChapter1Overview(data));
 
-    // TODO: Day 23 - 第二章
-    // const { generateChapter2 } = await import('./templates/chapter-2-cost-breakdown');
-    // chapters.push(...generateChapter2(data));
+    // Day 23: 第二章成本拆解 ✅
+    console.log('[ReportGenerator] 生成第二章：成本结构拆解...');
+    const { generateChapter2CostBreakdown } = await import('./templates/chapter-2-cost-breakdown');
+    chapters.push(...generateChapter2CostBreakdown(data));
 
     // TODO: Day 24 - 第三章
     // const { generateChapter3 } = await import('./templates/chapter-3-financial');
@@ -308,16 +309,26 @@ export class ReportGenerator {
     //   chapters.push(...generateAppendixC(data));
     // }
 
-    // Day 23-26占位：后续章节将逐步添加
+    // Day 24-26占位：后续章节将逐步添加
     chapters.push(
       new Paragraph({
-        text: '第二章：成本结构拆解（待Day 23实现）',
+        text: '第三章：财务分析与市场对比（待Day 24实现）',
         heading: HeadingLevel.HEADING_1,
         spacing: { before: 400, after: 200 },
         pageBreakBefore: true,
       }),
       new Paragraph({
-        text: '本章将详细拆解M1-M8八大成本模块，包含15+可视化图表。Day 23完成时自动生成。',
+        text: '本章将提供单位经济模型、盈亏平衡分析、关键KPI指标、市场排名分析。Day 24完成时自动生成。',
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        text: '第四章：智能优化建议（待Day 25实现）',
+        heading: HeadingLevel.HEADING_1,
+        spacing: { before: 400, after: 200 },
+        pageBreakBefore: true,
+      }),
+      new Paragraph({
+        text: '本章将由DeepSeek R1 AI模型基于成本数据生成战略优化建议。Day 25完成时自动生成。',
         spacing: { after: 400 },
       })
     );
