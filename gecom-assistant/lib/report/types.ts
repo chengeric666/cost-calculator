@@ -144,6 +144,23 @@ export interface ProcessedReportData {
     targetPriceFor30Margin: string; // "$33.10"
     priceIncreaseRequired: string; // "+107%"
   };
+
+  /** 19国市场对比数据（用于第三章表3.1）*/
+  multiCountryComparison?: Array<{
+    country: string; // "US" | "DE" | "GB" 等
+    countryName: string; // "美国" | "德国" | "英国" 等
+    currency: string; // "USD" | "EUR" | "GBP" 等
+    currencySymbol: string; // "$" | "€" | "£" 等
+    retailPrice: number; // 15.99
+    retailPriceFormatted: string; // "$15.99"
+    unitCost: number; // 23.17
+    unitCostFormatted: string; // "$23.17"
+    grossProfit: number; // -7.18
+    grossProfitFormatted: string; // "-$7.18"
+    grossMargin: number; // -44.9
+    grossMarginFormatted: string; // "-44.9%"
+    marginColor: string; // "10B981" (绿色) | "F59E0B" (橙色) | "EF4444" (红色)
+  }>;
 }
 
 /**

@@ -29,6 +29,9 @@ import type {
   ReportGenerationResult,
   ReportMetadata,
 } from './types';
+import { getCostFactorsByCountries } from '../appwrite-data';
+import type { TargetCountry } from '@/types/gecom';
+import { formatCurrency, formatPercentage } from './utils/formatters';
 
 /**
  * GECOM报告生成器主类
@@ -190,19 +193,127 @@ export class ReportGenerator {
   }
 
   /**
+   * 获取国家货币符号映射（Task 24.2辅助方法）
+   *
+   * @param country 国家代码
+   * @returns 货币符号和货币代码
+   */
+  private getCurrencyInfo(country: string): { symbol: string; code: string } {
+    const currencyMap: Record<string, { symbol: string; code: string }> = {
+      US: { symbol: '$', code: 'USD' },
+      DE: { symbol: '€', code: 'EUR' },
+      GB: { symbol: '£', code: 'GBP' },
+      FR: { symbol: '€', code: 'EUR' },
+      VN: { symbol: '₫', code: 'VND' },
+      TH: { symbol: '฿', code: 'THB' },
+      MY: { symbol: 'RM', code: 'MYR' },
+      PH: { symbol: '₱', code: 'PHP' },
+      ID: { symbol: 'Rp', code: 'IDR' },
+      IN: { symbol: '₹', code: 'INR' },
+      JP: { symbol: '¥', code: 'JPY' },
+      KR: { symbol: '₩', code: 'KRW' },
+      AU: { symbol: 'A$', code: 'AUD' },
+      SA: { symbol: 'SR', code: 'SAR' },
+      AE: { symbol: 'AED', code: 'AED' },
+      CA: { symbol: 'C$', code: 'CAD' },
+      MX: { symbol: 'MX$', code: 'MXN' },
+      BR: { symbol: 'R$', code: 'BRL' },
+      SG: { symbol: 'S$', code: 'SGD' },
+    };
+    return currencyMap[country] || { symbol: '$', code: 'USD' };
+  }
+
+  /**
    * 预处理数据：格式化、计算衍生字段
    *
    * @param rawData 原始报告数据
    * @returns 处理后的报告数据
    */
   private async preprocessData(rawData: ReportData): Promise<ProcessedReportData> {
-    // TODO: Day 22实现完整的数据预处理逻辑
-    // 目前返回一个基础的ProcessedReportData结构
+    // Day 24实现完整的数据预处理逻辑
 
     const { project, calculation } = rawData;
 
+    // Task 24.2: 获取19国成本数据用于对比分析
+    let multiCountryComparison: ProcessedReportData['multiCountryComparison'] = undefined;
+
+    try {
+      console.log('[ReportGenerator] Task 24.2: 获取19国成本数据用于对比分析...');
+
+      // 19国列表
+      const countries: TargetCountry[] = [
+        'US', 'DE', 'GB', 'FR', 'VN', 'TH', 'MY', 'PH', 'ID',
+        'IN', 'JP', 'KR', 'AU', 'SA', 'AE', 'CA', 'MX', 'BR', 'SG'
+      ];
+
+      // 批量获取成本因子
+      const costFactors = await getCostFactorsByCountries(
+        countries,
+        project.industry || 'pet_food',
+        '2025Q1'
+      );
+
+      console.log(`[ReportGenerator] 成功获取 ${costFactors.length}/19 国家成本数据`);
+
+      // 计算每个国家的单位经济模型
+      const basePrice = calculation.scope?.sellingPriceUsd || 15.99;
+
+      multiCountryComparison = costFactors.map(cf => {
+        // 简化计算：使用OPEX总成本（M4-M8）
+        const unitCost = (cf.m4_cogs || 5.0) +
+          (cf.m4_tariff_cost || 0) +
+          (cf.m4_vat_cost || 0) +
+          (cf.m4_logistics_cost || 0) +
+          (cf.m5_last_mile_delivery_usd || 0) +
+          (cf.m5_return_logistics_usd || 0) +
+          (cf.m6_cac_usd || 0) +
+          (cf.m7_payment_gateway_fee_usd || 0) +
+          (cf.m7_platform_commission_usd || 0) +
+          (cf.m8_customer_service_usd || 0) +
+          (cf.m8_ga_cost_usd || 0);
+
+        const grossProfit = basePrice - unitCost;
+        const grossMargin = basePrice > 0 ? (grossProfit / basePrice) * 100 : 0;
+
+        // 颜色映射：≥30%绿色，0-30%橙色，<0%红色
+        let marginColor = 'EF4444'; // 红色
+        if (grossMargin >= 30) {
+          marginColor = '10B981'; // 绿色
+        } else if (grossMargin >= 0) {
+          marginColor = 'F59E0B'; // 橙色
+        }
+
+        const currencyInfo = this.getCurrencyInfo(cf.country);
+
+        return {
+          country: cf.country,
+          countryName: cf.country_name_cn || cf.country,
+          currency: currencyInfo.code,
+          currencySymbol: currencyInfo.symbol,
+          retailPrice: basePrice,
+          retailPriceFormatted: formatCurrency(basePrice, currencyInfo.symbol),
+          unitCost,
+          unitCostFormatted: formatCurrency(unitCost, currencyInfo.symbol),
+          grossProfit,
+          grossProfitFormatted: formatCurrency(grossProfit, currencyInfo.symbol),
+          grossMargin,
+          grossMarginFormatted: formatPercentage(grossMargin),
+          marginColor,
+        };
+      });
+
+      // 按毛利率降序排序
+      multiCountryComparison.sort((a, b) => b.grossMargin - a.grossMargin);
+
+      console.log('[ReportGenerator] 19国对比数据处理完成');
+    } catch (error) {
+      console.error('[ReportGenerator] 获取19国数据失败:', error);
+      // 如果失败，继续生成报告，但multiCountryComparison为undefined
+    }
+
     return {
       raw: rawData,
+      multiCountryComparison,
 
       formattedProject: {
         name: project.name || '未命名项目',
@@ -289,9 +400,10 @@ export class ReportGenerator {
     const { generateChapter2CostBreakdown } = await import('./templates/chapter-2-cost-breakdown');
     chapters.push(...generateChapter2CostBreakdown(data));
 
-    // TODO: Day 24 - 第三章
-    // const { generateChapter3 } = await import('./templates/chapter-3-financial');
-    // chapters.push(...generateChapter3(data));
+    // Day 24: 第三章财务分析 ⏳
+    console.log('[ReportGenerator] 生成第三章：财务分析与市场对比...');
+    const { generateChapter3FinancialAnalysis } = await import('./templates/chapter-3-financial-analysis');
+    chapters.push(...generateChapter3FinancialAnalysis(data));
 
     // TODO: Day 25 - 第四章（AI生成）
     // if (this.options.useAI) {
@@ -309,18 +421,8 @@ export class ReportGenerator {
     //   chapters.push(...generateAppendixC(data));
     // }
 
-    // Day 24-26占位：后续章节将逐步添加
+    // Day 25-26占位：后续章节将逐步添加
     chapters.push(
-      new Paragraph({
-        text: '第三章：财务分析与市场对比（待Day 24实现）',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-        pageBreakBefore: true,
-      }),
-      new Paragraph({
-        text: '本章将提供单位经济模型、盈亏平衡分析、关键KPI指标、市场排名分析。Day 24完成时自动生成。',
-        spacing: { after: 200 },
-      }),
       new Paragraph({
         text: '第四章：智能优化建议（待Day 25实现）',
         heading: HeadingLevel.HEADING_1,
