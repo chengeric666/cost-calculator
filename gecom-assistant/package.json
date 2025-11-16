@@ -50,6 +50,7 @@
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@vitest/ui": "^4.0.9",
     "autoprefixer": "^10.4.21",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
@@ -57,6 +58,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.9"
   }
 }
