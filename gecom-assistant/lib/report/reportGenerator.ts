@@ -400,40 +400,32 @@ export class ReportGenerator {
     const { generateChapter2CostBreakdown } = await import('./templates/chapter-2-cost-breakdown');
     chapters.push(...generateChapter2CostBreakdown(data));
 
-    // Day 24: 第三章财务分析 ⏳
+    // Day 24: 第三章财务分析 ✅
     console.log('[ReportGenerator] 生成第三章：财务分析与市场对比...');
     const { generateChapter3FinancialAnalysis } = await import('./templates/chapter-3-financial-analysis');
     chapters.push(...generateChapter3FinancialAnalysis(data));
 
-    // TODO: Day 25 - 第四章（AI生成）
-    // if (this.options.useAI) {
-    //   const { generateChapter4 } = await import('./templates/chapter-4-strategy');
-    //   chapters.push(...generateChapter4(data));
-    // }
+    // Day 25: 第四章（AI生成战略建议）✅
+    if (this.options.useAI) {
+      console.log('[ReportGenerator] 生成第四章：智能优化建议（AI生成）...');
+      const { generateChapter4Strategy } = await import('./templates/chapter-4-strategy');
+      chapters.push(...await generateChapter4Strategy(data));
+    }
 
-    // TODO: Day 26 - 附录
-    // if (this.options.includeAppendix) {
-    //   const { generateAppendixA } = await import('./templates/appendix-a-details');
-    //   const { generateAppendixB } = await import('./templates/appendix-b-sources');
-    //   const { generateAppendixC } = await import('./templates/appendix-c-methodology');
-    //   chapters.push(...generateAppendixA(data));
-    //   chapters.push(...generateAppendixB(data));
-    //   chapters.push(...generateAppendixC(data));
-    // }
+    // Day 26: 附录A-C ✅
+    if (this.options.includeAppendix) {
+      console.log('[ReportGenerator] 生成附录A：完整成本明细表...');
+      const { generateAppendixACostDetails } = await import('./templates/appendix-a-cost-details');
+      chapters.push(...generateAppendixACostDetails(data));
 
-    // Day 25-26占位：后续章节将逐步添加
-    chapters.push(
-      new Paragraph({
-        text: '第四章：智能优化建议（待Day 25实现）',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before: 400, after: 200 },
-        pageBreakBefore: true,
-      }),
-      new Paragraph({
-        text: '本章将由DeepSeek R1 AI模型基于成本数据生成战略优化建议。Day 25完成时自动生成。',
-        spacing: { after: 400 },
-      })
-    );
+      console.log('[ReportGenerator] 生成附录B：数据溯源说明...');
+      const { generateAppendixBDataSources } = await import('./templates/appendix-b-data-sources');
+      chapters.push(...generateAppendixBDataSources(data));
+
+      console.log('[ReportGenerator] 生成附录C：GECOM方法论白皮书...');
+      const { generateAppendixCMethodology } = await import('./templates/appendix-c-methodology');
+      chapters.push(...generateAppendixCMethodology(data));
+    }
 
     return chapters;
   }
@@ -448,6 +440,12 @@ export class ReportGenerator {
     // 应用GECOM统一样式
     const { GECOM_STYLES } = await import('./utils/styles');
 
+    // 导入Header/Footer相关类
+    const { Header, Footer, TextRun, AlignmentType, PageNumber, NumberFormat } = await import('docx');
+
+    // 获取项目名称
+    const projectName = this.input.project.name || 'GECOM成本分析报告';
+
     return new Document({
       styles: GECOM_STYLES,
       sections: [
@@ -460,7 +458,71 @@ export class ReportGenerator {
                 bottom: 1440,
                 left: 1440,
               },
+              pageNumbers: {
+                start: 1,
+                formatType: NumberFormat.DECIMAL,
+              },
             },
+          },
+          headers: {
+            default: new Header({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: projectName,
+                      font: { name: '宋体', size: 18 },
+                      color: '6B7280',
+                    }),
+                    new TextRun({
+                      text: '\t\t', // Tab分隔
+                    }),
+                    new TextRun({
+                      text: 'GECOM全球电商成本优化方法论',
+                      font: { name: '宋体', size: 18 },
+                      color: '6B7280',
+                    }),
+                  ],
+                  alignment: AlignmentType.LEFT,
+                  spacing: { after: 100 },
+                  border: {
+                    bottom: {
+                      color: 'E5E7EB',
+                      space: 1,
+                      style: 'single',
+                      size: 6,
+                    },
+                  },
+                }),
+              ],
+            }),
+          },
+          footers: {
+            default: new Footer({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: '第 ',
+                      font: { name: '宋体', size: 18 },
+                      color: '6B7280',
+                    }),
+                    new TextRun({
+                      children: [PageNumber.CURRENT],
+                      font: { name: '宋体', size: 18 },
+                      color: '6B7280',
+                    }),
+                    new TextRun({
+                      text: ' 页',
+                      font: { name: '宋体', size: 18 },
+                      color: '6B7280',
+                    }),
+                  ],
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 100 },
+                }),
+              ],
+            }),
           },
           children: chapters,
         },
