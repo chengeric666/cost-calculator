@@ -793,20 +793,169 @@ export function generateChapter2CostBreakdown(data: ProcessedReportData): Paragr
     })
   );
 
-  // TODO: 表2.4 M4核心成本表格（Task 23.3）⭐
+  // 表2.4 M4货物税费详细表格（最复杂OPEX模块）
+  const m4OpexData = raw.calculation.costResult?.opex || {};
+
+  const m4Table = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [
+      // 表头行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '成本项目', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 40, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '单位成本（USD）', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: '备注', alignment: AlignmentType.CENTER })],
+            shading: { fill: 'E5E7EB', type: ShadingType.SOLID },
+            width: { size: 30, type: WidthType.PERCENTAGE },
+          }),
+        ],
+      }),
+      // 数据行：商品成本
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '商品成本（COGS）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m4OpexData.m4_cogs || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.calculation.scope?.productWeightKg
+                ? `产品重量：${raw.calculation.scope.productWeightKg}kg`
+                : '出厂成本（FOB价）'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：进口关税
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '进口关税（Import Tariff）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m4OpexData.m4_tariff || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m4_effective_tariff_rate
+                ? `税率：${formatPercentage(raw.costFactor.m4_effective_tariff_rate * 100)}`
+                : '基于有效关税税率计算'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 数据行：头程物流
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '头程物流（International Logistics）' })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m4OpexData.m4_logistics || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m4_logistics
+                ? '基于海运/空运费率 × 产品重量'
+                : '国际运输成本'
+            })],
+          }),
+        ],
+      }),
+      // 数据行：增值税
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ text: '增值税（VAT）' })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: formatCurrency(m4OpexData.m4_vat || 0),
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: raw.costFactor.m4_vat_rate
+                ? `VAT税率：${formatPercentage(raw.costFactor.m4_vat_rate * 100)}`
+                : '基于CIF价×VAT税率'
+            })],
+            shading: { fill: 'F9FAFB', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+      // 总计行
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({
+              text: 'M4总计',
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: opexBreakdown.m4.formatted,
+              bold: true,
+              alignment: AlignmentType.RIGHT
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+          new TableCell({
+            children: [new Paragraph({
+              text: `占单位总成本的${opexBreakdown.m4.percentage}`,
+              bold: true
+            })],
+            shading: { fill: 'DBEAFE', type: ShadingType.SOLID },
+          }),
+        ],
+      }),
+    ],
+  });
+
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: '【表2.4】M4货物税费成本明细表（待Task 23.3实现）',
-          italics: true,
+          text: '表2.4 M4货物税费成本明细表',
+          bold: true,
           font: 'SimSun',
           size: 22,
-          color: '666666',
         }),
       ],
-      spacing: { before: 200, after: 200 },
+      spacing: { before: 200, after: 100 },
       alignment: AlignmentType.CENTER,
+    }),
+    m4Table,
+    new Paragraph({
+      text: '',
+      spacing: { after: 200 },
     })
   );
 
