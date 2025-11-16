@@ -309,7 +309,7 @@ export class ReportGenerator {
     //   chapters.push(...generateAppendixC(data));
     // }
 
-    // 临时占位段落（避免目录后空白）
+    // 临时占位段落（Day 21基础版本，避免目录后空白）
     chapters.push(
       new Paragraph({
         text: '第一章：项目概况（待Day 22实现）',
@@ -317,7 +317,52 @@ export class ReportGenerator {
         spacing: { before: 400, after: 200 },
       }),
       new Paragraph({
-        text: '本章将在Day 22完成时自动生成，包含项目背景、核心假设、GECOM方法论说明等内容。',
+        text: '本章将在Day 22完成时自动生成，包含以下内容：',
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        text: '• 项目背景与核心假设',
+        indent: { left: 720 },
+      }),
+      new Paragraph({
+        text: '• GECOM方法论说明',
+        indent: { left: 720 },
+      }),
+      new Paragraph({
+        text: '• 核心输入参数汇总',
+        indent: { left: 720 },
+      }),
+      new Paragraph({
+        text: '• 数据质量声明与溯源',
+        indent: { left: 720 },
+        spacing: { after: 400 },
+      }),
+      new Paragraph({
+        text: '第二章：成本结构拆解（待Day 23实现）',
+        heading: HeadingLevel.HEADING_1,
+        spacing: { before: 400, after: 200 },
+      }),
+      new Paragraph({
+        text: '本章将详细拆解M1-M8八大成本模块，包含15+可视化图表。',
+        spacing: { after: 400 },
+      }),
+      new Paragraph({
+        text: '第三章：财务分析（待Day 24实现）',
+        heading: HeadingLevel.HEADING_1,
+        spacing: { before: 400, after: 200 },
+      }),
+      new Paragraph({
+        text: '本章将展示单位经济模型、关键KPI、盈亏平衡分析等财务指标。',
+        spacing: { after: 400 },
+      }),
+      new Paragraph({
+        text: '第四章：战略建议（待Day 25实现）',
+        heading: HeadingLevel.HEADING_1,
+        spacing: { before: 400, after: 200 },
+      }),
+      new Paragraph({
+        text: '本章将由DeepSeek R1 AI引擎生成深度战略建议与优化方案。',
+        spacing: { after: 400 },
       })
     );
 
@@ -331,12 +376,23 @@ export class ReportGenerator {
    * @returns Word文档对象
    */
   private async createDocument(chapters: Paragraph[]): Promise<Document> {
-    // TODO: Day 21 - 应用GECOM样式
+    // 应用GECOM统一样式
+    const { GECOM_STYLES } = await import('./utils/styles');
 
     return new Document({
+      styles: GECOM_STYLES,
       sections: [
         {
-          properties: {},
+          properties: {
+            page: {
+              margin: {
+                top: 1440, // 1英寸
+                right: 1440,
+                bottom: 1440,
+                left: 1440,
+              },
+            },
+          },
           children: chapters,
         },
       ],
