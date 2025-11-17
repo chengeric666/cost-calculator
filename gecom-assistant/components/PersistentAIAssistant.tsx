@@ -139,7 +139,7 @@ export default function PersistentAIAssistant({
   };
 
   return (
-    <div className="h-full flex flex-col bg-white/95 backdrop-blur-xl border-l border-slate-200/80 shadow-2xl">
+    <div className="h-full flex flex-col bg-white/95 backdrop-blur-xl border-l border-slate-200/80 shadow-2xl overflow-hidden">
       {/* Header - 精致的渐变卡片 */}
       <div className="flex-shrink-0 p-5 border-b border-slate-200/80 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
         <div className="flex items-start gap-3">

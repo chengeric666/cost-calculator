@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import { Project, Industry, TargetCountry, SalesChannel, CostResult } from '@/types/gecom';
 import { calculateCostModel } from '@/lib/gecom/calculator';
-import PersistentAIAssistant from './PersistentAIAssistant';
 import Step0ProjectInfo from './wizard/Step0ProjectInfo';
 import Step1Scope from './wizard/Step1Scope';
 import Step2DataCollection from './wizard/Step2DataCollection';
@@ -101,20 +100,10 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="flex flex-col">
       {/* Header - 精致的顶部导航栏 */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="font-medium">返回首页</span>
-            </button>
-          </div>
-
+      <div className="bg-white border-b border-slate-200 sticky top-16 z-20 shadow-sm">
+        <div className="px-6 py-6">
           {/* Progress bar - 优化的进度指示器 */}
           <div className="flex items-center justify-between max-w-5xl mx-auto">
             {steps.map((step, index) => (
@@ -160,8 +149,8 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
         </div>
       </div>
 
-      {/* Main Content - 添加右侧padding为AI助手留出空间 */}
-      <div className="flex-1 overflow-y-auto pr-[380px]">
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
         <div className="px-6 py-8">
           <div className="mx-auto max-w-5xl">
             {/* Step 0 has different props than Step 1-5 */}
@@ -221,14 +210,11 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
           </div>
         </div>
       </div>
-
-      {/* Fixed AI Assistant - 完全独立定位，占满整个视口高度 */}
-      <div className="fixed right-0 top-0 h-screen w-[380px] z-10">
-        <PersistentAIAssistant
-          project={project}
-          costResult={costResult}
-        />
-      </div>
     </div>
   );
+}
+
+// Export project and costResult for parent component (page.tsx)
+export function useWizardState() {
+  return { project: {}, costResult: null };
 }

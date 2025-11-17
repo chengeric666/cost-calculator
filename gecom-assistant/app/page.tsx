@@ -3,14 +3,31 @@
 import { useState } from 'react';
 import { Calculator, TrendingUp, Globe, Package } from 'lucide-react';
 import CostCalculatorWizard from '@/components/CostCalculatorWizard';
+import TopNavigation from '@/components/TopNavigation';
+import PersistentAIAssistant from '@/components/PersistentAIAssistant';
+import type { Project, CostResult } from '@/types/gecom';
 
 export default function HomePage() {
   const [showWizard, setShowWizard] = useState(false);
+  // Simplified: Let Wizard manage its own state, AI Assistant will receive updates via Context or global state
+  // For now, use empty initial values (Wizard will populate them)
 
   if (showWizard) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <CostCalculatorWizard onBack={() => setShowWizard(false)} />
+      <div className="min-h-screen bg-slate-50">
+        {/* Global TopNavigation */}
+        <TopNavigation />
+
+        {/* Main Content Area (with padding for TopNav and AI Assistant) */}
+        <div className="pt-16 pr-[400px]">
+          <CostCalculatorWizard onBack={() => setShowWizard(false)} />
+        </div>
+
+        {/* Global AI Assistant (fixed positioning) */}
+        {/* Note: Wizard state not directly accessible here - will be enhanced later with Context */}
+        <div className="fixed right-0 top-16 h-[calc(100vh-4rem)] w-[400px] z-50">
+          <PersistentAIAssistant project={{}} costResult={null} />
+        </div>
       </div>
     );
   }
