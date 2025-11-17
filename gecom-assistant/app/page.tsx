@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Calculator, TrendingUp, Globe, Package } from 'lucide-react';
 import CostCalculatorWizard from '@/components/CostCalculatorWizard';
-import AssistantPanel from '@/components/AssistantPanel';
 
 export default function HomePage() {
   const [showWizard, setShowWizard] = useState(false);
@@ -11,17 +10,7 @@ export default function HomePage() {
   if (showWizard) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="flex h-screen">
-          {/* Main wizard area */}
-          <div className="flex-1 overflow-auto">
-            <CostCalculatorWizard onBack={() => setShowWizard(false)} />
-          </div>
-
-          {/* AI Assistant sidebar */}
-          <div className="w-96 border-l border-gray-200 bg-white">
-            <AssistantPanel />
-          </div>
-        </div>
+        <CostCalculatorWizard onBack={() => setShowWizard(false)} />
       </div>
     );
   }
