@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import ClientLayout from '@/components/ClientLayout';
 
 export const metadata: Metadata = {
   title: 'GECOM Assistant - Global E-Commerce Cost Calculator',
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-gray-50">
-        {children}
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );
