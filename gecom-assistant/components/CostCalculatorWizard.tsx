@@ -225,7 +225,7 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
         </div>
 
         {/* Right: Persistent AI Assistant */}
-        <div className="w-[360px] border-l border-slate-200 flex-shrink-0 shadow-2xl">
+        <div className="w-[360px] h-full border-l border-slate-200 flex-shrink-0 shadow-2xl">
           <PersistentAIAssistant
             project={project}
             costResult={costResult}
