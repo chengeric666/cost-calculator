@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - button "返回首页" [ref=e7]:
+        - img [ref=e8]
+        - generic [ref=e10]: 返回首页
+      - generic [ref=e11]:
+        - generic [ref=e13]:
+          - generic [ref=e15]: "0"
+          - generic [ref=e17]: 项目信息
+        - generic [ref=e20]:
+          - generic [ref=e22]: "1"
+          - generic [ref=e24]: 业务场景
+        - generic [ref=e27]:
+          - generic [ref=e29]: "2"
+          - generic [ref=e31]: 数据采集
+        - generic [ref=e34]:
+          - generic [ref=e36]: "3"
+          - generic [ref=e38]: 成本建模
+        - generic [ref=e41]:
+          - generic [ref=e43]: "4"
+          - generic [ref=e45]: 场景分析
+        - generic [ref=e48]:
+          - generic [ref=e50]: "5"
+          - generic [ref=e52]: 报告生成
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - heading "创建成本测算项目" [level=1] [ref=e58]
+        - paragraph [ref=e59]: 基于GECOM方法论，精准计算跨境电商出海成本
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img [ref=e65]
+          - heading "项目信息" [level=2] [ref=e68]
+        - generic [ref=e69]:
+          - generic [ref=e70]: 项目名称 *
+          - textbox "项目名称 *" [ref=e71]:
+            - /placeholder: 例如：益家之宠宠物食品美国市场测算
+          - paragraph [ref=e72]: 为您的测算项目起一个清晰的名称，方便后续查找和管理
+        - generic [ref=e73]:
+          - generic [ref=e74]: 行业类别 *
+          - generic [ref=e75]:
+            - button "🐾 宠物食品 Pet Food 21国完整数据，覆盖关税/VAT/物流/合规" [ref=e76]:
+              - generic [ref=e77]: 🐾
+              - generic [ref=e78]:
+                - heading "宠物食品" [level=3] [ref=e79]
+                - paragraph [ref=e80]: Pet Food
+                - paragraph [ref=e81]: 21国完整数据，覆盖关税/VAT/物流/合规
+            - button "💨 电子烟 Vape 8国开放市场数据（11国监管限制暂缓）" [ref=e82]:
+              - generic [ref=e83]: 💨
+              - generic [ref=e84]:
+                - heading "电子烟" [level=3] [ref=e85]
+                - paragraph [ref=e86]: Vape
+                - paragraph [ref=e87]: 8国开放市场数据（11国监管限制暂缓）
+        - generic [ref=e88]:
+          - generic [ref=e89]: 产品描述 (可选)
+          - textbox "产品描述 (可选)" [ref=e90]:
+            - /placeholder: 例如：天然无谷狗粮，针对成犬，2kg包装，使用新西兰羊肉...
+          - paragraph [ref=e91]: 选填，帮助您更好地记录项目信息
+      - button "下一步：业务场景定义" [ref=e93]:
+        - generic [ref=e94]: 下一步：业务场景定义
+        - img [ref=e95]
+    - generic [ref=e98]:
+      - generic [ref=e100]:
+        - img [ref=e103]
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - heading "AI 智能助手" [level=2] [ref=e109]
+            - generic [ref=e110]:
+              - img [ref=e111]
+              - generic [ref=e113]: 在线
+          - paragraph [ref=e114]: 基于 DeepSeek V3 · 实时成本分析
+      - generic [ref=e115]:
+        - generic [ref=e116]:
+          - img [ref=e117]
+          - heading "快捷问题" [level=3] [ref=e119]
+        - generic [ref=e120]:
+          - button "分析当前成本结构" [ref=e121]:
+            - generic [ref=e122]: 分析当前成本结构
+          - button "对比美/越/德市场" [ref=e123]:
+            - generic [ref=e124]: 对比美/越/德市场
+          - button "如何优化ROI？" [ref=e125]:
+            - generic [ref=e126]: 如何优化ROI？
+          - button "降低成本的建议" [ref=e127]:
+            - generic [ref=e128]: 降低成本的建议
+      - generic [ref=e131]:
+        - img [ref=e133]
+        - generic [ref=e137]:
+          - paragraph [ref=e138]:
+            - text: 你好！我是
+            - strong [ref=e139]: GECOM 智能成本助手
+            - text: ✨
+          - paragraph [ref=e140]: 我可以帮助你：
+          - paragraph [ref=e141]:
+            - text: • 📊
+            - strong [ref=e142]: 深度成本分析
+            - text: "- 拆解 M1-M8 各模块成本结构 • 🌍"
+            - strong [ref=e143]: 跨国市场对比
+            - text: "- 比较 19 国成本与盈利能力 • 💡"
+            - strong [ref=e144]: 智能优化建议
+            - text: "- 基于数据生成 ROI 提升方案 • 🎯"
+            - strong [ref=e145]: 识别成本驱动
+            - text: "- 找出高占比成本项目"
+          - paragraph [ref=e146]: 请随时提问，我会基于真实数据为您分析。
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - textbox "询问任何关于成本优化的问题..." [ref=e149]
+          - button "发送" [disabled] [ref=e150]:
+            - img [ref=e151]
+            - generic [ref=e154]: 发送
+        - generic [ref=e155]:
+          - img [ref=e156]
+          - generic [ref=e158]: AI 会自动调用成本计算工具获取真实数据
+  - button "Open Next.js Dev Tools" [ref=e164] [cursor=pointer]:
+    - img [ref=e165]
+  - alert [ref=e168]
+```
