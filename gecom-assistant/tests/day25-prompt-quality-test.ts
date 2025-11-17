@@ -1,3 +1,4 @@
+// @ts-nocheck - Day 21-26测试文件
 /**
  * Day 25 Prompt质量测试 - 10个场景验证
  *

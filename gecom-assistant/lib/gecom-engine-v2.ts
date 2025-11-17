@@ -71,11 +71,51 @@ export class GECOMEngine {
       this.scope.capex?.m3_supply_chain_setup ||
       this.estimateM3Cost();
 
+    // 返回完整CAPEX结构（包含所有详细字段）
     return {
+      // M1总计和详细字段
       m1,
+      m1_company_registration: Number(this.getEffectiveValue('m1_company_registration_usd')) || 0,
+      m1_business_license: Number(this.getEffectiveValue('m1_business_license_usd')) || 0,
+      m1_tax_registration: Number(this.getEffectiveValue('m1_tax_registration_usd')) || 0,
+      m1_legal_consulting: Number(this.getEffectiveValue('m1_legal_consulting_usd')) || 0,
+      m1_regulatory_agency: String(this.getEffectiveValue('m1_regulatory_agency') || ''),
+      m1_complexity: String(this.getEffectiveValue('m1_complexity') || ''),
+      m1_industry_license: Number(this.getEffectiveValue('m1_import_license_cost_usd')) || 0,
+      m1_renewal_required: false, // 字段不存在于CostFactor，使用默认值
+      m1_renewal_frequency: '', // 字段不存在于CostFactor，使用默认值
+      m1_notes: String(this.getEffectiveValue('m1_notes') || ''),
+
+      // M2总计和详细字段
       m2,
+      m2_product_certification: Number(this.getEffectiveValue('m2_estimated_cost_usd')) || 0, // 映射到estimated_cost
+      m2_trademark_registration: Number(this.getEffectiveValue('m2_trademark_registration_usd')) || 0,
+      m2_compliance_testing: Number(this.getEffectiveValue('m2_product_testing_cost_usd')) || 0, // 映射到product_testing
+      m2_certification_validity_years: 0, // 字段不存在于CostFactor，使用默认值
+      m2_trademark_notes: '', // 字段不存在于CostFactor，使用默认值
+      m2_inspection_frequency: '', // 字段不存在于CostFactor，使用默认值
+      m2_inspection_cost: 0, // 字段不存在于CostFactor，使用默认值
+      m2_product_testing_cost: Number(this.getEffectiveValue('m2_product_testing_cost_usd')) || 0,
+      m2_patent_filing: Number(this.getEffectiveValue('m2_patent_filing_usd')) || 0,
+
+      // M3总计和详细字段
       m3,
+      m3_warehouse_deposit: Number(this.getEffectiveValue('m3_warehouse_deposit_usd')) || 0,
+      m3_equipment_purchase: Number(this.getEffectiveValue('m3_equipment_purchase_usd')) || 0,
+      m3_initial_inventory: Number(this.getEffectiveValue('m3_initial_inventory_usd')) || 0,
+      m3_system_setup: Number(this.getEffectiveValue('m3_system_setup_usd')) || 0,
+      m3_warehouse_type: '', // 字段不存在于CostFactor，使用默认值
+      m3_warehouse_size_sqm: 0, // 字段不存在于CostFactor，使用默认值
+      m3_inventory_months: 0, // 字段不存在于CostFactor，使用默认值
+      m3_software_cost: Number(this.getEffectiveValue('m3_system_setup_usd')) || 0, // 映射到system_setup
+
+      // 总计
       total: m1 + m2 + m3,
+
+      // POC兼容字段（保留以兼容旧代码）
+      m1_marketEntry: { total: m1 },
+      m2_techCompliance: { total: m2 },
+      m3_supplyChain: { total: m3 },
     };
   }
 
