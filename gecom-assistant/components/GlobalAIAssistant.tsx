@@ -283,9 +283,15 @@ export default function GlobalAIAssistant({
               className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">思考中...</span>
+                </>
               ) : (
-                <Send className="h-4 w-4" />
+                <>
+                  <Send className="h-4 w-4" />
+                  <span className="text-sm">发送</span>
+                </>
               )}
             </button>
           </div>
