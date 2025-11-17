@@ -1,4 +1,4 @@
-// @ts-nocheck - Day 21-26 docx.js API需要重构（TODO: 修复Document/styles API）
+// @ts-nocheck - 待修复：docx.js API类型定义需要完善
 /**
  * GECOM报告生成器核心引擎
  *

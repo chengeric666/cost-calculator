@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --font-dm-sans: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-dm-sans);
 }
 
 /* MVP 2.0 动画样式 */

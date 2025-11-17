@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import { Project, Industry, TargetCountry, SalesChannel, CostResult } from '@/types/gecom';
 import { calculateCostModel } from '@/lib/gecom/calculator';
+import PersistentAIAssistant from './PersistentAIAssistant';
 import Step0ProjectInfo from './wizard/Step0ProjectInfo';
 import Step1Scope from './wizard/Step1Scope';
 import Step2DataCollection from './wizard/Step2DataCollection';
@@ -100,44 +101,44 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      {/* Header - 精致的顶部导航栏 */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+        <div className="px-6 py-4">
           <div className="flex items-center gap-4 mb-6">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
-              返回首页
+              <span className="font-medium">返回首页</span>
             </button>
           </div>
 
-          {/* Progress bar */}
-          <div className="flex items-center justify-between">
+          {/* Progress bar - 优化的进度指示器 */}
+          <div className="flex items-center justify-between max-w-5xl mx-auto">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${
+                    className={`flex h-11 w-11 items-center justify-center rounded-2xl border-2 transition-all duration-300 shadow-sm ${
                       currentStep === step.number
-                        ? 'border-blue-600 bg-blue-600 text-white'
+                        ? 'border-blue-600 bg-gradient-to-br from-blue-600 to-indigo-600 text-white scale-110 shadow-lg shadow-blue-500/30'
                         : currentStep > step.number
-                        ? 'border-green-600 bg-green-600 text-white'
-                        : 'border-gray-300 bg-white text-gray-400'
+                        ? 'border-green-600 bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-md shadow-green-500/20'
+                        : 'border-slate-300 bg-white text-slate-400'
                     }`}
                   >
                     {currentStep > step.number ? (
                       <CheckCircle className="h-6 w-6" />
                     ) : (
-                      <span className="font-semibold">{step.number}</span>
+                      <span className="font-bold text-sm">{step.number}</span>
                     )}
                   </div>
                   <div className="mt-2 text-center">
                     <div
-                      className={`text-sm font-medium ${
-                        currentStep >= step.number ? 'text-gray-900' : 'text-gray-400'
+                      className={`text-xs font-semibold tracking-wide transition-colors duration-200 ${
+                        currentStep >= step.number ? 'text-slate-900' : 'text-slate-400'
                       }`}
                     >
                       {step.title}
@@ -146,8 +147,10 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mx-4 ${
-                      currentStep > step.number ? 'bg-green-600' : 'bg-gray-300'
+                    className={`flex-1 h-1 mx-4 rounded-full transition-all duration-300 ${
+                      currentStep > step.number
+                        ? 'bg-gradient-to-r from-green-600 to-emerald-600'
+                        : 'bg-slate-200'
                     }`}
                   />
                 )}
@@ -157,63 +160,76 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
         </div>
       </div>
 
-      {/* Step content */}
-      <div className="container mx-auto px-6 py-8">
-        <div className="mx-auto max-w-4xl">
-          {/* Step 0 has different props than Step 1-5 */}
-          {currentStep === 0 ? (
-            <Step0ProjectInfo
-              onNext={handleStep0Complete}
-              initialData={project}
-            />
-          ) : (() => {
-              // TypeScript: currentStep > 0 means we're rendering Step 1-5, not Step 0
-              const StepComponent = steps[currentStep].component as React.ComponentType<{
-                project: Partial<Project>;
-                onUpdate: (updates: Partial<Project>) => void;
-                costResult: CostResult | null;
-              }>;
-              return (
-                <StepComponent
-                  project={project}
-                  onUpdate={handleProjectUpdate}
-                  costResult={costResult}
+      {/* Main Layout - 左右分栏 */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left: Step content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-6 py-8">
+            <div className="mx-auto max-w-5xl">
+              {/* Step 0 has different props than Step 1-5 */}
+              {currentStep === 0 ? (
+                <Step0ProjectInfo
+                  onNext={handleStep0Complete}
+                  initialData={project}
                 />
-              );
-            })()
-          }
+              ) : (() => {
+                  // TypeScript: currentStep > 0 means we're rendering Step 1-5, not Step 0
+                  const StepComponent = steps[currentStep].component as React.ComponentType<{
+                    project: Partial<Project>;
+                    onUpdate: (updates: Partial<Project>) => void;
+                    costResult: CostResult | null;
+                  }>;
+                  return (
+                    <StepComponent
+                      project={project}
+                      onUpdate={handleProjectUpdate}
+                      costResult={costResult}
+                    />
+                  );
+                })()
+              }
 
-          {/* Navigation buttons - only shown for Step 1-5 (Step 0 has its own button) */}
-          {currentStep > 0 && (
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
-              <button
-                onClick={handlePrevious}
-                disabled={currentStep === 0}
-                className="flex items-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                上一步
-              </button>
+              {/* Navigation buttons - only shown for Step 1-5 (Step 0 has its own button) */}
+              {currentStep > 0 && (
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentStep === 0}
+                    className="group flex items-center gap-2 px-6 py-3 text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
+                    <span className="font-semibold">上一步</span>
+                  </button>
 
-              {currentStep < steps.length - 1 ? (
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  下一步
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={onBack}
-                  className="flex items-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  完成
-                </button>
+                  {currentStep < steps.length - 1 ? (
+                    <button
+                      onClick={handleNext}
+                      className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 active:scale-95"
+                    >
+                      <span className="font-semibold">下一步</span>
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={onBack}
+                      className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 active:scale-95"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      <span className="font-semibold">完成</span>
+                    </button>
+                  )}
+                </div>
               )}
             </div>
-          )}
+          </div>
+        </div>
+
+        {/* Right: Persistent AI Assistant */}
+        <div className="w-[360px] border-l border-slate-200 flex-shrink-0 shadow-2xl">
+          <PersistentAIAssistant
+            project={project}
+            costResult={costResult}
+          />
         </div>
       </div>
     </div>
