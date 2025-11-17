@@ -179,7 +179,7 @@ export default function GlobalAIAssistant({
         {/* 快捷问题 */}
         <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
           <h3 className="text-xs font-medium text-gray-700 mb-2">快捷问题</h3>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {quickQuestions.map((question, index) => (
               <button
                 key={index}
