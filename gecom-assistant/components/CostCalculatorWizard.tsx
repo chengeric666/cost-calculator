@@ -160,77 +160,74 @@ export default function CostCalculatorWizard({ onBack }: CostCalculatorWizardPro
         </div>
       </div>
 
-      {/* Main Layout - 左右分栏 */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left: Step content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="px-6 py-8">
-            <div className="mx-auto max-w-5xl">
-              {/* Step 0 has different props than Step 1-5 */}
-              {currentStep === 0 ? (
-                <Step0ProjectInfo
-                  onNext={handleStep0Complete}
-                  initialData={project}
-                />
-              ) : (() => {
-                  // TypeScript: currentStep > 0 means we're rendering Step 1-5, not Step 0
-                  const StepComponent = steps[currentStep].component as React.ComponentType<{
-                    project: Partial<Project>;
-                    onUpdate: (updates: Partial<Project>) => void;
-                    costResult: CostResult | null;
-                  }>;
-                  return (
-                    <StepComponent
-                      project={project}
-                      onUpdate={handleProjectUpdate}
-                      costResult={costResult}
-                    />
-                  );
-                })()
-              }
+      {/* Main Content - 添加右侧padding为AI助手留出空间 */}
+      <div className="flex-1 overflow-y-auto pr-[380px]">
+        <div className="px-6 py-8">
+          <div className="mx-auto max-w-5xl">
+            {/* Step 0 has different props than Step 1-5 */}
+            {currentStep === 0 ? (
+              <Step0ProjectInfo
+                onNext={handleStep0Complete}
+                initialData={project}
+              />
+            ) : (() => {
+                // TypeScript: currentStep > 0 means we're rendering Step 1-5, not Step 0
+                const StepComponent = steps[currentStep].component as React.ComponentType<{
+                  project: Partial<Project>;
+                  onUpdate: (updates: Partial<Project>) => void;
+                  costResult: CostResult | null;
+                }>;
+                return (
+                  <StepComponent
+                    project={project}
+                    onUpdate={handleProjectUpdate}
+                    costResult={costResult}
+                  />
+                );
+              })()
+            }
 
-              {/* Navigation buttons - only shown for Step 1-5 (Step 0 has its own button) */}
-              {currentStep > 0 && (
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+            {/* Navigation buttons - only shown for Step 1-5 (Step 0 has its own button) */}
+            {currentStep > 0 && (
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentStep === 0}
+                  className="group flex items-center gap-2 px-6 py-3 text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
+                  <span className="font-semibold">上一步</span>
+                </button>
+
+                {currentStep < steps.length - 1 ? (
                   <button
-                    onClick={handlePrevious}
-                    disabled={currentStep === 0}
-                    className="group flex items-center gap-2 px-6 py-3 text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                    onClick={handleNext}
+                    className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 active:scale-95"
                   >
-                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
-                    <span className="font-semibold">上一步</span>
+                    <span className="font-semibold">下一步</span>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </button>
-
-                  {currentStep < steps.length - 1 ? (
-                    <button
-                      onClick={handleNext}
-                      className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 active:scale-95"
-                    >
-                      <span className="font-semibold">下一步</span>
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={onBack}
-                      className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 active:scale-95"
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="font-semibold">完成</span>
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+                ) : (
+                  <button
+                    onClick={onBack}
+                    className="group flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 active:scale-95"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="font-semibold">完成</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Right: Persistent AI Assistant */}
-        <div className="w-[360px] h-full border-l border-slate-200 flex-shrink-0 shadow-2xl">
-          <PersistentAIAssistant
-            project={project}
-            costResult={costResult}
-          />
-        </div>
+      {/* Fixed AI Assistant - 完全独立定位，占满整个视口高度 */}
+      <div className="fixed right-0 top-0 h-screen w-[380px] z-10">
+        <PersistentAIAssistant
+          project={project}
+          costResult={costResult}
+        />
       </div>
     </div>
   );
