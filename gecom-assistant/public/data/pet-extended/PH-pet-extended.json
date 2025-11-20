@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "PH-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T05:57:22.019Z"
+  },
+  "m5_return_cost_usd": 2.5,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.22,\"tier3_percentage\":0.06},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"Bureau of Customs PH (关税官方)\",\"BIR (VAT官方)\",\"SEC (公司注册官方)\",\"BAI / FDA Philippines (监管)\",\"Sino Shipping / Basenton (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Mordor Intelligence / Statista (市场数据)\"],\"notes\":\"菲律宾ASEAN AFTA零关税优势。Shopee第二大市场（仅次于印尼）。BAI多层审批但流程标准化。\"}",
+  "m1_regulatory_agency": "BAI (Bureau of Animal Industry), FDA Philippines, BOC",
+  "m2_certifications_required": "[\"BAI License to Operate (LTO) - 进口商资质\",\"外国制造商BAI认证（Manufacturer Accreditation）\",\"SPS-IC (Sanitary and Phytosanitary Import Clearance)有效期60天\",\"CPR (Certificate of Product Registration) - 每个产品\",\"Import Permit (IP) - 每批次\",\"Sanitary Certificate - 出口国监管机构签发\"]",
+  "m2_product_certification_notes": "BAI LTO + 外国制造商认证 + CPR注册。SPS-IC有效期仅60天需频繁续签。",
+  "m2_trademark_notes": "IPOPHL商标PHP 6,800-10,000 (~$150-220)，注册周期12-18个月。",
+  "m2_labeling_review_usd": 200,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":8211,\"m1_market_entry\":1561,\"m2_technical_compliance\":2050,\"m3_supply_chain\":4600,\"payback_estimate_months\":4},\"unit_economics\":{\"total_opex_per_unit_usd\":11.5,\"m4_goods_tax\":1.2,\"m5_logistics\":6.5,\"m6_marketing\":2,\"m7_payment\":0.7,\"m8_operations\":1.1,\"gross_margin_target\":0.42},\"key_rates\":{\"vat_rate\":0.12,\"tariff_rate\":0,\"fba_fee_usd\":0,\"lazada_lazmall_commission_rate\":-0.03359999999999999,\"lazada_marketplace_commission_rate\":-0.04,\"shopee_commission_rate\":0.11,\"shopee_platform_shipping_rate\":0.056,\"order_processing_fee_php\":5,\"cac_usd\":23,\"payment_rate\":0.035},\"market_context\":{\"market_size_usd_2025\":\"430M\",\"market_size_range\":\"$349M-$588M (多源估计)\",\"cagr_2025_2030\":\"12-13%\",\"population\":\"117M (东南亚第二大)\",\"shopee_market_rank\":\"2nd (second only to Indonesia)\",\"main_platforms\":[\"Shopee\",\"Lazada\"],\"main_warehouse_areas\":[\"Manila\",\"Cavite\",\"Laguna\"]},\"regulatory_highlights\":{\"primary_agency\":\"BAI (Bureau of Animal Industry)\",\"secondary_agency\":\"FDA Philippines\",\"approval_process\":\"LTO → Manufacturer Accreditation → SPS-IC → CPR → IP\",\"sps_ic_validity\":\"60 days (需频繁续签)\",\"labeling_language\":\"English (菲律宾英语普及率高)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (多层审批但流程标准化)\"}}"
+}

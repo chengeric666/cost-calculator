@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "SG-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T05:57:22.013Z"
+  },
+  "m5_return_cost_usd": 2.5,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":20,\"tier3_count\":5,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.05},\"confidence_score\":0.91,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"IRAS (GST官方)\",\"Singapore Customs (关税官方)\",\"ACRA (公司注册官方)\",\"SFA / NParks AVS (监管)\",\"Sino Shipping / Super Intl (物流)\",\"Lazada / Shopee Seller Center (平台)\",\"Stripe (支付)\",\"Statista / Pet Fair SEA (市场数据)\"],\"notes\":\"新加坡作为自由贸易港，关税0%（全球最低）。GST 9%，物流效率亚洲第一。AVS-approved sources限制严格（仅限AU/CA/NZ/UK/US）。\"}",
+  "m1_regulatory_agency": "SFA (Singapore Food Agency), NParks AVS",
+  "m2_certifications_required": "[\"AVS-approved source证明（仅限AU/CA/NZ/UK/US）\",\"SFA进口许可\",\"产品标签合规（英文强制，中文可选）\",\"肉类产品需额外检疫证书\"]",
+  "m2_product_certification_notes": "AVS-approved sources限制严格，仅限5国（AU/CA/NZ/UK/US）。含肉宠物食品需额外检疫证书。",
+  "m2_trademark_notes": "IPOS商标SGD $341（单类别），注册周期6-8个月。",
+  "m2_labeling_review_usd": 300,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":13415,\"m1_market_entry\":4515,\"m2_technical_compliance\":2600,\"m3_supply_chain\":6300,\"payback_estimate_months\":6},\"unit_economics\":{\"total_opex_per_unit_usd\":14.3,\"m4_goods_tax\":0.9,\"m5_logistics\":7.5,\"m6_marketing\":4.5,\"m7_payment\":0.7,\"m8_operations\":0.7,\"gross_margin_target\":0.4},\"key_rates\":{\"gst_rate\":0.09,\"tariff_rate\":0,\"fba_fee_usd\":0,\"lazada_commission_rate\":-0.039999999999999994,\"shopee_commission_rate\":-0.09640000000000001,\"cac_usd\":30,\"payment_rate\":0.034},\"market_context\":{\"market_size_sgd_2024\":\"195M\",\"market_size_usd_2025\":\"111.9M\",\"total_pet_care_sgd_2025\":\"350-400M\",\"internet_penetration\":\"90%+\",\"main_platforms\":[\"Lazada\",\"Shopee\",\"Qoo10\"],\"main_warehouse_areas\":[\"Jurong\",\"Tuas\"]},\"regulatory_highlights\":{\"primary_agency\":\"SFA (Singapore Food Agency)\",\"secondary_agency\":\"NParks AVS\",\"avs_approved_sources\":[\"Australia\",\"Canada\",\"New Zealand\",\"UK\",\"USA\"],\"labeling_language\":\"English (mandatory), Chinese (optional)\",\"certification_complexity\":\"Low\",\"entry_barrier\":\"Medium (AVS-approved sources limitation)\"}}"
+}

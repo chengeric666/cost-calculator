@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "IT-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T05:57:22.004Z"
+  },
+  "m5_return_cost_usd": 3.5,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":63,\"tier2_count\":22,\"tier3_count\":5,\"tier1_percentage\":0.7,\"tier2_percentage\":0.25,\"tier3_percentage\":0.05},\"confidence_score\":0.89,\"last_verified\":\"2025-11-09\",\"data_sources\":[\"Agenzia delle Entrate (VAT官方)\",\"EU TARIC Database (关税官方)\",\"Italian Company Formations (公司注册)\",\"Ministry of Health Italy (监管)\",\"EU Regulation 767/2009 (法规)\",\"Amazon Seller Central Europe (FBA)\",\"Freightos / Welltrans (物流)\",\"Stripe (支付)\",\"Mordor Intelligence / Ken Research (市场数据)\"],\"notes\":\"意大利作为EU成员国，关税/法规与FR/DE一致，但VAT更高（22% vs 20%/19%）。监管相对简化，不需向MOH单独通知。市场规模€3.1B，年增长4.42%。\"}",
+  "m1_regulatory_agency": "Ministry of Health (MOH), Italian Customs Agency, EU Commission",
+  "m2_certifications_required": "[\"EU Regulation (EC) No 767/2009合规（宠物食品标签和流通）\",\"EU Regulation (EC) No 1831/2003合规（饲料添加剂）\",\"FEDIAF营养指南（欧洲推荐）\",\"意大利语标签合规\"]",
+  "m2_product_certification_notes": "EU 767/2009要求：成分声明、营养分析、批次追溯、保质期标注。FEDIAF营养指南为行业推荐标准（非强制）。",
+  "m2_trademark_notes": "EU商标（EUTM）€850，覆盖27个成员国。意大利国家商标€177-350（UIBM）。",
+  "m2_labeling_review_usd": 400,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0.065,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":17650,\"m1_market_entry\":5750,\"m2_technical_compliance\":3700,\"m3_supply_chain\":8200,\"payback_estimate_months\":8},\"unit_economics\":{\"total_opex_per_unit_usd\":18.5,\"m4_goods_tax\":2.5,\"m5_logistics\":10,\"m6_marketing\":4.8,\"m7_payment\":0.6,\"m8_operations\":0.6,\"gross_margin_target\":0.35},\"key_rates\":{\"vat_rate\":0.22,\"tariff_rate\":0.065,\"fba_fee_usd\":5,\"cac_usd\":32,\"platform_commission_rate\":0.15,\"payment_rate\":0.029},\"market_context\":{\"market_size_eur_2025\":\"3.1B\",\"cagr_2025_2030\":\"4.42%\",\"pet_population_growth_2017_2022\":\"17.3%\",\"cat_population_growth_2017_2022\":\"43.7%\",\"main_ports\":[\"Genoa\",\"Naples\",\"Trieste\"],\"main_cities\":[\"Milan\",\"Rome\",\"Turin\",\"Bologna\"]},\"regulatory_highlights\":{\"primary_regulation\":\"EU Regulation 767/2009\",\"regulatory_agency\":\"Ministry of Health (MOH)\",\"labeling_language\":\"Italian (mandatory)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Low (EU unified rules)\"}}"
+}

@@ -1,0 +1,162 @@
+{
+  "_metadata": {
+    "source_file": "BR-pet-food.ts",
+    "total_fields": 133,
+    "core_fields": 70,
+    "extended_fields": 63,
+    "exported_at": "2025-11-10T05:57:22.026Z"
+  },
+  "m5_last_mile_notes": "Mercado Envios免费配送（R$19起），卖家承担成本",
+  "m5_fba_fulfillment_fee_usd": 0.5,
+  "m5_fba_notes": "Mercado Livre Full logistics履约费用",
+  "m5_return_notes": "退货率12%（巴西电商高于拉美平均），免费退货政策普遍",
+  "m6_platform_notes": "Mercado Livre 16.5%佣金（巴西费率，高于墨西哥15%）",
+  "m6_acos_target": 0.28,
+  "m6_marketing_notes": "Mercado Livre广告 + Facebook/Instagram/TikTok投放",
+  "m7_payment_gateway_fixed_fee": 0.6,
+  "m7_payment_provider": "MercadoPago",
+  "m7_payment_notes": "MercadoPago 4.9% + R$3/笔（约$0.60），可分期12x免息",
+  "m8_customer_service_rate": 0.04,
+  "m8_software_subscription_usd": 200,
+  "m8_software_notes": "ERP + 库存管理软件 + 巴西财税合规软件",
+  "m8_staff_cost_usd": 0,
+  "market_summary": {
+    "market_size_usd": "68.7B BRL",
+    "pet_food_size_usd": "38.1B BRL",
+    "growth_rate": "5.6%",
+    "retail_channels": {
+      "store_based": "85%",
+      "online": "15%"
+    },
+    "top_platforms": [
+      "Mercado Livre",
+      "Amazon.com.br",
+      "Petlove"
+    ],
+    "payment_methods": [
+      "MercadoPago",
+      "Boleto Bancário",
+      "Credit Card",
+      "Pix"
+    ],
+    "currency": "BRL (Real)",
+    "language": "Portuguese"
+  },
+  "competitive_insights": {
+    "market_maturity": "mature",
+    "competition_level": "high",
+    "entry_barriers": "high",
+    "key_trends": [
+      "E-commerce增长15%+/年（线上渗透率快速提升）",
+      "Mercado Livre主导地位（R$19免邮政策）",
+      "Premium pet food需求强劲（巴西有1.6亿宠物）",
+      "复杂税制（7种税：II/IPI/AFRMM/PIS/COFINS/SISCOMEX/ICMS）",
+      "分期付款普遍（12x免息）"
+    ]
+  },
+  "m1_regulatory_agency": "MAPA/ANVISA",
+  "m1_regulatory_notes": "MAPA（农牧业部）主管宠物食品，ANVISA管理食品安全",
+  "m1_company_registration_notes": "CNPJ注册（Cadastro Nacional da Pessoa Jurídica）",
+  "m1_business_license_notes": "Alvará de Funcionamento（营业执照）",
+  "m1_industry_license_notes": "MAPA进口许可 + SIPEAGRO系统注册",
+  "m1_legal_consulting_notes": "巴西税制合规 + MAPA认证咨询（复杂度高）",
+  "m1_tax_registration_notes": "Receita Federal税务登记 + 州ICMS登记",
+  "m1_radar_license_usd": 500,
+  "m1_radar_notes": "RADAR许可（访问SISCOMEX系统必需）",
+  "m1_collected_at": "2025-11-10T16:00:00+08:00",
+  "m1_pet_food_specific_requirements": {
+    "sipeagro_registration": "必需通过SIPEAGRO注册establishment和products",
+    "responsible_veterinarian": "必需指定负责兽医师或动物科学家",
+    "importer_registration": "巴西进口商必需在MAPA注册",
+    "vs_form_16_4": "不再接受VS Form 16-4证明（2025新规）"
+  },
+  "m2_certifications_required": "MAPA产品注册 + SIPEAGRO + APHIS出口证明",
+  "m2_product_certification_notes": "MAPA通过SIPEAGRO产品注册（每个产品）",
+  "m2_labeling_review_usd": 1200,
+  "m2_labeling_notes": "葡萄牙语标签 + MAPA标签规范",
+  "m2_compliance_testing_notes": "MAPA授权实验室检测 + ANVISA食品安全检测",
+  "m2_trademark_notes": "INPI（巴西工业产权局）商标注册",
+  "m2_collected_at": "2025-11-10T16:30:00+08:00",
+  "m2_pet_food_specific_compliance": {
+    "labeling_language": "Portuguese（葡萄牙语必需）",
+    "nutrition_info": "AAFCO营养标准 + MAPA特定要求",
+    "expiry_date": "必需标注生产日期和有效期",
+    "manufacturing_registration": "MAPA注册的外国生产商establishment"
+  },
+  "m3_warehouse_notes": "第三方仓储押金（圣保罗/里约热内卢）",
+  "m3_system_setup_notes": "ERP + 库存管理 + 巴西财税合规软件",
+  "m3_initial_inventory_notes": "1.5个月销售库存（考虑长海运时效21天）",
+  "m3_packaging_rate": 0.025,
+  "m3_packaging_notes": "葡萄牙语标签 + MAPA合规包装 + 额外物流包装",
+  "m3_collected_at": "2025-11-10T17:00:00+08:00",
+  "m4_hs_description": "猫狗食品（Dog or cat food, put up for retail sale）",
+  "m4_mfn_tariff_rate": 0.1,
+  "m4_mercosur_tariff_rate": 0,
+  "m4_ipi_rate": 0.05,
+  "m4_ipi_notes": "IPI税率视具体产品而定（0-20%范围）",
+  "m4_afrmm_rate": 0.08,
+  "m4_afrmm_notes": "AFRMM 8%（仅海运进口，空运无此税）",
+  "m4_tariff_notes_extended": "Mercosur CET平均10%，具体税率需查NCM 8位码",
+  "m5_shipping_notes": "中国-巴西海运21天，宠物食品海运占主导",
+  "m5_local_delivery_rate": 0.05,
+  "m5_reverse_logistics_rate": 0.12,
+  "m5_reverse_logistics_notes": "宠物食品退货率12%（巴西消费者保护法严格）",
+  "m6_mercadolibre_commission": 0.165,
+  "m6_mercadolibre_ads_cpc": 0.5,
+  "m6_mercadolibre_notes": "Mercado Livre巴西主导地位，16.5%佣金（高于墨西哥15%）",
+  "m6_amazon_commission": 0.15,
+  "m6_amazon_ads_cpc": 0.6,
+  "m6_amazon_notes": "Amazon.com.br宠物食品类目",
+  "m6_repeat_purchase_rate": 0.6,
+  "m6_ltv_cac_ratio": 3,
+  "data_quality_score": {
+    "tier1_ratio": 0.6,
+    "tier2_ratio": 0.35,
+    "tier3_ratio": 0.05,
+    "overall_confidence": 0.85
+  },
+  "pet_food_market_insights": {
+    "market_size_2025": "R$ 38.1B（宠物食品占总市场55.5%）",
+    "growth_rate_volume": "5.6%",
+    "growth_rate_value": "14%",
+    "total_pets": "160 million（全球第3）",
+    "pet_breakdown": {
+      "dogs": "60 million",
+      "cats": "30 million（快速增长）",
+      "pet_owning_households": "32 million"
+    },
+    "top_categories": [
+      "Dog food (干粮主导)",
+      "Cat food",
+      "Treats/零食"
+    ],
+    "consumer_trends": [
+      "Premium pet food需求强劲（巴西宠物食品金额增长14% vs 销量5.6%）",
+      "E-commerce增长15%+/年",
+      "Mercado Livre免邮政策（R$19起）推动线上销售",
+      "分期付款普遍（12x免息）",
+      "线下门店仍占85%（超市/宠物专卖店）"
+    ],
+    "regulatory_challenges": [
+      "MAPA/ANVISA严格监管（SIPEAGRO注册复杂）",
+      "复杂税制（7种税：II/IPI/AFRMM/PIS/COFINS/SISCOMEX/ICMS）",
+      "葡萄牙语标签强制要求",
+      "长海运时效（21天）",
+      "VS Form 16-4不再接受（2025新规）"
+    ],
+    "competitive_landscape": {
+      "local_production": "巴西是全球第2大宠物食品生产国（420万吨/年）",
+      "international_brands": [
+        "Purina (Nestlé)",
+        "Mars Petcare",
+        "Royal Canin"
+      ],
+      "local_brands": [
+        "Premier Pet",
+        "Gran Plus",
+        "Guabi"
+      ],
+      "market_concentration": "top 5品牌占70%市场份额"
+    }
+  }
+}

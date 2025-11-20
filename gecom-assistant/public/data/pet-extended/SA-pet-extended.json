@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "SA-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T05:57:22.024Z"
+  },
+  "m5_return_cost_usd": 4,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":65,\"tier2_count\":21,\"tier3_count\":4,\"tier1_percentage\":0.72,\"tier2_percentage\":0.23,\"tier3_percentage\":0.04},\"confidence_score\":0.9,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"ZATCA (Zakat, Tax and Customs Authority) - 关税+VAT官方\",\"SFDA Feed Department - 宠物食品监管官方\",\"MISA (Ministry of Investment) - 公司注册官方\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.sa Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Grand View Research / TechSci Research (市场数据)\"],\"notes\":\"沙特GCC统一关税5%，VAT 15%（海湾最高）。BSE禁令：美国牛肉成分禁止。Noon + Amazon.sa双雄主导。Vision 2030多元化战略。\"}",
+  "m1_regulatory_agency": "SFDA (Saudi Food and Drug Authority) - Feed Department",
+  "m2_certifications_required": "[\"SFDA Feed Facility Registration - 外国饲料厂注册（Feed Department审批）\",\"Veterinary Health Certificate - 出口国兽医健康证书（含ante/post-mortem检查）\",\"GSO Standards Compliance - GSO 9:2013标签要求（阿拉伯语标签）\",\"BSE Compliance - 不含美国牛肉成分（2012年禁令）\",\"Halal Certification - 穆斯林市场优势（非强制但建议）\",\"Unfit for Human Consumption Label - \\\"unfit for human consumption\\\"标签必需\"]",
+  "m2_product_certification_notes": "SFDA Feed Department注册流程。兽医健康证书必需（含兽药残留/激素/抗生素/重金属检测）。BSE禁令：美国牛肉成分禁止。",
+  "m2_trademark_notes": "SAIP商标注册SAR 1,200-3,000 (~$320-800)，周期6-12个月。",
+  "m2_labeling_review_usd": 400,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0.05,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":10800,\"m1_market_entry\":4300,\"m2_technical_compliance\":3800,\"m3_supply_chain\":8500,\"payback_estimate_months\":6},\"unit_economics\":{\"total_opex_per_unit_usd\":16.5,\"m4_goods_tax\":1.6,\"m5_logistics\":9,\"m6_marketing\":4,\"m7_payment\":0.7,\"m8_operations\":1.2,\"gross_margin_target\":0.35},\"key_rates\":{\"vat_rate\":0.15,\"tariff_rate\":0.05,\"noon_commission_rate\":-0.22000000000000003,\"noon_typical_commission\":0.1,\"amazon_sa_referral_fee\":-0.09999999999999999,\"cac_usd\":40,\"payment_rate\":0.034},\"market_context\":{\"market_size_usd_2024\":\"74.56M\",\"market_size_usd_2030\":\"82.56-296.9M\",\"cagr_2025_2030\":\"1.71-5.7%\",\"population\":\"36M\",\"pet_population_2024\":\"0.8M-2.4M (growing)\",\"gdp_per_capita\":\"$30,000+ (high purchasing power)\",\"main_platforms\":[\"Noon\",\"Amazon.sa\"],\"main_warehouse_areas\":[\"Riyadh\",\"Jeddah\",\"Dammam\"]},\"regulatory_highlights\":{\"primary_agency\":\"SFDA (Saudi Food and Drug Authority) - Feed Department\",\"regulation\":\"Feed Act & Regulation\",\"facility_registration\":\"Foreign Feed Mills Registration Required\",\"veterinary_certificate\":\"Health Certificate with ante/post-mortem inspection\",\"bse_ban\":\"US Beef-Containing Pet Food Banned (Since May 2012)\",\"labeling_language\":\"Arabic (GSO 9:2013 mandatory)\",\"labeling_requirement\":\"\\\"Unfit for Human Consumption\\\" Label Mandatory\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (SFDA Registration + Veterinary Certificate + BSE Ban)\"}}"
+}

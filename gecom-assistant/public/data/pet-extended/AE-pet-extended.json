@@ -1,0 +1,19 @@
+{
+  "_metadata": {
+    "source_file": "AE-pet-food.ts",
+    "total_fields": 93,
+    "core_fields": 83,
+    "extended_fields": 10,
+    "exported_at": "2025-11-10T05:57:22.023Z"
+  },
+  "m5_return_cost_usd": 4.5,
+  "data_quality_summary": "{\"total_fields\":90,\"p0_fields_filled\":67,\"p0_fill_rate\":1,\"tier_distribution\":{\"tier1_count\":67,\"tier2_count\":18,\"tier3_count\":5,\"tier1_percentage\":0.74,\"tier2_percentage\":0.2,\"tier3_percentage\":0.06},\"confidence_score\":0.92,\"last_verified\":\"2025-11-10\",\"data_sources\":[\"FTA (Federal Tax Authority) - 关税+VAT官方\",\"MOCCAE (Ministry of Climate Change & Environment) - 宠物食品监管\",\"Dubai Municipality - 食品安全+标签\",\"Dubai Economy / Free Zone Authorities - 公司注册\",\"Sino Shipping / Basenton (物流)\",\"Noon / Amazon.ae Seller Center (平台)\",\"Stripe (支付)\",\"IMARC / Statista / Grand View Research (市场数据)\"],\"notes\":\"阿联酋VAT 5%（GCC最低），关税5%。MOCCAE 5年注册有效期。Noon起源地。Free Zone 100%外资所有权。Jebel Ali中东最大港。\"}",
+  "m1_regulatory_agency": "MOCCAE (Ministry of Climate Change & Environment), Dubai Municipality",
+  "m2_certifications_required": "[\"MOCCAE Registration - 宠物食品注册（有效期5年，7-14工作日）\",\"Veterinary Health Certificate - 兽医健康证书（出口国认证）\",\"GCC Standards Compliance - GCC标准合规（质量+安全）\",\"Pork-Free Certificate - 无猪肉成分证明（制造商提供）\",\"Aflatoxin/Dioxin-Free Certificate - 无毒素证明（制造商提供）\",\"English Labeling - 英语标签（可双语/多语言）\"]",
+  "m2_product_certification_notes": "MOCCAE注册流程简化（vs 沙特SFDA）。双重审批：MOCCAE（进口许可）+ Dubai Municipality（食品安全）。",
+  "m2_trademark_notes": "UAE商标注册AED 1,000-3,000 (~$270-800)，周期6-12个月。",
+  "m2_labeling_review_usd": 300,
+  "m4_hs_description": "Dog or cat food, put up for retail sale",
+  "m4_base_tariff_rate": 0.05,
+  "quick_reference": "{\"market_entry\":{\"total_capex_usd\":9200,\"m1_market_entry\":4200,\"m2_technical_compliance\":3300,\"m3_supply_chain\":10200,\"payback_estimate_months\":5},\"unit_economics\":{\"total_opex_per_unit_usd\":18.5,\"m4_goods_tax\":0.8,\"m5_logistics\":10,\"m6_marketing\":4.2,\"m7_payment\":0.7,\"m8_operations\":1.4,\"gross_margin_target\":0.35},\"key_rates\":{\"vat_rate\":0.05,\"tariff_rate\":0.05,\"combined_tax_burden\":0.1025,\"noon_commission_rate\":-0.22000000000000003,\"noon_typical_commission\":0.1,\"amazon_ae_referral_fee\":-0.105,\"cac_usd\":42,\"payment_rate\":0.034},\"market_context\":{\"market_size_usd_2025\":\"107.3-164.27M\",\"market_size_usd_2030\":\"148.3-171.0M\",\"cagr_2025_2030\":\"5.04-8.89%\",\"population\":\"10M\",\"pet_ownership_trend\":\"Rapid growth, humanization trend\",\"gdp_per_capita\":\"$50,000+ (top 10 globally)\",\"online_penetration\":\"16% (vs 8% pre-COVID)\",\"main_platforms\":[\"Noon (origin)\",\"Amazon.ae\"],\"main_warehouse_areas\":[\"Dubai (Jafza)\",\"Abu Dhabi\",\"Sharjah\",\"Dubai South\"]},\"regulatory_highlights\":{\"primary_agency\":\"MOCCAE (Ministry of Climate Change & Environment)\",\"secondary_agency\":\"Dubai Municipality\",\"moccae_certificate_validity\":\"5 years\",\"registration_timeline\":\"7-14 working days\",\"veterinary_certificate\":\"Required from exporting country\",\"gcc_standards\":\"Compliance Mandatory\",\"pork_free_certificate\":\"Mandatory (Muslim market)\",\"labeling_language\":\"English (bilingual ok)\",\"certification_complexity\":\"Medium\",\"entry_barrier\":\"Medium (MOCCAE + Dubai Municipality)\"}}"
+}

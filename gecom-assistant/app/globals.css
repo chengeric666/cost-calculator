@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  --font-dm-sans: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+}
+
+body {
+  font-family: var(--font-dm-sans);
+}
+
+/* MVP 2.0 动画样式 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
